@@ -14,7 +14,11 @@ the keyboard repo — both sides of every touch seam are in this repo.
 
 ## Files changed vs upstream
 
-### `src/layouts/operator/status_screen.c` — the entire touch UI (biggest change)
+### `src/touch/` + `src/status_screen.c` — the entire touch UI (biggest change)
+
+(2026-07-07: the `layouts/operator/` tree was flattened — touch UI now lives in `src/touch/`
+one feature per file, widgets in `src/widgets/`, entry point at `src/status_screen.c`; the
+`custom_status_screen.c` #include indirection and the single-entry layout glob are gone.)
 
 **Views (menu tree, after the 2026-07-06 swap):** NORMAL → tap → HOME (icons: GPS-cursor =
 TRACKPAD / settings-gear / keyboard). SETTINGS is reached from HOME; the KEYS hub holds
@@ -101,7 +105,7 @@ summarised in the keyboard repo's docs/information.md §12.)
   Compiled out on the DIY dongle (`CONFIG_PROSPECTOR_USE_AMBIENT_LIGHT_SENSOR=n`); fixed for
   the day an APDS9960 is fitted.
 
-### Everything else under `src/layouts/operator/`
+### Everything else under `src/widgets/`
 
 Upstream OPERATOR theme (wpm meter, layer display, battery circles, output widget,
 modifier indicator) — untouched except status_screen.c wiring them + the overlay on top.

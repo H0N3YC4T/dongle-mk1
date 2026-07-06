@@ -1,6 +1,6 @@
-/* OPERATOR layout entry point: assembles the status screen (widgets) and attaches
- * the touch UI overlay. This file is #included by custom_status_screen.c; the touch
- * UI itself is split by feature into the touch_*.c files (see touch_ui.h). */
+/* Status-screen entry point: assembles the widgets and attaches the touch UI
+ * overlay. The touch UI is split by feature under src/touch/ (see touch_ui.h);
+ * the widgets live under src/widgets/. */
 
 #include <lvgl.h>
 

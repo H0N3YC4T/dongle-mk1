@@ -1,13 +1,13 @@
 #pragma once
 
-/* Shared internals of the OPERATOR touch UI. One feature per .c file:
+/* Shared internals of the touch UI (src/touch/). One feature per .c file:
+ *   touch_input.c    -- CST816S gesture driver (taps + trackpad -> mouse HID)
  *   touch_keys.c     -- workqueue key/macro sending (the thread-safety boundary)
  *   touch_rotation.c -- 4-step display rotation (MADCTL + LVGL resolution swap)
  *   touch_draw.c     -- grid geometry + button drawing
  *   touch_views.c    -- per-view renderers (build_view)
  *   touch_nav.c      -- tap routing, view state, idle timeout, overlay + timer
- *   status_screen.c  -- screen assembly; the layout entry point #included by
- *                       custom_status_screen.c (everything else compiles standalone)
+ * ../status_screen.c -- screen assembly (widgets + touch_ui_attach)
  */
 
 #include <lvgl.h>
