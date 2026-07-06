@@ -344,17 +344,25 @@ static void build_view(enum ui_view v) {
             draw_cell(0, 0, 1, LV_SYMBOL_PLUS,
                       sn >= SETTINGS_SENS_MAX ? COLOR_HINT_GLYPH : COLOR_ACCENT);
             draw_cell(1, 0, 1, LV_SYMBOL_MINUS, sn <= 0 ? COLOR_HINT_GLYPH : COLOR_ACCENT);
-            lv_snprintf(lbl, sizeof(lbl), LV_SYMBOL_GPS " %d", sn);
-            draw_cell(2, 0, 1, lbl, COLOR_PAGE);
         }
         draw_cell(0, 1, 1, LV_SYMBOL_UP, COLOR_BACK);
-        draw_cell(1, 1, 1, LV_SYMBOL_REFRESH, COLOR_PAGE); /* rotate the display 180deg */
+        draw_cell(1, 1, 1, LV_SYMBOL_REFRESH, COLOR_PAGE); /* rotate 90deg cw per tap */
         draw_cell(0, 2, 1, LV_SYMBOL_PLUS,
                   br >= SETTINGS_BRIGHT_MAX ? COLOR_HINT_GLYPH : COLOR_ACCENT);
         draw_cell(1, 2, 1, LV_SYMBOL_MINUS,
                   br <= SETTINGS_BRIGHT_MIN ? COLOR_HINT_GLYPH : COLOR_ACCENT);
+        /* Readout row: the two boxes split the row 50/50 (1.5 grid units each),
+         * sensitivity under its column, brightness under its. Drawn on a temporary
+         * 2-column grid so the normal cell math applies; restored immediately.
+         * Taps still resolve on the 3x3 grid -- row 2 is no-op cells either way. */
+        grid_cols = 2;
+        if (sn >= 0) {
+            lv_snprintf(lbl, sizeof(lbl), LV_SYMBOL_GPS " %d", sn);
+            draw_cell(2, 0, 1, lbl, COLOR_PAGE);
+        }
         lv_snprintf(lbl, sizeof(lbl), LV_SYMBOL_EYE_OPEN " %d%%", br);
-        draw_cell(2, 2, 1, lbl, COLOR_PAGE);
+        draw_cell(2, 1, 1, lbl, COLOR_PAGE);
+        grid_cols = 3;
         break;
     }
     case VIEW_HUB: /* hub: 0 F-keys, 1 Back, 2 numpad, 3 symbols, 4 media, 5 mods.
