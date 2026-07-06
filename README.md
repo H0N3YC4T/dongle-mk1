@@ -6,9 +6,14 @@ touch LCD (280x240 ST7789V, CST816S capacitive touch, glass corners ~R5.15mm). P
 settings (brightness, trackpad sensitivity, screen rotation), an on-screen key hub (F-keys,
 numpad, symbols, one-shot modifiers), and a whole-screen trackpad with mouse HID output.
 
-Derived from [carrefinho/prospector-zmk-module](https://github.com/carrefinho/prospector-zmk-module)
-(OPERATOR layout), heavily extended and trimmed to just what this hardware uses. The other
-upstream layouts (classic/radii/field) live upstream, not here.
+## Credit
+
+This module is derived from **[prospector-zmk-module](https://github.com/carrefinho/prospector-zmk-module)
+by [carrefinho](https://github.com/carrefinho)** — the Prospector dongle concept, the adapter
+shield, the OPERATOR status-screen layout, and the display driver all originate there. Go star
+the original. This repo extends it with the touch UI / trackpad and trims it to just what this
+hardware combination uses; the other upstream layouts (classic/radii/field) live upstream, not
+here. Both repos are MIT licensed.
 
 ## Features
 
