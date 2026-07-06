@@ -1,6 +1,7 @@
-# Fork changes — H0N3YC4T/prospector-zmk-module @ feat/new-status-screens
+# Change ledger — zmk-waveshare-touch
 
-Everything this fork adds on top of carrefinho/prospector-zmk-module, in one place. This file
+Everything this module adds on top of carrefinho/prospector-zmk-module (from which it was
+extracted 2026-07-06, having lived as a fork branch until then), in one place. This file
 carries the detailed rationale and history that the code comments deliberately don't, so future
 edits have full context. Companion docs live in the keyboard repo
 (Keyboard-Prototype_Mk1: docs/information.md + docs/issues.md).
@@ -8,6 +9,8 @@ edits have full context. Companion docs live in the keyboard repo
 Consumed by the keyboard repo via an exact-SHA pin in `config/west.yml` — every change here
 needs a commit + push + pin bump there. Hardware: Seeed XIAO nRF52840 + Waveshare 1.69" LCD
 (280x240, ST7789V, glass corners R5.15mm ≈ 44px) + CST816S touch, OPERATOR layout.
+The CST816S gesture driver (`touch_input.c`) lives HERE now (adapter `src/`), moved in from
+the keyboard repo — both sides of every touch seam are in this repo.
 
 ## Files changed vs upstream
 
