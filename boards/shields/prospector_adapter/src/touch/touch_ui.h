@@ -111,6 +111,10 @@ void fire_macro(const char *dev);
 /* touch_rotation.c */
 void settings_apply_rotation(void);
 
+/* ../status_screen.c: re-position the NORMAL screen's widgets for the current
+ * orientation (called by settings_apply_rotation). */
+void status_screen_reflow(void);
+
 /* Seams to the rest of the firmware. Brightness is src/brightness.c (dongle display
  * dimmer -- never the keyboard &bl relay). The trackpad sensitivity + orientation
  * hooks are implemented by touch_input.c; weak fallbacks (sens in touch_nav.c,

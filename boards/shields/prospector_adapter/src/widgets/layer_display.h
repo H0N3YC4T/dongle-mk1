@@ -14,3 +14,5 @@ struct zmk_widget_layer_display {
 
 int zmk_widget_layer_display_init(struct zmk_widget_layer_display *widget, lv_obj_t *parent);
 lv_obj_t *zmk_widget_layer_display_obj(struct zmk_widget_layer_display *widget);
+/* Resize (portrait rotation): dots shrink to fit, keeping the gap. */
+void zmk_widget_layer_display_set_width(struct zmk_widget_layer_display *widget, int width);

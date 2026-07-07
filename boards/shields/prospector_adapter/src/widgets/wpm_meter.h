@@ -17,3 +17,5 @@ struct zmk_widget_wpm_meter {
 
 int zmk_widget_wpm_meter_init(struct zmk_widget_wpm_meter *widget, lv_obj_t *parent);
 lv_obj_t *zmk_widget_wpm_meter_obj(struct zmk_widget_wpm_meter *widget);
+/* Resize (portrait rotation): bars shrink to fit, labels re-anchor. */
+void zmk_widget_wpm_meter_set_width(struct zmk_widget_wpm_meter *widget, int width);

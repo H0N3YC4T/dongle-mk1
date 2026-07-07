@@ -32,6 +32,23 @@ struct layer_state {
     uint8_t index;
 };
 
+/* Bar geometry, re-derived whenever the widget width changes (portrait rotation
+ * narrows the meter). Bars keep a 2px gap and shrink to fit; labels re-anchor via
+ * their lv_obj_align. */
+#define WPM_BAR_GAP 2
+static int geo_width = 260;
+static int geo_bar_w = 8;
+
+static void wpm_meter_layout(struct zmk_widget_wpm_meter *widget) {
+    geo_bar_w = (geo_width - (WPM_BAR_COUNT - 1) * WPM_BAR_GAP) / WPM_BAR_COUNT;
+    int total_width = WPM_BAR_COUNT * geo_bar_w + (WPM_BAR_COUNT - 1) * WPM_BAR_GAP;
+    int start_x = (geo_width - total_width) / 2;
+    for (int i = 0; i < WPM_BAR_COUNT; i++) {
+        lv_obj_set_size(widget->bars[i], geo_bar_w, 90);
+        lv_obj_set_pos(widget->bars[i], start_x + i * (geo_bar_w + WPM_BAR_GAP), 0);
+    }
+}
+
 static void wpm_meter_render(int active_bars) {
     struct zmk_widget_wpm_meter *widget;
     SYS_SLIST_FOR_EACH_CONTAINER(&widgets, widget, node) {
@@ -48,13 +65,11 @@ static void wpm_meter_render(int active_bars) {
         }
 
         if (peak_position > active_bars && peak_position > 0) {
-            int bar_width = 8;
-            int bar_gap = 2;
-            int total_width = WPM_BAR_COUNT * bar_width + (WPM_BAR_COUNT - 1) * bar_gap;
-            int start_x = (260 - total_width) / 2;
+            int total_width = WPM_BAR_COUNT * geo_bar_w + (WPM_BAR_COUNT - 1) * WPM_BAR_GAP;
+            int start_x = (geo_width - total_width) / 2;
             int peak_slot = (peak_position > active_bars + 1) ? (peak_position - 1) : active_bars;
             if (peak_slot >= WPM_BAR_COUNT) peak_slot = WPM_BAR_COUNT - 1;
-            int peak_x = start_x + peak_slot * (bar_width + bar_gap) + 2;
+            int peak_x = start_x + peak_slot * (geo_bar_w + WPM_BAR_GAP) + 2;
             lv_obj_set_pos(widget->peak_indicator, peak_x, 0);
             lv_obj_clear_flag(widget->peak_indicator, LV_OBJ_FLAG_HIDDEN);
         } else {
@@ -162,22 +177,16 @@ int zmk_widget_wpm_meter_init(struct zmk_widget_wpm_meter *widget, lv_obj_t *par
     lv_obj_set_style_border_width(widget->obj, 0, LV_PART_MAIN);
     lv_obj_set_style_pad_all(widget->obj, 0, LV_PART_MAIN);
 
-    int bar_width = 8;
-    int bar_gap = 2;
-    int bar_height = 90;
-    int total_width = WPM_BAR_COUNT * bar_width + (WPM_BAR_COUNT - 1) * bar_gap;
-    int start_x = (260 - total_width) / 2;
-
     for (int i = 0; i < WPM_BAR_COUNT; i++) {
         widget->bars[i] = lv_obj_create(widget->obj);
-        lv_obj_set_size(widget->bars[i], bar_width, bar_height);
-        lv_obj_set_pos(widget->bars[i], start_x + i * (bar_width + bar_gap), 0);
         lv_obj_set_style_bg_color(widget->bars[i], lv_color_hex(DISPLAY_COLOR_WPM_BAR_INACTIVE), LV_PART_MAIN);
         lv_obj_set_style_bg_opa(widget->bars[i], LV_OPA_COVER, LV_PART_MAIN);
         lv_obj_set_style_border_width(widget->bars[i], 0, LV_PART_MAIN);
         lv_obj_set_style_radius(widget->bars[i], 1, LV_PART_MAIN);
         lv_obj_set_style_pad_all(widget->bars[i], 0, LV_PART_MAIN);
     }
+    wpm_meter_layout(widget); /* size + position the bars for the current width */
+    int bar_height = 90;
 
     widget->peak_indicator = lv_obj_create(widget->obj);
     lv_obj_set_size(widget->peak_indicator, 4, bar_height);
@@ -219,4 +228,12 @@ int zmk_widget_wpm_meter_init(struct zmk_widget_wpm_meter *widget, lv_obj_t *par
 
 lv_obj_t *zmk_widget_wpm_meter_obj(struct zmk_widget_wpm_meter *widget) {
     return widget->obj;
+}
+
+/* Resize the meter (portrait rotation): bars shrink to fit, the peak indicator
+ * follows via the shared geometry, labels re-anchor themselves. */
+void zmk_widget_wpm_meter_set_width(struct zmk_widget_wpm_meter *widget, int width) {
+    geo_width = width;
+    lv_obj_set_width(widget->obj, width);
+    wpm_meter_layout(widget);
 }
