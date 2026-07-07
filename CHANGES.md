@@ -39,6 +39,16 @@ an LVGL built-in (`CONFIG_LV_FONT_MONTSERRAT_16=y` in `prospector_adapter.conf`)
 asset needed, but it's a different type family from the FoundryGridnik/DINish fonts used by the
 rest of the NORMAL screen. Revisit if that reads as inconsistent on hardware.
 
+**Modifier row width tightened (230 -> 200), corrected 2026-07-08.** The row uses
+`LV_FLEX_ALIGN_SPACE_BETWEEN`, which stretches the gaps between the 4 mod labels + 3
+separators to fill the ENTIRE declared container width — so that number is the row's real
+on-screen footprint (the margins between mod keys), not just a bounding box. At 230, centred,
+portrait had only 5px of clearance to the screen edge on each side ((240-230)/2); the montserrat
+font swap changed glyph metrics enough that this was reported as the row's width not
+comfortably fitting. Trimmed to 200 (tighter gaps between CTRL/ALT/SHIFT/GUI, same label/
+separator sizes), giving 20px clearance in portrait and 40px in landscape — status_screen.c's
+centred x-offsets updated to match (40 landscape, 20 portrait).
+
 **Battery moved under the output (USB/BLE + profile slots) widget — portrait only.** The
 original attempt (2026-07-07) shrank the WPM meter, battery, and output widgets in BOTH
 orientations to force the stacked arrangement to also fit landscape; that shrink was not

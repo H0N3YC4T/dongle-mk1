@@ -106,7 +106,13 @@ static lv_obj_t *create_mod_label(lv_obj_t *parent, const char *text) {
 
 int zmk_widget_modifier_indicator_init(struct zmk_widget_modifier_indicator *widget, lv_obj_t *parent) {
     widget->obj = lv_obj_create(parent);
-    lv_obj_set_size(widget->obj, 230, 24);
+    /* LV_FLEX_ALIGN_SPACE_BETWEEN stretches the gaps between the 4 labels/3
+     * separators to fill this whole declared width, so this number IS the row's
+     * total footprint (the margins between mod keys), not just a bounding box.
+     * Was 230 -- tightened to 200 so the row (centred by status_screen.c) keeps
+     * real clearance from the screen edges in portrait, where it was uncomfortably
+     * close (5px each side at 230). */
+    lv_obj_set_size(widget->obj, 200, 24);
     lv_obj_set_style_bg_opa(widget->obj, LV_OPA_TRANSP, LV_PART_MAIN);
     lv_obj_set_style_border_width(widget->obj, 0, LV_PART_MAIN);
     lv_obj_set_style_pad_all(widget->obj, 0, LV_PART_MAIN);
