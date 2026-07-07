@@ -187,10 +187,9 @@ int zmk_widget_wpm_meter_init(struct zmk_widget_wpm_meter *widget, lv_obj_t *par
         lv_obj_set_style_pad_all(widget->bars[i], 0, LV_PART_MAIN);
     }
     wpm_meter_layout(widget); /* size + position the bars for the current width */
-    int bar_height = WPM_BAR_HEIGHT;
 
     widget->peak_indicator = lv_obj_create(widget->obj);
-    lv_obj_set_size(widget->peak_indicator, 4, bar_height);
+    lv_obj_set_size(widget->peak_indicator, 4, WPM_BAR_HEIGHT);
     lv_obj_set_style_bg_color(widget->peak_indicator, lv_color_hex(0x505050), LV_PART_MAIN);
     lv_obj_set_style_bg_opa(widget->peak_indicator, LV_OPA_COVER, LV_PART_MAIN);
     lv_obj_set_style_border_width(widget->peak_indicator, 0, LV_PART_MAIN);
