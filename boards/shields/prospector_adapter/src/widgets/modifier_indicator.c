@@ -97,7 +97,9 @@ static lv_obj_t *create_separator(lv_obj_t *parent) {
 static lv_obj_t *create_mod_label(lv_obj_t *parent, const char *text) {
     lv_obj_t *label = lv_label_create(parent);
     lv_label_set_text(label, text);
-    lv_obj_set_style_text_font(label, &FG_Medium_20, LV_PART_MAIN);
+    /* No custom font ships smaller than FG_Medium_20; lv_font_montserrat_16 (an
+     * LVGL built-in, enabled in prospector_adapter.conf) is the smaller option. */
+    lv_obj_set_style_text_font(label, &lv_font_montserrat_16, LV_PART_MAIN);
     lv_obj_set_style_text_color(label, lv_color_hex(DISPLAY_COLOR_MOD_INACTIVE), LV_PART_MAIN);
     return label;
 }

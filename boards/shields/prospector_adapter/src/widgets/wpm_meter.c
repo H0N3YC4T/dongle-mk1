@@ -34,8 +34,11 @@ struct layer_state {
 
 /* Bar geometry, re-derived whenever the widget width changes (portrait rotation
  * narrows the meter). Bars keep a 2px gap and shrink to fit; labels re-anchor via
- * their lv_obj_align. */
+ * their lv_obj_align. Height is fixed (not re-derived like width): trimmed from
+ * the original 90 to make room on the landscape NORMAL screen when the battery
+ * widget moved to sit under the output widget instead of beside it. */
 #define WPM_BAR_GAP 2
+#define WPM_BAR_HEIGHT 76
 static int geo_width = 260;
 static int geo_bar_w = 8;
 
@@ -44,7 +47,7 @@ static void wpm_meter_layout(struct zmk_widget_wpm_meter *widget) {
     int total_width = WPM_BAR_COUNT * geo_bar_w + (WPM_BAR_COUNT - 1) * WPM_BAR_GAP;
     int start_x = (geo_width - total_width) / 2;
     for (int i = 0; i < WPM_BAR_COUNT; i++) {
-        lv_obj_set_size(widget->bars[i], geo_bar_w, 90);
+        lv_obj_set_size(widget->bars[i], geo_bar_w, WPM_BAR_HEIGHT);
         lv_obj_set_pos(widget->bars[i], start_x + i * (geo_bar_w + WPM_BAR_GAP), 0);
     }
 }
@@ -172,7 +175,7 @@ ZMK_SUBSCRIPTION(widget_wpm_meter_layer, zmk_layer_state_changed);
 
 int zmk_widget_wpm_meter_init(struct zmk_widget_wpm_meter *widget, lv_obj_t *parent) {
     widget->obj = lv_obj_create(parent);
-    lv_obj_set_size(widget->obj, 260, 90);
+    lv_obj_set_size(widget->obj, 260, WPM_BAR_HEIGHT);
     lv_obj_set_style_bg_opa(widget->obj, LV_OPA_TRANSP, LV_PART_MAIN);
     lv_obj_set_style_border_width(widget->obj, 0, LV_PART_MAIN);
     lv_obj_set_style_pad_all(widget->obj, 0, LV_PART_MAIN);
@@ -186,7 +189,7 @@ int zmk_widget_wpm_meter_init(struct zmk_widget_wpm_meter *widget, lv_obj_t *par
         lv_obj_set_style_pad_all(widget->bars[i], 0, LV_PART_MAIN);
     }
     wpm_meter_layout(widget); /* size + position the bars for the current width */
-    int bar_height = 90;
+    int bar_height = WPM_BAR_HEIGHT;
 
     widget->peak_indicator = lv_obj_create(widget->obj);
     lv_obj_set_size(widget->peak_indicator, 4, bar_height);

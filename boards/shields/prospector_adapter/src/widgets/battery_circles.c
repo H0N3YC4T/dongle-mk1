@@ -385,7 +385,11 @@ int zmk_widget_battery_circles_init(struct zmk_widget_battery_circles *widget, l
     init_styles();
 
     widget->obj = lv_obj_create(parent);
-    lv_obj_set_size(widget->obj, 132, 62);
+    /* Height trimmed from the original 62 (was the same row-height as the arc
+     * size) to fit under the output widget on the landscape NORMAL screen; only
+     * the 2-peripheral branch below is reachable on this hardware (always 2
+     * halves), so it's the only one whose sizing needs to track this. */
+    lv_obj_set_size(widget->obj, 132, 50);
     lv_obj_set_style_bg_opa(widget->obj, LV_OPA_TRANSP, LV_PART_MAIN);
     lv_obj_set_style_border_width(widget->obj, 0, LV_PART_MAIN);
     lv_obj_set_style_pad_all(widget->obj, 0, LV_PART_MAIN);
@@ -436,8 +440,8 @@ int zmk_widget_battery_circles_init(struct zmk_widget_battery_circles *widget, l
         lv_obj_align_to(battery_label, label_box, LV_ALIGN_OUT_BOTTOM_RIGHT, 0, 4);
 
     } else if (PERIPHERAL_COUNT == 2) {
-        int arc_size = 58;
-        int y_center = (62 - arc_size) / 2;
+        int arc_size = 46; /* was 58; shrunk to match the widget's 50px height */
+        int y_center = (50 - arc_size) / 2;
         int spacing = 66;
 
         for (int i = 0; i < 2; i++) {

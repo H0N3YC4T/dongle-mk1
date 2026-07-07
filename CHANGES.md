@@ -12,6 +12,32 @@ needs a commit + push + pin bump there. Hardware: Seeed XIAO nRF52840 + Waveshar
 The CST816S gesture driver (`touch_input.c`) lives HERE now (adapter `src/`), moved in from
 the keyboard repo — both sides of every touch seam are in this repo.
 
+## NORMAL status screen (2026-07-07)
+
+**Modifier row font:** no custom (FoundryGridnik/DINish) font ships smaller than `FG_Medium_20`
+(20px) — checked every font ever carried by this module's history, nothing smaller ever
+existed. Switched the modifier indicator (`modifier_indicator.c`) to `lv_font_montserrat_16`,
+an LVGL built-in (`CONFIG_LV_FONT_MONTSERRAT_16=y` in `prospector_adapter.conf`) — no new font
+asset needed, but it's a different type family from the FoundryGridnik/DINish fonts used by the
+rest of the NORMAL screen. Revisit if that reads as inconsistent on hardware.
+
+**Battery moved under the output (USB/BLE + profile slots) widget**, both orientations —
+previously side-by-side (landscape) / battery-above-output (portrait). Two 62px-tall widgets
+stacked under the WPM meter does not fit the 240px-tall landscape screen, so three widgets
+were trimmed (portrait, at 280px tall, has slack to spare and didn't strictly need this, but
+got it too for consistency — same widget sizes in both orientations, only positions differ):
+- `wpm_meter.c`: bar height 90 -> 76 (`WPM_BAR_HEIGHT`; the peak-indicator geometry already
+  shares this via the local `bar_height` var, so it moved with it).
+- `battery_circles.c`: the 2-peripheral branch's `arc_size` 58 -> 46, widget height 62 -> 50.
+  (The 1- and 9-peripheral branches are unreachable on this hardware -- always 2 halves --
+  and were left untouched.)
+- `output.c`: toggle-button and profile-slot height 29 -> 23, widget height 62 -> 50, slot
+  row y-offset 33 -> 27 (matches the shrunk button height + the same 4px gap).
+
+Landscape positions (`status_screen_reflow()`): wpm y 42->38, layer y 142->120, output at
+(82,132), battery at (74,184) -- computed to land exactly at the 240px floor with a few px of
+margin. Portrait: output at (62,152), battery at (54,206).
+
 ## Files changed vs upstream
 
 ### `src/touch/` + `src/status_screen.c` — the entire touch UI (biggest change)
