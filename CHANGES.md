@@ -12,6 +12,24 @@ needs a commit + push + pin bump there. Hardware: Seeed XIAO nRF52840 + Waveshar
 The CST816S gesture driver (`touch_input.c`) lives HERE now (adapter `src/`), moved in from
 the keyboard repo — both sides of every touch seam are in this repo.
 
+## HOME menu: 6 discrete buttons + true numpad HID (2026-07-08)
+
+**HOME** dropped its two spanning buttons (back across the top row, keys across the bottom in
+portrait) for 6 plain single-cell buttons, reusing the shared `p23_pos` portrait re-arrangement
+that HUB/MEDIA/MODIFIERS already used (the bespoke `pmap_home` table + `build_home`'s
+landscape/portrait branch are gone). New layout: `0` media, `1` back, `2` numpad ("123"),
+`3` keyboard sub-menu (the hub), `4` settings, `5` trackpad. Media and numpad are now reachable
+directly from HOME as well as through the hub (their hub shortcuts are unchanged); both screens'
+back cell returns to HOME either way, matching how trackpad already worked — so a hub->numpad->
+back trip lands on HOME rather than back on the hub. Simple and consistent, at the cost of that
+one breadcrumb skip; revisit if it's confusing in practice.
+
+**NUMPAD now sends true HID Keypad codes** (`KP_N0..KP_N9`, `KP_PLUS/MINUS/MULTIPLY/DIVIDE`,
+`KP_ENTER`) instead of the main-row digit/shifted-symbol codes (`N0..N9`, `PLUS`, `MINUS`, `STAR`,
+`FSLH`, `RET`) it sent before. Same rendered labels, different HID usage codes underneath — this
+matters for apps/fields that distinguish numpad input from top-row digits (numeric entry fields,
+spreadsheets, some RDP/game clients with Num Lock-aware bindings).
+
 ## NORMAL status screen (2026-07-07)
 
 **Modifier row font:** no custom (FoundryGridnik/DINish) font ships smaller than `FG_Medium_20`

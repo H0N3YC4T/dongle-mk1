@@ -14,33 +14,28 @@ static void tap_normal(int cell) {
 }
 
 /* -------------------------------- HOME ------------------------------------ */
-/* Icons: back / trackpad / settings / keys. Portrait: back spans the top row,
- * trackpad|settings middle, keys spans the bottom (see pmap_home). */
+/* 6 discrete buttons: media / back / numpad / keyboard sub-menu / settings /
+ * trackpad. Uses the shared p23_pos portrait re-arrangement like HUB/MEDIA/
+ * MODIFIERS (no bespoke spans -- media and numpad used to be reachable only
+ * through the hub; now they're one tap from here too). */
 
 static void build_home(void) {
-    if (ui_rot & 1) {
-        draw_cell(0, 0, 2, LV_SYMBOL_UP, COLOR_BACK);
-        draw_cell(1, 0, 1, LV_SYMBOL_GPS, COLOR_ACCENT);
-        draw_cell(1, 1, 1, LV_SYMBOL_SETTINGS, COLOR_ACCENT);
-        draw_cell(2, 0, 2, LV_SYMBOL_KEYBOARD, COLOR_ACCENT);
-    } else {
-        draw_cell(0, 0, 3, LV_SYMBOL_UP, COLOR_BACK);
-        draw_cell(1, 0, 1, LV_SYMBOL_GPS, COLOR_ACCENT);
-        draw_cell(1, 1, 1, LV_SYMBOL_SETTINGS, COLOR_ACCENT);
-        draw_cell(1, 2, 1, LV_SYMBOL_KEYBOARD, COLOR_ACCENT);
-    }
+    draw_cell_l(0, LV_SYMBOL_AUDIO, COLOR_ACCENT);
+    draw_cell_l(1, LV_SYMBOL_UP, COLOR_BACK);
+    draw_cell_l(2, "123", COLOR_ACCENT);
+    draw_cell_l(3, LV_SYMBOL_KEYBOARD, COLOR_ACCENT);
+    draw_cell_l(4, LV_SYMBOL_SETTINGS, COLOR_ACCENT);
+    draw_cell_l(5, LV_SYMBOL_GPS, COLOR_ACCENT);
 }
 
 static void tap_home(int cell) {
-    switch (cell) {
-    case 3: show_view(VIEW_TRACKPAD); break;
-    case 4: show_view(VIEW_SETTINGS); break;
-    case 5: show_view(VIEW_HUB); break;
-    default: show_view(VIEW_NORMAL); break; /* the whole top row is Back */
+    static const enum ui_view targets[6] = {
+        VIEW_MEDIA, VIEW_NORMAL, VIEW_NUMPAD, VIEW_HUB, VIEW_SETTINGS, VIEW_TRACKPAD,
+    };
+    if (cell >= 0 && cell < 6) {
+        show_view(targets[cell]);
     }
 }
-
-static const uint8_t pmap_home[6] = {0, 0, 3, 4, 5, 5};
 
 /* ------------------------------- SETTINGS --------------------------------- */
 /* 3x3. One setting per outer column: left = trackpad sensitivity, right = display
@@ -111,7 +106,8 @@ static void tap_hub(int cell) {
 
 /* -------------------------------- MEDIA ------------------------------------ */
 /* Volume / transport, one macro per cell (defined in the consuming keyboard's
- * overlay). Cell 1 = back to the hub. */
+ * overlay). Cell 1 = back to HOME (also reachable via the hub's audio icon;
+ * either way back returns to HOME, matching trackpad's pattern). */
 
 static void build_media(void) {
     draw_cell_l(0, LV_SYMBOL_VOLUME_MID, COLOR_ACCENT);
@@ -128,7 +124,7 @@ static void tap_media(int cell) {
         "touch_macro_4", "touch_macro_3", "touch_macro_5",
     };
     if (cell == 1) {
-        show_view(VIEW_HUB);
+        show_view(VIEW_HOME);
     } else if (cell >= 0 && cell < 6 && macros[cell] != NULL) {
         fire_macro(macros[cell]);
     }
@@ -190,7 +186,11 @@ static void build_symbols(void) { draw_key_page(sym_lbls, 32, cur_page); }
 static void tap_symbols(int cell) { handle_key_page(symbols, 32, cell); }
 
 /* -------------------------------- NUMPAD ----------------------------------- */
-/* 4x4 calc grid; operators (blue) in column 3; cell 12 = Back, 14 = Enter. */
+/* 4x4 calc grid; operators (blue) in column 3; cell 12 = Back, 14 = Enter. Keys
+ * are true HID Keypad codes (KP_*), not the main-row digits/symbols -- so this
+ * behaves as an actual numpad for apps/fields that distinguish the two (numeric
+ * entry, spreadsheets, RDP), not just a second way to type "7890". Cell 1 = back
+ * to HOME (also reachable via the hub's 123 icon; either way back returns home). */
 
 static void build_numpad(void) {
     static const char *const lbls[16] = {
@@ -207,10 +207,12 @@ static void build_numpad(void) {
 static void tap_numpad(int cell) {
     /* Index 12 (Back) is 0 and handled first, so the np[cell] guard only skips
      * it -- every real key code is non-zero. */
-    static const uint32_t np[16] = {N7, N8, N9, PLUS,  N4, N5, N6, MINUS,
-                                    N1, N2, N3, STAR,  0,  N0, RET, FSLH};
+    static const uint32_t np[16] = {KP_N7, KP_N8, KP_N9, KP_PLUS,
+                                    KP_N4, KP_N5, KP_N6, KP_MINUS,
+                                    KP_N1, KP_N2, KP_N3, KP_MULTIPLY,
+                                    0,     KP_N0, KP_ENTER, KP_DIVIDE};
     if (cell == 12) {
-        show_view(VIEW_HUB);
+        show_view(VIEW_HOME);
     } else if (cell >= 0 && cell <= 15 && np[cell]) {
         send_key(np[cell]);
     }
@@ -333,7 +335,7 @@ void build_view(enum ui_view v) {
 const struct view_def view_defs[VIEW_COUNT] = {
     /*                    build             on_tap          r  c  portrait   2x3    tmout  mods */
     [VIEW_NORMAL]    = {NULL,            tap_normal,    2, 3, NULL,      false, false, false},
-    [VIEW_HOME]      = {build_home,      tap_home,      2, 3, pmap_home, true,  true,  false},
+    [VIEW_HOME]      = {build_home,      tap_home,      2, 3, p23_pos,   true,  true,  false},
     [VIEW_SETTINGS]  = {build_settings,  tap_settings,  3, 3, NULL,      false, true,  false},
     [VIEW_HUB]       = {build_hub,       tap_hub,       2, 3, p23_pos,   true,  false, true},
     [VIEW_MEDIA]     = {build_media,     tap_media,     2, 3, p23_pos,   true,  false, true},

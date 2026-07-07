@@ -7,10 +7,12 @@ screens re-arrange to 3x2 (see CHANGES.md); square grids keep their layout.
 graph TD
     %% Core Navigation
     NORMAL -- "tap anywhere" --> HOME
-    HOME -- "0-2 (BACK)" --> NORMAL
-    HOME -- "3" --> TRACKPAD
+    HOME -- "0" --> MEDIA
+    HOME -- "1 (back)" --> NORMAL
+    HOME -- "2" --> NUMPAD
+    HOME -- "3" --> HUB
     HOME -- "4" --> SETTINGS
-    HOME -- "5" --> HUB
+    HOME -- "5" --> TRACKPAD
 
     TRACKPAD -- "exit (top-left X)" --> HOME
 
@@ -24,7 +26,7 @@ graph TD
     SETTINGS -. "6 (blue)" .-> S_SensR[sens readout <br> GPS icon + 0..10]
     SETTINGS -. "8 (blue)" .-> S_BriR[bright readout <br> eye icon + %]
 
-    %% Hub Sub-menus
+    %% Hub Sub-menus (keyboard sub-menu; media/numpad also reachable directly from HOME)
     HUB -- "1 (back)" --> HOME
     HUB -- "0" --> FKEYS
     HUB -- "2" --> NUMPAD
@@ -32,8 +34,8 @@ graph TD
     HUB -- "4" --> MEDIA
     HUB -- "5" --> MODIFIERS
 
-    %% Media Actions
-    MEDIA -- "1 (back)" --> HUB
+    %% Media Actions (reachable from HOME cell 0 or HUB cell 4; back always -> HOME)
+    MEDIA -- "1 (back)" --> HOME
     MEDIA -. "0" .-> M_VolM[vol-]
     MEDIA -. "2" .-> M_VolP[vol+]
     MEDIA -. "3" .-> M_Prev[prev]
@@ -49,9 +51,10 @@ graph TD
     SYMBOLS -. "cell 1 (>pg0)" .-> SYM_Prev[Prev Page]
     SYMBOLS -. "cell 7" .-> SYM_Next[Next Page]
 
-    %% Numpad (4x4 layout)
-    NUMPAD -- "back" --> HUB
-    NUMPAD -. "inputs" .-> N_Keys["7 8 9 +<br>4 5 6 -<br>1 2 3 *<br>0 enter /<br>(operators blue)"]
+    %% Numpad (4x4 layout, true HID Keypad codes -- KP_*, not main-row digits).
+    %% Reachable from HOME cell 2 or HUB cell 2; back always -> HOME.
+    NUMPAD -- "back" --> HOME
+    NUMPAD -. "inputs" .-> N_Keys["KP 7 8 9 +<br>KP 4 5 6 -<br>KP 1 2 3 *<br>KP 0 enter /<br>(operators blue)"]
 
     %% Modifiers
     MODIFIERS -. "actions" .-> MOD_Keys["One-shot: Ctrl / Shift / Alt / Gui"]
