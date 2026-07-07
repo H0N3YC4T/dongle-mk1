@@ -106,7 +106,7 @@ ZMK_SUBSCRIPTION(widget_output_profile, zmk_ble_active_profile_changed);
 
 static lv_obj_t *create_toggle_btn(lv_obj_t *parent, const char *text, int x) {
     lv_obj_t *btn = lv_obj_create(parent);
-    lv_obj_set_size(btn, 56, 23); /* was 29; widget compacted to sit under battery */
+    lv_obj_set_size(btn, 56, 29);
     lv_obj_set_pos(btn, x, 0);
     lv_obj_set_style_radius(btn, 6, LV_PART_MAIN);
     lv_obj_set_style_pad_all(btn, 0, LV_PART_MAIN);
@@ -122,8 +122,8 @@ static lv_obj_t *create_toggle_btn(lv_obj_t *parent, const char *text, int x) {
 
 static lv_obj_t *create_slot_btn(lv_obj_t *parent, int index, int x, int width, bool show_number) {
     lv_obj_t *slot = lv_obj_create(parent);
-    lv_obj_set_size(slot, width, 23); /* was 29; matches the shrunk toggle buttons */
-    lv_obj_set_pos(slot, x, 27);      /* was 33 (= old 29 + 4 gap); now 23 + 4 gap */
+    lv_obj_set_size(slot, width, 29);
+    lv_obj_set_pos(slot, x, 33);
     lv_obj_set_style_radius(slot, 6, LV_PART_MAIN);
     lv_obj_set_style_bg_opa(slot, LV_OPA_COVER, LV_PART_MAIN);
     lv_obj_set_style_border_width(slot, 0, LV_PART_MAIN);
@@ -145,7 +145,7 @@ static lv_obj_t *create_slot_btn(lv_obj_t *parent, int index, int x, int width, 
 
 int zmk_widget_output_init(struct zmk_widget_output *widget, lv_obj_t *parent) {
     widget->obj = lv_obj_create(parent);
-    lv_obj_set_size(widget->obj, 116, 50); /* was 62; compacted to sit under battery */
+    lv_obj_set_size(widget->obj, 116, 62);
     lv_obj_set_style_bg_opa(widget->obj, LV_OPA_TRANSP, LV_PART_MAIN);
     lv_obj_set_style_border_width(widget->obj, 0, LV_PART_MAIN);
     lv_obj_set_style_pad_all(widget->obj, 0, LV_PART_MAIN);

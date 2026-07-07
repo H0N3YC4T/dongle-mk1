@@ -34,11 +34,9 @@ struct layer_state {
 
 /* Bar geometry, re-derived whenever the widget width changes (portrait rotation
  * narrows the meter). Bars keep a 2px gap and shrink to fit; labels re-anchor via
- * their lv_obj_align. Height is fixed (not re-derived like width): trimmed from
- * the original 90 to make room on the landscape NORMAL screen when the battery
- * widget moved to sit under the output widget instead of beside it. */
+ * their lv_obj_align. Height is fixed (not re-derived like width). */
 #define WPM_BAR_GAP 2
-#define WPM_BAR_HEIGHT 76
+#define WPM_BAR_HEIGHT 90
 static int geo_width = 260;
 static int geo_bar_w = 8;
 

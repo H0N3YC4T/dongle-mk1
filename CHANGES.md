@@ -30,7 +30,7 @@ one breadcrumb skip; revisit if it's confusing in practice.
 matters for apps/fields that distinguish numpad input from top-row digits (numeric entry fields,
 spreadsheets, some RDP/game clients with Num Lock-aware bindings).
 
-## NORMAL status screen (2026-07-07)
+## NORMAL status screen (2026-07-07, corrected 2026-07-08)
 
 **Modifier row font:** no custom (FoundryGridnik/DINish) font ships smaller than `FG_Medium_20`
 (20px) — checked every font ever carried by this module's history, nothing smaller ever
@@ -39,22 +39,19 @@ an LVGL built-in (`CONFIG_LV_FONT_MONTSERRAT_16=y` in `prospector_adapter.conf`)
 asset needed, but it's a different type family from the FoundryGridnik/DINish fonts used by the
 rest of the NORMAL screen. Revisit if that reads as inconsistent on hardware.
 
-**Battery moved under the output (USB/BLE + profile slots) widget**, both orientations —
-previously side-by-side (landscape) / battery-above-output (portrait). Two 62px-tall widgets
-stacked under the WPM meter does not fit the 240px-tall landscape screen, so three widgets
-were trimmed (portrait, at 280px tall, has slack to spare and didn't strictly need this, but
-got it too for consistency — same widget sizes in both orientations, only positions differ):
-- `wpm_meter.c`: bar height 90 -> 76 (`WPM_BAR_HEIGHT`; the peak-indicator geometry already
-  shares this via the local `bar_height` var, so it moved with it).
-- `battery_circles.c`: the 2-peripheral branch's `arc_size` 58 -> 46, widget height 62 -> 50.
-  (The 1- and 9-peripheral branches are unreachable on this hardware -- always 2 halves --
-  and were left untouched.)
-- `output.c`: toggle-button and profile-slot height 29 -> 23, widget height 62 -> 50, slot
-  row y-offset 33 -> 27 (matches the shrunk button height + the same 4px gap).
+**Battery moved under the output (USB/BLE + profile slots) widget — portrait only.** The
+original attempt (2026-07-07) shrank the WPM meter, battery, and output widgets in BOTH
+orientations to force the stacked arrangement to also fit landscape; that shrink was not
+requested and was reverted on 2026-07-08 (widgets are back to their original full sizes:
+`WPM_BAR_HEIGHT` 90, battery `arc_size` 58 / widget 62, output buttons/slots 29 / widget 62).
 
-Landscape positions (`status_screen_reflow()`): wpm y 42->38, layer y 142->120, output at
-(82,132), battery at (74,184) -- computed to land exactly at the 240px floor with a few px of
-margin. Portrait: output at (62,152), battery at (54,206).
+Reverting the shrink means landscape genuinely cannot stack battery under output: mod(24) +
+wpm(90) + layer(6) + output(62) + battery(62) alone totals 244px, already past the 240px screen
+height with zero gaps between them. **Landscape keeps its original side-by-side layout**
+(battery left, output right, unchanged from before any of this). **Portrait** (280px tall) had
+slack to spare all along and needed no shrink — battery sits under output there at full size,
+reusing the same two vertical slots (152/216) the widgets occupied before, just swapped which
+widget is in which slot.
 
 ## Files changed vs upstream
 

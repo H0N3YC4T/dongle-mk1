@@ -22,12 +22,21 @@ static struct zmk_widget_layer_display layer_display_widget;
 static struct zmk_widget_battery_circles battery_circles_widget;
 static struct zmk_widget_output output_widget;
 
-/* Position (and where needed, resize) the status-screen widgets for the current
- * orientation. Both orientations now stack the battery widget UNDER the output
- * (USB/BLE + profile slots) widget rather than beside it. Battery and output
- * were each trimmed from 62 to 50px tall (see battery_circles.c / output.c) and
- * the WPM meter from 90 to 76px tall (see wpm_meter.c) to make that fit on the
- * landscape 240px-tall screen; portrait (280px tall) has slack to spare. */
+/* Position the status-screen widgets for the current orientation. All widgets
+ * stay at their original full sizes -- earlier this trimmed the WPM meter,
+ * battery, and output widgets down to fit battery UNDER output on landscape,
+ * but that shrink wasn't wanted, so it's reverted (widgets are full-size again
+ * in both orientations).
+ *
+ * Portrait (240x280) has slack to spare: battery UNDER output at full size
+ * fits cleanly in the same two vertical slots the widgets already used pre-
+ * reorder (152/216), just swapped which widget sits in which slot.
+ *
+ * Landscape (280x240) does not have the room: mod(24) + wpm(90) + layer(6) +
+ * output(62) + battery(62) alone is 244px, already past the 240px screen
+ * height with ZERO gaps between them, let alone margins -- stacking here is
+ * not achievable without shrinking something, which was explicitly rejected.
+ * So landscape keeps its original side-by-side arrangement. */
 void status_screen_reflow(void) {
     if (ui_rot & 1) { /* portrait: 240x280 */
         lv_obj_set_pos(zmk_widget_modifier_indicator_obj(&modifier_indicator_widget), 5, 8);
@@ -36,15 +45,15 @@ void status_screen_reflow(void) {
         zmk_widget_layer_display_set_width(&layer_display_widget, 220);
         lv_obj_set_pos(zmk_widget_layer_display_obj(&layer_display_widget), 10, 140);
         lv_obj_set_pos(zmk_widget_output_obj(&output_widget), 62, 152);
-        lv_obj_set_pos(zmk_widget_battery_circles_obj(&battery_circles_widget), 54, 206);
+        lv_obj_set_pos(zmk_widget_battery_circles_obj(&battery_circles_widget), 54, 216);
     } else { /* landscape: 280x240 */
         lv_obj_set_pos(zmk_widget_modifier_indicator_obj(&modifier_indicator_widget), 25, 8);
         zmk_widget_wpm_meter_set_width(&wpm_meter_widget, 260);
-        lv_obj_set_pos(zmk_widget_wpm_meter_obj(&wpm_meter_widget), 10, 38);
+        lv_obj_set_pos(zmk_widget_wpm_meter_obj(&wpm_meter_widget), 10, 42);
         zmk_widget_layer_display_set_width(&layer_display_widget, 260);
-        lv_obj_set_pos(zmk_widget_layer_display_obj(&layer_display_widget), 10, 120);
-        lv_obj_set_pos(zmk_widget_output_obj(&output_widget), 82, 132);
-        lv_obj_set_pos(zmk_widget_battery_circles_obj(&battery_circles_widget), 74, 184);
+        lv_obj_set_pos(zmk_widget_layer_display_obj(&layer_display_widget), 10, 142);
+        lv_obj_set_pos(zmk_widget_battery_circles_obj(&battery_circles_widget), 11, 170);
+        lv_obj_set_pos(zmk_widget_output_obj(&output_widget), 148, 170);
     }
 }
 
