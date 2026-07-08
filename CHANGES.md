@@ -135,7 +135,7 @@ trackpad never time out -- exit is always explicit. See docs/Touch-UI.md for the
 
 **SETTINGS layout (3x3):** one setting per outer column — left = trackpad sensitivity, right =
 display brightness. Rows 0/1 = plain +/- buttons (cell0/3 = sens +/-, cell2/5 = bright +/-;
-greyed COLOR_HINT_GLYPH at the end stop: `SETTINGS_SENS_MAX` / `SETTINGS_BRIGHT_MIN/MAX`).
+greyed COLOR_GREY at the end stop: `SETTINGS_SENS_MAX` / `SETTINGS_BRIGHT_MIN/MAX`).
 Row 2 = blue icon+value readout boxes, not tappable: cell6 = GPS-cursor + sens level (0..10),
 cell8 = eye-open + brightness % (LVGL's built-in set has NO sun glyph — eye-open is the
 stand-in; swap to LV_SYMBOL_CHARGE/TINT if preferred). Middle column: back (1) / rotate (4) /
@@ -159,11 +159,11 @@ montserrat_20 (the only compiled font); Fn/123/#$%/MOD stay text because no glyp
 The GPS location-arrow stands in for a mouse cursor.
 
 **Visual system:** `GLASS_RADIUS 44` (R5.15mm at ~0.117mm/px), `UI_PAD 5` grid inset so corner
-buttons clear the glass arcs, `BTN_RADIUS 14`, charcoal button fill `COLOR_BTN_BG 0x101216`,
+buttons clear the glass arcs, `BTN_RADIUS 14`, charcoal button fill `COLOR_CHARCOAL 0x101216`,
 2px accent border, +1px letter spacing. Colour roles: lilac `COLOR_PURPLE` = keys, red
 `COLOR_RED` = back, pastel blue `COLOR_BLUE` = nav / numpad operators / armed states. Named
-hint greys: `COLOR_HINT 0x303030`, `COLOR_HINT_GLYPH 0x505050`, `COLOR_LANE_BG 0x0b0d10`,
-`COLOR_LANE_EDGE 0x2e3238`. Armed modifiers: solid blue fill + black text (`draw_cell_on_l`)
+hint greys: `COLOR_DARK_GREY 0x303030`, `COLOR_GREY 0x505050`, `COLOR_NEAR_BLACK 0x0b0d10`,
+`COLOR_SLATE 0x2e3238`. Armed modifiers: solid blue fill + black text (`draw_cell_on_l`)
 plus a radius-44 blue frame around the whole screen (child object, NOT an overlay border —
 a square border loses its corners to the glass; a child rounded-rect with transparent bg
 avoids punching see-through holes in the opaque overlay).

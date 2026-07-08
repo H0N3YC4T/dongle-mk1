@@ -44,11 +44,11 @@
 /* COLOR_PURPLE / COLOR_RED / COLOR_BLUE / COLOR_GREEN / COLOR_YELLOW live in
  * display_colors.h (shared with the widgets). Roles: purple = keys, red = back,
  * blue = nav/rotate/armed, green = settings +, yellow = settings -. */
-#define COLOR_BTN_BG 0x101216     /* soft charcoal button fill */
-#define COLOR_HINT 0x303030       /* dim legend/hint text */
-#define COLOR_HINT_GLYPH 0x505050 /* slightly brighter hint glyphs */
-#define COLOR_LANE_BG 0x0b0d10    /* scroll-track fill (below button fill) */
-#define COLOR_LANE_EDGE 0x2e3238  /* scroll-track outline */
+#define COLOR_CHARCOAL 0x101216   /* button fill */
+#define COLOR_DARK_GREY 0x303030  /* dim legend/hint text */
+#define COLOR_GREY 0x505050       /* brighter hint glyphs / greyed-out controls */
+#define COLOR_NEAR_BLACK 0x0b0d10 /* scroll-track fill (below button fill) */
+#define COLOR_SLATE 0x2e3238      /* scroll-track outline */
 
 /* The Waveshare 1.69" glass has rounded corners, R5.15mm ~= 44px at this panel's
  * ~0.117mm/px. Chrome drawn inside the corner arcs gets physically clipped, so the

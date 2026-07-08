@@ -26,7 +26,7 @@ static lv_obj_t *make_btn(int row, int col, int w_cells, uint32_t accent, int pc
   }
   lv_obj_set_size(b, bw, bh);
   lv_obj_set_pos(b, UI_PAD + col * cwc + (cw - bw) / 2, UI_PAD + row * ch + (ch - bh) / 2);
-  lv_obj_set_style_bg_color(b, lv_color_hex(filled ? accent : COLOR_BTN_BG), LV_PART_MAIN);
+  lv_obj_set_style_bg_color(b, lv_color_hex(filled ? accent : COLOR_CHARCOAL), LV_PART_MAIN);
   lv_obj_set_style_bg_opa(b, LV_OPA_COVER, LV_PART_MAIN);
   lv_obj_set_style_border_color(b, lv_color_hex(accent), LV_PART_MAIN);
   lv_obj_set_style_border_width(b, 2, LV_PART_MAIN);

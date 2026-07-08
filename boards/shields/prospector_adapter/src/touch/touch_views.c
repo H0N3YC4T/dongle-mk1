@@ -28,7 +28,7 @@ static void build_home(void)
   draw_cell_icon(1, 2, &icon_trackpad, LV_SYMBOL_GPS, COLOR_PURPLE);
   draw_cell_icon(2, 0, &icon_modkeys, "MOD", COLOR_PURPLE);
   draw_cell(2, 1, 1, LV_SYMBOL_KEYBOARD,
-            touch_pad_count() > 0 ? COLOR_PURPLE : COLOR_HINT_GLYPH);
+            touch_pad_count() > 0 ? COLOR_PURPLE : COLOR_GREY);
   draw_cell(2, 2, 1, LV_SYMBOL_AUDIO, COLOR_PURPLE);
 }
 
@@ -70,15 +70,15 @@ static void build_settings(void)
   if (sn >= 0)
   {
     draw_cell(0, 0, 1, LV_SYMBOL_PLUS,
-              sn >= SETTINGS_SENS_MAX ? COLOR_HINT_GLYPH : COLOR_GREEN);
-    draw_cell(1, 0, 1, LV_SYMBOL_MINUS, sn <= 0 ? COLOR_HINT_GLYPH : COLOR_YELLOW);
+              sn >= SETTINGS_SENS_MAX ? COLOR_GREY : COLOR_GREEN);
+    draw_cell(1, 0, 1, LV_SYMBOL_MINUS, sn <= 0 ? COLOR_GREY : COLOR_YELLOW);
   }
   draw_cell(0, 1, 1, LV_SYMBOL_UP, COLOR_RED);
   draw_cell(1, 1, 1, LV_SYMBOL_REFRESH, COLOR_BLUE); /* rotate 90deg cw per tap */
   draw_cell(0, 2, 1, LV_SYMBOL_PLUS,
-            br >= SETTINGS_BRIGHT_MAX ? COLOR_HINT_GLYPH : COLOR_GREEN);
+            br >= SETTINGS_BRIGHT_MAX ? COLOR_GREY : COLOR_GREEN);
   draw_cell(1, 2, 1, LV_SYMBOL_MINUS,
-            br <= SETTINGS_BRIGHT_MIN ? COLOR_HINT_GLYPH : COLOR_YELLOW);
+            br <= SETTINGS_BRIGHT_MIN ? COLOR_GREY : COLOR_YELLOW);
   /* Readout row on a temporary 2-column grid (1.5 units each); taps still
    * resolve on the 3x3 grid -- row 2 is no-op cells either way. */
   grid_cols = 2;
@@ -387,7 +387,7 @@ static void build_pad(void)
   {
     if (lbls[c] != NULL)
     {
-      draw_cell_l(c, lbls[c], i < n ? COLOR_PURPLE : COLOR_HINT_GLYPH);
+      draw_cell_l(c, lbls[c], i < n ? COLOR_PURPLE : COLOR_GREY);
       i++;
     }
   }
@@ -428,9 +428,9 @@ static void build_trackpad(void)
       lv_obj_set_size(lane, scr_w() - TP_SCROLL_ZONE, scr_h());
       lv_obj_set_pos(lane, TP_SCROLL_ZONE, 0);
     }
-    lv_obj_set_style_bg_color(lane, lv_color_hex(COLOR_LANE_BG), LV_PART_MAIN);
+    lv_obj_set_style_bg_color(lane, lv_color_hex(COLOR_NEAR_BLACK), LV_PART_MAIN);
     lv_obj_set_style_bg_opa(lane, LV_OPA_COVER, LV_PART_MAIN);
-    lv_obj_set_style_border_color(lane, lv_color_hex(COLOR_LANE_EDGE), LV_PART_MAIN);
+    lv_obj_set_style_border_color(lane, lv_color_hex(COLOR_SLATE), LV_PART_MAIN);
     lv_obj_set_style_border_width(lane, 1, LV_PART_MAIN);
     lv_obj_set_style_radius(lane, 0, LV_PART_MAIN);
     lv_obj_set_style_pad_all(lane, 0, LV_PART_MAIN);
@@ -448,7 +448,7 @@ static void build_trackpad(void)
   {
     lv_label_set_text(hint, "TRACKPAD");
     lv_obj_set_style_text_font(hint, &lv_font_montserrat_20, LV_PART_MAIN);
-    lv_obj_set_style_text_color(hint, lv_color_hex(COLOR_HINT), LV_PART_MAIN);
+    lv_obj_set_style_text_color(hint, lv_color_hex(COLOR_DARK_GREY), LV_PART_MAIN);
     /* centred on the pad area (excluding the lane) */
     if (ui_rot & 1)
     {
