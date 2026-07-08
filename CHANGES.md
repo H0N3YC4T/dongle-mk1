@@ -160,8 +160,8 @@ The GPS location-arrow stands in for a mouse cursor.
 
 **Visual system:** `GLASS_RADIUS 44` (R5.15mm at ~0.117mm/px), `UI_PAD 5` grid inset so corner
 buttons clear the glass arcs, `BTN_RADIUS 14`, charcoal button fill `COLOR_BTN_BG 0x101216`,
-2px accent border, +1px letter spacing. Colour roles: lilac `COLOR_ACCENT` = keys, red
-`COLOR_BACK` = back, pastel blue `COLOR_PAGE` = nav / numpad operators / armed states. Named
+2px accent border, +1px letter spacing. Colour roles: lilac `COLOR_PURPLE` = keys, red
+`COLOR_RED` = back, pastel blue `COLOR_BLUE` = nav / numpad operators / armed states. Named
 hint greys: `COLOR_HINT 0x303030`, `COLOR_HINT_GLYPH 0x505050`, `COLOR_LANE_BG 0x0b0d10`,
 `COLOR_LANE_EDGE 0x2e3238`. Armed modifiers: solid blue fill + black text (`draw_cell_on_l`)
 plus a radius-44 blue frame around the whole screen (child object, NOT an overlay border —

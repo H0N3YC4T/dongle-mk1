@@ -30,7 +30,7 @@
  * actual clamp bounds on the other side of each seam (touch_input.c aliases
  * TP_SENS_MAX to SETTINGS_SENS_MAX; brightness.c clamps to SETTINGS_BRIGHT_MIN/MAX)
  * -- single source, nothing to keep in sync by hand. */
-#define SETTINGS_SENS_MAX   10
+#define SETTINGS_SENS_MAX 10
 #define SETTINGS_BRIGHT_MAX 100
 #define SETTINGS_BRIGHT_MIN 5
 
@@ -41,14 +41,14 @@
  * (touch_views.c) draws the lane divider flush to it. */
 #define TP_SCROLL_ZONE 240
 
-#define COLOR_ACCENT DISPLAY_COLOR_WPM_TEXT         /* lilac/purple */
-#define COLOR_BACK   DISPLAY_COLOR_BATTERY_LOW_FILL /* low-battery red */
-#define COLOR_PAGE   DISPLAY_COLOR_BATTERY_FILL     /* pastel battery-blue */
-#define COLOR_BTN_BG 0x101216                       /* soft charcoal button fill */
-#define COLOR_HINT      0x303030                    /* dim legend/hint text */
-#define COLOR_HINT_GLYPH 0x505050                   /* slightly brighter hint glyphs */
-#define COLOR_LANE_BG   0x0b0d10                    /* scroll-track fill (below button fill) */
-#define COLOR_LANE_EDGE 0x2e3238                    /* scroll-track outline */
+#define COLOR_PURPLE              /* lilac/purple */
+#define COLOR_RED                 /* low-battery red */
+#define COLOR_BLUE                /* pastel battery-blue */
+#define COLOR_BTN_BG 0x101216     /* soft charcoal button fill */
+#define COLOR_HINT 0x303030       /* dim legend/hint text */
+#define COLOR_HINT_GLYPH 0x505050 /* slightly brighter hint glyphs */
+#define COLOR_LANE_BG 0x0b0d10    /* scroll-track fill (below button fill) */
+#define COLOR_LANE_EDGE 0x2e3238  /* scroll-track outline */
 
 /* The Waveshare 1.69" glass has rounded corners, R5.15mm ~= 44px at this panel's
  * ~0.117mm/px. Chrome drawn inside the corner arcs gets physically clipped, so the
@@ -59,33 +59,43 @@
 
 /* Enum order carries no semantics -- per-view behaviour (grid, timeout, portrait
  * handling, one-shot-mod policy) is declared in view_defs[] (touch_views.c). */
-enum ui_view {
-    VIEW_NORMAL, VIEW_HOME, VIEW_SETTINGS,
-    VIEW_MEDIA, VIEW_FKEYS, VIEW_NUMPAD, VIEW_SYMBOLS, VIEW_MODIFIERS, VIEW_TRACKPAD, VIEW_PAD,
-    VIEW_COUNT,
+enum ui_view
+{
+  VIEW_NORMAL,
+  VIEW_HOME,
+  VIEW_SETTINGS,
+  VIEW_MEDIA,
+  VIEW_FKEYS,
+  VIEW_NUMPAD,
+  VIEW_SYMBOLS,
+  VIEW_MODIFIERS,
+  VIEW_TRACKPAD,
+  VIEW_PAD,
+  VIEW_COUNT,
 };
 
 /* Everything navigation needs to know about a view, declared not implied. */
-struct view_def {
-    void (*build)(void);         /* renderer; NULL = nothing to draw (NORMAL) */
-    void (*on_tap)(int cell);    /* tap handler (cell = logical cell id) */
-    uint8_t rows, cols;          /* landscape grid */
-    const uint8_t *portrait_map; /* portrait tap pos -> logical cell; NULL = identity */
-    bool rearrange_2x3;          /* portrait: re-arrange the 2x3 grid to 3x2 */
-    bool idle_timeout;           /* return to NORMAL after TOUCH_TIMEOUT_MS idle */
-    bool keeps_mods;             /* armed one-shot mods survive entering this view */
+struct view_def
+{
+  void (*build)(void);         /* renderer; NULL = nothing to draw (NORMAL) */
+  void (*on_tap)(int cell);    /* tap handler (cell = logical cell id) */
+  uint8_t rows, cols;          /* landscape grid */
+  const uint8_t *portrait_map; /* portrait tap pos -> logical cell; NULL = identity */
+  bool rearrange_2x3;          /* portrait: re-arrange the 2x3 grid to 3x2 */
+  bool idle_timeout;           /* return to NORMAL after TOUCH_TIMEOUT_MS idle */
+  bool keeps_mods;             /* armed one-shot mods survive entering this view */
 };
 extern const struct view_def view_defs[VIEW_COUNT];
 
 /* ----------------------------- shared state ------------------------------- */
 
-extern lv_obj_t *touch_overlay;      /* full-screen touch UI layer (touch_nav.c) */
-extern enum ui_view cur_view;        /* current view (touch_nav.c) */
-extern int cur_page;                 /* page of the paginated key screens (touch_nav.c) */
-extern uint8_t pending_mods;         /* one-shot mods, applied to the next key (touch_keys.c) */
-extern int grid_rows;                /* current screen's grid (touch_draw.c) */
+extern lv_obj_t *touch_overlay; /* full-screen touch UI layer (touch_nav.c) */
+extern enum ui_view cur_view;   /* current view (touch_nav.c) */
+extern int cur_page;            /* page of the paginated key screens (touch_nav.c) */
+extern uint8_t pending_mods;    /* one-shot mods, applied to the next key (touch_keys.c) */
+extern int grid_rows;           /* current screen's grid (touch_draw.c) */
 extern int grid_cols;
-extern uint8_t ui_rot;               /* 0..3 = 0/90/180/270 deg CW (touch_rotation.c) */
+extern uint8_t ui_rot; /* 0..3 = 0/90/180/270 deg CW (touch_rotation.c) */
 
 /* Logical screen dimensions for the current orientation. */
 static inline lv_coord_t scr_w(void) { return (ui_rot & 1) ? SCR_H : SCR_W; }
