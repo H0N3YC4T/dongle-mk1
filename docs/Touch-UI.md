@@ -1,62 +1,58 @@
 # Touch UI navigation map
 
-Cell numbers are the landscape 2x3 / 3x3 / 4x4 grid indices (row-major). In portrait the 2x3
-screens re-arrange to 3x2 (see CHANGES.md); square grids keep their layout.
+Cell numbers are the landscape row-major grid indices. In portrait the 2x3 screens re-arrange
+to 3x2 (see CHANGES.md); square grids keep their layout.
+
+**Solid arrows** = forward navigation (label = the tapped cell). **Dotted arrows** = back
+(the red ▲ / X; label = its cell). MEDIA and NUMPAD always return to HOME, even when entered
+through the hub; F-KEYS / SYMBOLS / MODIFIERS return to the hub.
 
 ```mermaid
 graph TD
-    %% Core Navigation
-    NORMAL -- "tap anywhere" --> HOME
-    HOME -- "0" --> MEDIA
-    HOME -- "1 (back)" --> NORMAL
-    HOME -- "2" --> NUMPAD
-    HOME -- "3" --> HUB
-    HOME -- "4" --> SETTINGS
-    HOME -- "5" --> TRACKPAD
+    NORMAL["NORMAL<br>status screen"]
+    HOME["HOME<br>2x3 menu"]
+    MEDIA["MEDIA<br>2x3"]
+    NUMPAD["NUMPAD<br>4x4"]
+    HUB["KEYS HUB<br>2x3"]
+    SETTINGS["SETTINGS<br>3x3"]
+    TRACKPAD["TRACKPAD<br>whole screen"]
+    FKEYS["F-KEYS<br>3x3 · 2 pages"]
+    SYMBOLS["SYMBOLS<br>3x3 · 5 pages"]
+    MODIFIERS["MODIFIERS<br>2x3"]
 
-    TRACKPAD -- "exit (top-left X)" --> HOME
+    NORMAL -->|tap anywhere| HOME
 
-    %% Settings (3x3 layout)
-    SETTINGS -- "1 (back)" --> HOME
-    SETTINGS -. "0" .-> S_SensP[sens+]
-    SETTINGS -. "2" .-> S_BriP[bright+]
-    SETTINGS -. "3" .-> S_SensM[sens-]
-    SETTINGS -. "4" .-> S_Rot[rotate 90deg cw per tap]
-    SETTINGS -. "5" .-> S_BriM[bright-]
-    SETTINGS -. "6 (blue)" .-> S_SensR[sens readout <br> GPS icon + 0..10]
-    SETTINGS -. "8 (blue)" .-> S_BriR[bright readout <br> eye icon + %]
+    HOME -->|0| MEDIA
+    HOME -->|2| NUMPAD
+    HOME -->|3| HUB
+    HOME -->|4| SETTINGS
+    HOME -->|5| TRACKPAD
 
-    %% Hub Sub-menus (keyboard sub-menu; media/numpad also reachable directly from HOME)
-    HUB -- "1 (back)" --> HOME
-    HUB -- "0" --> FKEYS
-    HUB -- "2" --> NUMPAD
-    HUB -- "3" --> SYMBOLS
-    HUB -- "4" --> MEDIA
-    HUB -- "5" --> MODIFIERS
+    HUB -->|0| FKEYS
+    HUB -->|2| NUMPAD
+    HUB -->|3| SYMBOLS
+    HUB -->|4| MEDIA
+    HUB -->|5| MODIFIERS
 
-    %% Media Actions (reachable from HOME cell 0 or HUB cell 4; back always -> HOME)
-    MEDIA -- "1 (back)" --> HOME
-    MEDIA -. "0" .-> M_VolM[vol-]
-    MEDIA -. "2" .-> M_VolP[vol+]
-    MEDIA -. "3" .-> M_Prev[prev]
-    MEDIA -. "4" .-> M_Play[play/pause]
-    MEDIA -. "5" .-> M_Next[next]
-
-    %% Paginated Menus (FKeys / Symbols - 3x3, 7 keys/page)
-    FKEYS -- "cell 1 (pg0)" --> HUB
-    FKEYS -. "cell 1 (>pg0)" .-> FK_Prev[Prev Page]
-    FKEYS -. "cell 7" .-> FK_Next[Next Page]
-
-    SYMBOLS -- "cell 1 (pg0)" --> HUB
-    SYMBOLS -. "cell 1 (>pg0)" .-> SYM_Prev[Prev Page]
-    SYMBOLS -. "cell 7" .-> SYM_Next[Next Page]
-
-    %% Numpad (4x4 layout, true HID Keypad codes -- KP_*, not main-row digits).
-    %% Reachable from HOME cell 2 or HUB cell 2; back always -> HOME.
-    NUMPAD -- "back" --> HOME
-    NUMPAD -. "inputs" .-> N_Keys["KP 7 8 9 +<br>KP 4 5 6 -<br>KP 1 2 3 *<br>KP 0 enter /<br>(operators blue)"]
-
-    %% Modifiers
-    MODIFIERS -. "actions" .-> MOD_Keys["One-shot: Ctrl / Shift / Alt / Gui"]
-    MODIFIERS -. "armed state" .-> MOD_State["solid blue fill + black text"]
+    HOME -.->|1| NORMAL
+    SETTINGS -.->|1| HOME
+    HUB -.->|1| HOME
+    MEDIA -.->|1| HOME
+    NUMPAD -.->|12| HOME
+    TRACKPAD -.->|X, top-left| HOME
+    FKEYS -.->|1 on page 0| HUB
+    SYMBOLS -.->|1 on page 0| HUB
+    MODIFIERS -.->|1| HUB
 ```
+
+## What each screen does
+
+| Screen | Grid | Cells |
+| --- | --- | --- |
+| SETTINGS | 3x3 | 0 / 3 = sensitivity + / − · 2 / 5 = brightness + / − · 4 = rotate 90° CW per tap · 6 / 8 = readouts (blue, not tappable: sens 0–10, brightness %) · 7 = empty |
+| MEDIA | 2x3 | 0 = vol− · 2 = vol+ · 3 = prev · 4 = play/pause · 5 = next |
+| F-KEYS | 3x3 | F1–F12, 7 keys per page · cell 1 = prev page (back to hub on page 0) · cell 7 = next page (cyclic) |
+| SYMBOLS | 3x3 | 32 symbols, same paging as F-KEYS |
+| NUMPAD | 4x4 | true HID Keypad codes (KP_*, not main-row digits): 0–9, + − * /, enter · operators + enter blue · cell 12 = back |
+| MODIFIERS | 2x3 | one-shot mods: 0 = CTRL · 2 = SHFT · 3 = ALT · 5 = GUI · 4 = empty · armed = solid blue fill + black text, applied to the next key sent, cleared on leaving the hub family |
+| TRACKPAD | whole screen | drag = pointer · scroll-lane drag (right strip landscape / bottom strip portrait) = scroll · 1 tap = left click · 2 taps = right click · tap-then-hold-and-drag = drag-lock · top-left X = exit |
