@@ -22,11 +22,11 @@ static void build_home(void)
 {
   draw_cell(0, 0, 1, "Fn", COLOR_PURPLE);
   draw_cell(0, 1, 1, LV_SYMBOL_UP, COLOR_RED);
-  draw_cell(0, 2, 1, "123", COLOR_PURPLE);
-  draw_cell(1, 0, 1, "#$%", COLOR_PURPLE);
+  draw_cell_icon(0, 2, &icon_numpad, "123", COLOR_PURPLE);
+  draw_cell_icon(1, 0, &icon_symbols, "#$%", COLOR_PURPLE);
   draw_cell(1, 1, 1, LV_SYMBOL_SETTINGS, COLOR_PURPLE);
-  draw_cell(1, 2, 1, LV_SYMBOL_GPS, COLOR_PURPLE);
-  draw_cell(2, 0, 1, "MOD", COLOR_PURPLE);
+  draw_cell_icon(1, 2, &icon_trackpad, LV_SYMBOL_GPS, COLOR_PURPLE);
+  draw_cell_icon(2, 0, &icon_modkeys, "MOD", COLOR_PURPLE);
   draw_cell(2, 1, 1, LV_SYMBOL_KEYBOARD,
             touch_pad_count() > 0 ? COLOR_PURPLE : COLOR_HINT_GLYPH);
   draw_cell(2, 2, 1, LV_SYMBOL_AUDIO, COLOR_PURPLE);

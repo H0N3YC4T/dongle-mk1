@@ -107,12 +107,22 @@ extern const int key_cells[KEYS_PER_PAGE];
 /* Portrait re-arrangement of the 2x3 screens (touch_draw.c). */
 extern const uint8_t p23_pos[6];
 
+/* Optional custom HOME icons (drop converted assets in src/icons/, see its
+ * README). Weak: with no asset file present the symbol resolves to NULL and
+ * the cell falls back to its text label. */
+extern const lv_image_dsc_t icon_trackpad __weak;
+extern const lv_image_dsc_t icon_modkeys __weak;
+extern const lv_image_dsc_t icon_numpad __weak;
+extern const lv_image_dsc_t icon_symbols __weak;
+
 /* ------------------------------- functions -------------------------------- */
 
 /* touch_draw.c */
 void draw_cell(int row, int col, int w_cells, const char *text, uint32_t accent);
 void draw_cell_l(int lcell, const char *text, uint32_t accent);
 void draw_cell_on_l(int lcell, const char *text, uint32_t accent);
+void draw_cell_icon(int row, int col, const lv_image_dsc_t *icon, const char *fallback,
+                    uint32_t accent);
 void draw_key_page(const char *const *lbls, int n, int page);
 
 /* touch_views.c */

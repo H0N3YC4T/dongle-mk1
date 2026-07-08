@@ -12,8 +12,7 @@ const int key_cells[KEYS_PER_PAGE] = {0, 2, 3, 4, 5, 6, 8};
  * border+text; `filled` inverts (solid accent, black text) for armed/on states.
  * The grid lives inside a UI_PAD safe inset so corner buttons clear the glass arcs.
  * draw_cell() is the outline 80% default; wider variants give long labels room. */
-static void draw_cell_impl(int row, int col, int w_cells, const char *text, uint32_t accent,
-                           int pct, bool filled)
+static lv_obj_t *make_btn(int row, int col, int w_cells, uint32_t accent, int pct, bool filled)
 {
   lv_coord_t cwc = (scr_w() - 2 * UI_PAD) / grid_cols;
   lv_coord_t ch = (scr_h() - 2 * UI_PAD) / grid_rows;
@@ -23,7 +22,7 @@ static void draw_cell_impl(int row, int col, int w_cells, const char *text, uint
   lv_obj_t *b = lv_obj_create(touch_overlay);
   if (b == NULL)
   {
-    return; /* LVGL pool exhausted -- skip this cell rather than deref NULL */
+    return NULL; /* LVGL pool exhausted -- skip this cell rather than deref NULL */
   }
   lv_obj_set_size(b, bw, bh);
   lv_obj_set_pos(b, UI_PAD + col * cwc + (cw - bw) / 2, UI_PAD + row * ch + (ch - bh) / 2);
@@ -33,7 +32,17 @@ static void draw_cell_impl(int row, int col, int w_cells, const char *text, uint
   lv_obj_set_style_border_width(b, 2, LV_PART_MAIN);
   lv_obj_set_style_radius(b, BTN_RADIUS, LV_PART_MAIN);
   lv_obj_set_style_pad_all(b, 0, LV_PART_MAIN);
+  return b;
+}
 
+static void draw_cell_impl(int row, int col, int w_cells, const char *text, uint32_t accent,
+                           int pct, bool filled)
+{
+  lv_obj_t *b = make_btn(row, col, w_cells, accent, pct, filled);
+  if (b == NULL)
+  {
+    return;
+  }
   lv_obj_t *l = lv_label_create(b);
   if (l == NULL)
   {
@@ -49,6 +58,33 @@ static void draw_cell_impl(int row, int col, int w_cells, const char *text, uint
 void draw_cell(int row, int col, int w_cells, const char *text, uint32_t accent)
 {
   draw_cell_impl(row, col, w_cells, text, accent, 80, false);
+}
+
+/* Icon-faced button: `icon` is a weak symbol from src/icons/ (see its README) --
+ * NULL when the asset file is absent, in which case the text fallback draws
+ * instead. Icons are recolored to the accent, so draw them white-on-transparent. */
+void draw_cell_icon(int row, int col, const lv_image_dsc_t *icon, const char *fallback,
+                    uint32_t accent)
+{
+  if (icon == NULL)
+  {
+    draw_cell(row, col, 1, fallback, accent);
+    return;
+  }
+  lv_obj_t *b = make_btn(row, col, 1, accent, 80, false);
+  if (b == NULL)
+  {
+    return;
+  }
+  lv_obj_t *img = lv_image_create(b);
+  if (img == NULL)
+  {
+    return;
+  }
+  lv_image_set_src(img, icon);
+  lv_obj_set_style_image_recolor(img, lv_color_hex(accent), LV_PART_MAIN);
+  lv_obj_set_style_image_recolor_opa(img, LV_OPA_COVER, LV_PART_MAIN);
+  lv_obj_center(img);
 }
 
 /* 2x3-logical cell placement for both orientations. In portrait the six cells
