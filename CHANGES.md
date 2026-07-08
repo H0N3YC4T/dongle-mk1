@@ -12,7 +12,21 @@ needs a commit + push + pin bump there. Hardware: Seeed XIAO nRF52840 + Waveshar
 The CST816S gesture driver (`touch_input.c`) lives HERE now (adapter `src/`), moved in from
 the keyboard repo — both sides of every touch seam are in this repo.
 
-## Trackpad drag-lock (2026-07-08)
+## Single-source the seam constants (2026-07-08)
+
+Three constants existed on both sides of a seam, kept in sync only by "must match/track"
+comments. All hoisted to one definition each in `touch_ui.h`:
+- `TP_SCROLL_ZONE` (240): was a define in touch_input.c + bare `240` literals where
+  build_trackpad draws the lane divider. Now defined once in touch_ui.h; both files use it.
+- `TP_SENS_MAX`: now an alias of `SETTINGS_SENS_MAX` (the settings UI's end-stop grey-out).
+- brightness.c's 5..100% clamp: now literally `SETTINGS_BRIGHT_MIN/MAX`.
+
+touch_input.c gained `#include "touch_ui.h"` for this (it implements four `prospector_*` hooks
+the header declares, so the include also buys prototype checking it never had); brightness.c
+likewise. Same-repo includes only became possible when touch_input.c moved in from the keyboard
+repo at extraction (2026-07-06) — the "one constant, two repos" era is over. Also corrected two
+stale CHANGES.md passages (the rotation section still described the pre-4-step 180° flip;
+`draw_cell_on` → `draw_cell_on_l`) and two landscape-only scroll-lane comments in touch_input.c.
 
 **Tap-then-hold-and-drag** = drag-lock: left button held for the duration of the drag, released
 on lift. This is the standard trackpad "drag" gesture (tap once, then touch down again and hold
@@ -116,12 +130,15 @@ empty (7). Cells 0-5 kept the old 2x3 numbering so the tap handler was unchanged
 lives in the keyboard repo's touch driver via weak hooks (`prospector_touchpad_sens_get/step`;
 -1 = driver absent → the sensitivity column is simply not drawn). Volume lives on MEDIA.
 
-**Display rotate (cell4):** `settings_toggle_rotation()` flips the ST7789V between its two
-landscape orientations (ROTATED_90 ↔ ROTATED_270 via `display_set_orientation`) = 180° per tap,
-so LVGL's 280x240 geometry is unchanged. It also calls `prospector_touch_set_flip()` (weak hook
-into touch_input.c) to invert the touch mapping, then `lv_obj_invalidate(lv_screen_active())`
-for a full redraw. 90° is deliberately not offered — it would swap to a 240x280 portrait
-geometry and break every widget position.
+**Display rotate (cell4):** `settings_apply_rotation()` (`touch_rotation.c`) steps the ST7789V
+through all four orientations 90° CW per tap — `ui_rot` 0..3 mapped through `rot_to_panel[]` to
+`display_set_orientation`, a pure MADCTL scan-out change. LVGL's logical resolution swaps
+280x240 landscape ↔ 240x280 portrait; `prospector_touch_set_orientation()` keeps the touch
+transform in sync, then `status_screen_reflow()` + `build_view()` re-lay the NORMAL screen and
+the current touch screen for the new dimensions. Four taps = full circle. (This section
+previously described the original 180°-only version — `settings_toggle_rotation()` /
+`prospector_touch_set_flip()` — which the 4-step rework of 2026-07-06 replaced; corrected
+2026-07-08.)
 
 **Navigation language:** red up-chevron = back/exit (all 8 back buttons), blue up/down
 chevrons = prev/next page. Icon glyphs are LVGL's built-in FontAwesome subset in
@@ -133,17 +150,19 @@ buttons clear the glass arcs, `BTN_RADIUS 14`, charcoal button fill `COLOR_BTN_B
 2px accent border, +1px letter spacing. Colour roles: lilac `COLOR_ACCENT` = keys, red
 `COLOR_BACK` = back, pastel blue `COLOR_PAGE` = nav / numpad operators / armed states. Named
 hint greys: `COLOR_HINT 0x303030`, `COLOR_HINT_GLYPH 0x505050`, `COLOR_LANE_BG 0x0b0d10`,
-`COLOR_LANE_EDGE 0x2e3238`. Armed modifiers: solid blue fill + black text (`draw_cell_on`)
+`COLOR_LANE_EDGE 0x2e3238`. Armed modifiers: solid blue fill + black text (`draw_cell_on_l`)
 plus a radius-44 blue frame around the whole screen (child object, NOT an overlay border —
 a square border loses its corners to the glass; a child rounded-rect with transparent bg
 avoids punching see-through holes in the opaque overlay).
 
-**Touch dispatch contract with the keyboard repo:** `prospector_touch_tap(sx, sy)` receives
-RAW rendered-screen coords (280x240) from touch_input.c and maps them per the current view's
+**Touch dispatch contract (both sides in this repo since the 2026-07-06 extraction):**
+`prospector_touch_tap(sx, sy)` receives logical-screen coords (280x240 landscape / 240x280
+portrait, per the current rotation) from touch_input.c and maps them per the current view's
 grid (`grid_rows`/`grid_cols`: 2x3, 3x3, or 4x4). `prospector_touchpad_active()` returns true
 while VIEW_TRACKPAD shows; touch_input.c then streams mouse HID instead of taps. The trackpad
-view renders a scroll-lane divider at x=240 which MUST match `TP_SCROLL_ZONE_X` in
-touch_input.c — one constant, two repos.
+scroll-lane boundary is `TP_SCROLL_ZONE` in touch_ui.h — ONE shared constant (hoisted
+2026-07-08; it was previously duplicated as a define in touch_input.c plus bare literals in
+build_trackpad, with a MUST-match comment doing the work a compiler should).
 
 **Threading (the invariant that bit us):** three contexts exist — the touch workqueue,
 the LVGL display thread (`ui_timer_cb`, 30ms), and the system workqueue. Taps arrive via a

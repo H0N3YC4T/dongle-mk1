@@ -26,11 +26,20 @@
 #define BRIGHTNESS_STEP 10
 #define KEYS_PER_PAGE 7
 
-/* Settings-cell limits, used to grey out a +/- control at its end stop. Must track
- * the touch driver (TP_SENS_MAX) and brightness.c (5..100% clamp). */
+/* Settings-cell limits, used to grey out a +/- control at its end stop AND as the
+ * actual clamp bounds on the other side of each seam (touch_input.c aliases
+ * TP_SENS_MAX to SETTINGS_SENS_MAX; brightness.c clamps to SETTINGS_BRIGHT_MIN/MAX)
+ * -- single source, nothing to keep in sync by hand. */
 #define SETTINGS_SENS_MAX   10
 #define SETTINGS_BRIGHT_MAX 100
 #define SETTINGS_BRIGHT_MIN 5
+
+/* Trackpad scroll lane: logical coord >= this along the LONG axis (280) is the
+ * scroll lane -- far-right strip in landscape, bottom strip in portrait
+ * (horizontal, swipe right = scroll down). ONE constant serving both sides of
+ * the seam: touch_input.c tests the gesture boundary against it, build_trackpad
+ * (touch_views.c) draws the lane divider flush to it. */
+#define TP_SCROLL_ZONE 240
 
 #define COLOR_ACCENT DISPLAY_COLOR_WPM_TEXT         /* lilac/purple */
 #define COLOR_BACK   DISPLAY_COLOR_BATTERY_LOW_FILL /* low-battery red */

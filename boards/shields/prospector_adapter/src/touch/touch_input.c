@@ -11,9 +11,10 @@
  *
  *  2. TRACKPAD: while the fork's MOUSE page is active
  *     (prospector_touchpad_active), gestures become mouse HID instead --
- *     drag = pointer, right-edge drag = scroll, 1 tap = left click,
- *     2 taps = right click, tap-then-hold-and-drag = drag-lock (left button
- *     held for the duration), top-left corner tap = exit.
+ *     drag = pointer, scroll-lane drag = scroll (right edge in landscape,
+ *     bottom in portrait), 1 tap = left click, 2 taps = right click,
+ *     tap-then-hold-and-drag = drag-lock (left button held for the
+ *     duration), top-left corner tap = exit.
  *
  * Whole file is gated on the cst816s DT node, so with no node present this
  * compiles to nothing and the build stays green. Thread rule: behaviors and
@@ -30,6 +31,11 @@
 #include <zephyr/sys/atomic.h>
 #include <zmk/behavior.h>
 
+/* Shared UI seam: TP_SCROLL_ZONE (the lane build_trackpad draws must match the
+ * boundary tested here) + prototype checking of the prospector_touch* hooks
+ * this file implements. */
+#include "touch_ui.h"
+
 LOG_MODULE_REGISTER(mk1_touch, LOG_LEVEL_INF);
 
 #if IS_ENABLED(CONFIG_ZMK_POINTING)
@@ -39,7 +45,8 @@ LOG_MODULE_REGISTER(mk1_touch, LOG_LEVEL_INF);
 
 /* Whole-screen trackpad (single-touch CST816S -- no two-finger gestures):
  *   DRAG (main area)     -> pointer motion (commits once past the dead-zone).
- *   DRAG on the far-right -> scroll (that vertical strip is the scroll lane).
+ *   DRAG in the scroll lane (past TP_SCROLL_ZONE: right strip in landscape,
+ *     bottom strip in portrait) -> scroll.
  *   1 TAP -> left click,  2 TAPS -> right click (resolved over TP_DTAP_MS).
  *   TAP then HOLD-AND-DRAG (2nd touch within TP_DTAP_MS that moves instead of
  *     releasing) -> drag-lock: left button held for the drag, released on lift.
@@ -47,9 +54,8 @@ LOG_MODULE_REGISTER(mk1_touch, LOG_LEVEL_INF);
 #define TP_CORNER_PX 40           /* top-left NxN screen corner tap = exit */
 #define TP_MOVE_DEADZONE_PX 8     /* travel this far commits a drag (else it's a tap) */
 #define TP_DTAP_MS 180            /* 2nd tap within this of the 1st = right click */
-#define TP_SCROLL_ZONE 240        /* logical coord >= this along the LONG axis (280) =
-                                   * scroll lane: far-right strip in landscape, bottom
-                                   * strip in portrait (horizontal, right = scroll down) */
+/* TP_SCROLL_ZONE (the lane boundary) lives in touch_ui.h -- shared with the
+ * lane divider build_trackpad draws. */
 #define TP_SCROLL_PX 6            /* screen px of lane travel per wheel tick (lower =
                                    * faster scrolling; was 18, cut to a third) */
 
@@ -58,7 +64,7 @@ LOG_MODULE_REGISTER(mk1_touch, LOG_LEVEL_INF);
  * gives ~4x screen-to-pointer movement (the midpoint of the 0..10 range), so 10 is
  * ~8x and 0 holds the pointer still. x256 carry keeps sub-pixel travel on slow
  * drags. Adjusted from the fork's settings screen (prospector_touchpad_sens_*). */
-#define TP_SENS_MAX 10
+#define TP_SENS_MAX SETTINGS_SENS_MAX /* end-stop shared with the settings UI (touch_ui.h) */
 #define TP_SENS_DEFAULT 5
 #define TP_SENS_MULT256 205   /* per level; 5*205 = 1025/256 ~= 4.0x */
 #endif

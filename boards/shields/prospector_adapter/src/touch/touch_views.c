@@ -251,20 +251,21 @@ static void tap_modifiers(int cell) {
 
 /* ------------------------------- TRACKPAD ---------------------------------- */
 /* Whole screen = trackpad (gestures in touch_input.c): drag = move pointer,
- * 1 tap = L-click, 2 taps = R-click, top-left corner = exit. Scroll lane =
- * logical coord >= 240 along the long axis, drawn flush to the edge: right-side
- * vertical strip in landscape, bottom horizontal strip in portrait (swipe
- * right = scroll down). */
+ * 1 tap = L-click, 2 taps = R-click, tap-then-hold-and-drag = drag-lock,
+ * top-left corner = exit. Scroll lane = logical coord >= TP_SCROLL_ZONE
+ * (touch_ui.h, shared with the gesture boundary in touch_input.c) along the
+ * long axis, drawn flush to the edge: right-side vertical strip in landscape,
+ * bottom horizontal strip in portrait (swipe right = scroll down). */
 
 static void build_trackpad(void) {
     lv_obj_t *lane = lv_obj_create(touch_overlay);
     if (lane != NULL) {
         if (ui_rot & 1) {
-            lv_obj_set_size(lane, scr_w(), scr_h() - 240);
-            lv_obj_set_pos(lane, 0, 240);
+            lv_obj_set_size(lane, scr_w(), scr_h() - TP_SCROLL_ZONE);
+            lv_obj_set_pos(lane, 0, TP_SCROLL_ZONE);
         } else {
-            lv_obj_set_size(lane, scr_w() - 240, scr_h());
-            lv_obj_set_pos(lane, 240, 0);
+            lv_obj_set_size(lane, scr_w() - TP_SCROLL_ZONE, scr_h());
+            lv_obj_set_pos(lane, TP_SCROLL_ZONE, 0);
         }
         lv_obj_set_style_bg_color(lane, lv_color_hex(COLOR_LANE_BG), LV_PART_MAIN);
         lv_obj_set_style_bg_opa(lane, LV_OPA_COVER, LV_PART_MAIN);

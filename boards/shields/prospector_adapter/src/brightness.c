@@ -8,6 +8,10 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(als, 4);
 
+/* SETTINGS_BRIGHT_MIN/MAX -- the clamp below and the settings UI's end-stop
+ * greying share these (single source; src/touch is on the include path). */
+#include "touch_ui.h"
+
 /* Bind the DISPLAY's pwm-leds controller SPECIFICALLY, via disp_bl's parent node.
  * This build defines a SECOND pwm-leds node (the keyboard-backlight relay
  * placeholder in prototype_mk1_waveshare.overlay), which made the old
@@ -22,8 +26,8 @@ static const struct device *pwm_leds_dev = DEVICE_DT_GET(DT_PARENT(DT_NODELABEL(
 static uint8_t touch_brightness = CONFIG_PROSPECTOR_FIXED_BRIGHTNESS;
 void prospector_brightness_step(int delta) {
     int b = (int)touch_brightness + delta;
-    if (b > 100) { b = 100; }
-    if (b < 5) { b = 5; }
+    if (b > SETTINGS_BRIGHT_MAX) { b = SETTINGS_BRIGHT_MAX; }
+    if (b < SETTINGS_BRIGHT_MIN) { b = SETTINGS_BRIGHT_MIN; }
     int rc = led_set_brightness(pwm_leds_dev, DISP_BL, (uint8_t)b);
     LOG_INF("display brightness -> %d%% (delta %d, rc %d)", b, delta, rc);
     if (rc == 0) {
