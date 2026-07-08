@@ -61,7 +61,7 @@
  * handling, one-shot-mod policy) is declared in view_defs[] (touch_views.c). */
 enum ui_view {
     VIEW_NORMAL, VIEW_HOME, VIEW_SETTINGS,
-    VIEW_HUB, VIEW_MEDIA, VIEW_FKEYS, VIEW_NUMPAD, VIEW_SYMBOLS, VIEW_MODIFIERS, VIEW_TRACKPAD,
+    VIEW_MEDIA, VIEW_FKEYS, VIEW_NUMPAD, VIEW_SYMBOLS, VIEW_MODIFIERS, VIEW_TRACKPAD,
     VIEW_COUNT,
 };
 

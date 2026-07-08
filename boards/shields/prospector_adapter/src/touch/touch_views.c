@@ -14,25 +14,28 @@ static void tap_normal(int cell) {
 }
 
 /* -------------------------------- HOME ------------------------------------ */
-/* 6 discrete buttons: media / back / numpad / keyboard sub-menu / settings /
- * trackpad. Uses the shared p23_pos portrait re-arrangement like HUB/MEDIA/
- * MODIFIERS (no bespoke spans -- media and numpad used to be reachable only
- * through the hub; now they're one tap from here too). */
+/* 3x3, every screen one tap away (the HUB sub-menu is gone). Cell 7 = keyboard
+ * icon, reserved for a future programmable pad -- drawn greyed, tap is a no-op. */
 
 static void build_home(void) {
-    draw_cell_l(0, LV_SYMBOL_AUDIO, COLOR_ACCENT);
-    draw_cell_l(1, LV_SYMBOL_UP, COLOR_BACK);
-    draw_cell_l(2, "123", COLOR_ACCENT);
-    draw_cell_l(3, LV_SYMBOL_KEYBOARD, COLOR_ACCENT);
-    draw_cell_l(4, LV_SYMBOL_SETTINGS, COLOR_ACCENT);
-    draw_cell_l(5, LV_SYMBOL_GPS, COLOR_ACCENT);
+    draw_cell(0, 0, 1, "Fn", COLOR_ACCENT);
+    draw_cell(0, 1, 1, LV_SYMBOL_UP, COLOR_BACK);
+    draw_cell(0, 2, 1, "123", COLOR_ACCENT);
+    draw_cell(1, 0, 1, "#$%", COLOR_ACCENT);
+    draw_cell(1, 1, 1, LV_SYMBOL_SETTINGS, COLOR_ACCENT);
+    draw_cell(1, 2, 1, LV_SYMBOL_GPS, COLOR_ACCENT);
+    draw_cell(2, 0, 1, "MOD", COLOR_ACCENT);
+    draw_cell(2, 1, 1, LV_SYMBOL_KEYBOARD, COLOR_HINT_GLYPH); /* unbound */
+    draw_cell(2, 2, 1, LV_SYMBOL_AUDIO, COLOR_ACCENT);
 }
 
 static void tap_home(int cell) {
-    static const enum ui_view targets[6] = {
-        VIEW_MEDIA, VIEW_NORMAL, VIEW_NUMPAD, VIEW_HUB, VIEW_SETTINGS, VIEW_TRACKPAD,
+    static const enum ui_view targets[9] = {
+        VIEW_FKEYS,     VIEW_NORMAL,   VIEW_NUMPAD,
+        VIEW_SYMBOLS,   VIEW_SETTINGS, VIEW_TRACKPAD,
+        VIEW_MODIFIERS, VIEW_COUNT /* unbound */, VIEW_MEDIA,
     };
-    if (cell >= 0 && cell < 6) {
+    if (cell >= 0 && cell < 9 && targets[cell] != VIEW_COUNT) {
         show_view(targets[cell]);
     }
 }
@@ -82,32 +85,9 @@ static void tap_settings(int cell) {
     }
 }
 
-/* --------------------------------- HUB ------------------------------------ */
-/* Gateway to the key screens + media. No LVGL glyphs exist for F-keys or
- * modifiers, so those stay short text. */
-
-static void build_hub(void) {
-    draw_cell_l(0, "Fn", COLOR_ACCENT);
-    draw_cell_l(1, LV_SYMBOL_UP, COLOR_BACK);
-    draw_cell_l(2, "123", COLOR_ACCENT);
-    draw_cell_l(3, "#$%", COLOR_ACCENT);
-    draw_cell_l(4, LV_SYMBOL_AUDIO, COLOR_ACCENT);
-    draw_cell_l(5, "MOD", COLOR_ACCENT);
-}
-
-static void tap_hub(int cell) {
-    static const enum ui_view targets[6] = {
-        VIEW_FKEYS, VIEW_HOME, VIEW_NUMPAD, VIEW_SYMBOLS, VIEW_MEDIA, VIEW_MODIFIERS,
-    };
-    if (cell >= 0 && cell < 6) {
-        show_view(targets[cell]);
-    }
-}
-
 /* -------------------------------- MEDIA ------------------------------------ */
 /* Volume / transport, one macro per cell (defined in the consuming keyboard's
- * overlay). Cell 1 = back to HOME (also reachable via the hub's audio icon;
- * either way back returns to HOME, matching trackpad's pattern). */
+ * overlay). Cell 1 = back to HOME. */
 
 static void build_media(void) {
     draw_cell_l(0, LV_SYMBOL_VOLUME_MID, COLOR_ACCENT);
@@ -155,7 +135,7 @@ static void handle_key_page(const uint32_t *keys, int n, int cell) {
     int pages = (n + KEYS_PER_PAGE - 1) / KEYS_PER_PAGE;
     if (cell == 1) { /* Back (page 0) or Prev */
         if (cur_page == 0) {
-            show_view(VIEW_HUB);
+            show_view(VIEW_HOME);
         } else {
             cur_page--;
             build_view(cur_view);
@@ -189,8 +169,7 @@ static void tap_symbols(int cell) { handle_key_page(symbols, 32, cell); }
 /* 4x4 calc grid; operators (blue) in column 3; cell 12 = Back, 14 = Enter. Keys
  * are true HID Keypad codes (KP_*), not the main-row digits/symbols -- so this
  * behaves as an actual numpad for apps/fields that distinguish the two (numeric
- * entry, spreadsheets, RDP), not just a second way to type "7890". Back returns
- * to HOME (also reachable via the hub's 123 icon; either way back goes home). */
+ * entry, spreadsheets, RDP), not just a second way to type "7890". Back -> HOME. */
 
 static void build_numpad(void) {
     static const char *const lbls[16] = {
@@ -220,7 +199,7 @@ static void tap_numpad(int cell) {
 
 /* ------------------------------- MODIFIERS --------------------------------- */
 /* One-shot mods; armed = solid blue fill + black text, applied to the next key
- * sent (send_key). Leaving the hub family clears them (keeps_mods in show_view). */
+ * sent (send_key). Leaving for NORMAL or SETTINGS clears them (keeps_mods). */
 
 static const uint8_t mod_bits[6] = {MOD_LCTL, 0 /* back */, MOD_LSFT,
                                     MOD_LALT, 0 /* empty */, MOD_LGUI};
@@ -242,7 +221,7 @@ static void build_modifiers(void) {
 
 static void tap_modifiers(int cell) {
     if (cell == 1) {
-        show_view(VIEW_HUB);
+        show_view(VIEW_HOME);
     } else if (cell >= 0 && cell < 6 && mod_bits[cell]) {
         pending_mods ^= mod_bits[cell];
         build_view(VIEW_MODIFIERS);
@@ -336,9 +315,8 @@ void build_view(enum ui_view v) {
 const struct view_def view_defs[VIEW_COUNT] = {
     /*                    build             on_tap          r  c  portrait   2x3    tmout  mods */
     [VIEW_NORMAL]    = {NULL,            tap_normal,    2, 3, NULL,      false, false, false},
-    [VIEW_HOME]      = {build_home,      tap_home,      2, 3, p23_pos,   true,  true,  false},
+    [VIEW_HOME]      = {build_home,      tap_home,      3, 3, NULL,      false, true,  true},
     [VIEW_SETTINGS]  = {build_settings,  tap_settings,  3, 3, NULL,      false, true,  false},
-    [VIEW_HUB]       = {build_hub,       tap_hub,       2, 3, p23_pos,   true,  false, true},
     [VIEW_MEDIA]     = {build_media,     tap_media,     2, 3, p23_pos,   true,  false, true},
     [VIEW_FKEYS]     = {build_fkeys,     tap_fkeys,     3, 3, NULL,      false, false, true},
     [VIEW_NUMPAD]    = {build_numpad,    tap_numpad,    4, 4, NULL,      false, false, true},

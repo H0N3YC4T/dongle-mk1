@@ -12,7 +12,20 @@ needs a commit + push + pin bump there. Hardware: Seeed XIAO nRF52840 + Waveshar
 The CST816S gesture driver (`touch_input.c`) lives HERE now (adapter `src/`), moved in from
 the keyboard repo — both sides of every touch seam are in this repo.
 
-## Single-source the seam constants (2026-07-08)
+## Flatten the menu: HOME goes 3x3, the HUB sub-menu is gone (2026-07-08)
+
+Every screen is now one tap from HOME and one tap back. HOME (2x3) + HUB (2x3) collapse into a
+single 3x3 HOME: `0` Fn (F-keys), `1` back, `2` 123 (numpad), `3` #$% (symbols), `4` settings,
+`5` trackpad, `6` MOD (one-shot modifiers), `7` reserved (greyed keyboard icon, no-op --
+placeholder for a future programmable pad), `8` media. All back buttons that previously
+returned to the hub (F-keys/symbols page 0, modifiers) now return to HOME; media and numpad
+already did.
+
+Because HOME now sits between MODIFIERS and the key screens, it keeps armed one-shot mods
+(`keeps_mods` flipped to true in view_defs) -- arming Ctrl then crossing HOME to SYMBOLS keeps
+the mod, exactly as crossing the hub used to. Mods still clear on reaching NORMAL or SETTINGS.
+As a 3x3, HOME no longer uses the p23_pos portrait re-arrangement (square grids keep their
+layout in portrait, like SETTINGS).
 
 Three constants existed on both sides of a seam, kept in sync only by "must match/track"
 comments. All hoisted to one definition each in `touch_ui.h`:
@@ -112,13 +125,13 @@ widget is in which slot.
 one feature per file, widgets in `src/widgets/`, entry point at `src/status_screen.c`; the
 `custom_status_screen.c` #include indirection and the single-entry layout glob are gone.)
 
-**Views (menu tree, after the 2026-07-06 swap):** NORMAL → tap → HOME (icons: GPS-cursor =
-TRACKPAD / settings-gear / keyboard). SETTINGS is reached from HOME; the KEYS hub holds
-Fn = F-keys 3x3, 123 = numpad 4x4, #$% = symbols 3x3, MOD = one-shot modifiers, and audio =
-MEDIA (media moved into the hub; trackpad moved out to HOME). Trackpad exits to HOME, media
-back-arrow returns to the hub. VIEW_MEDIA sits after VIEW_HUB in the enum so it (and the
-trackpad, entered from HOME) never idle-times-out; only HOME/SETTINGS time out after
-`TOUCH_TIMEOUT_MS` (30s).
+**Views (menu tree, flat since 2026-07-08):** NORMAL → tap → HOME (3x3), and every screen is
+one tap from HOME: Fn = F-keys 3x3 paged, 123 = numpad 4x4, #$% = symbols 3x3 paged,
+settings-gear = SETTINGS, GPS-cursor = TRACKPAD, MOD = one-shot modifiers, audio = MEDIA,
+cell 7 reserved (greyed keyboard icon, no-op). Every back returns to HOME (trackpad via the
+top-left X). Idle timeout is declared per view in view_defs[] (not enum order): only
+HOME/SETTINGS return to NORMAL after `TOUCH_TIMEOUT_MS` (30s); key screens, media and
+trackpad never time out -- exit is always explicit. See docs/Touch-UI.md for the map.
 
 **SETTINGS layout (3x3):** one setting per outer column — left = trackpad sensitivity, right =
 display brightness. Rows 0/1 = plain +/- buttons (cell0/3 = sens +/-, cell2/5 = bright +/-;
