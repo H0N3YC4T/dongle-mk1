@@ -61,7 +61,7 @@
  * handling, one-shot-mod policy) is declared in view_defs[] (touch_views.c). */
 enum ui_view {
     VIEW_NORMAL, VIEW_HOME, VIEW_SETTINGS,
-    VIEW_MEDIA, VIEW_FKEYS, VIEW_NUMPAD, VIEW_SYMBOLS, VIEW_MODIFIERS, VIEW_TRACKPAD,
+    VIEW_MEDIA, VIEW_FKEYS, VIEW_NUMPAD, VIEW_SYMBOLS, VIEW_MODIFIERS, VIEW_TRACKPAD, VIEW_PAD,
     VIEW_COUNT,
 };
 
@@ -115,6 +115,8 @@ void touch_ui_attach(lv_obj_t *screen); /* create the overlay + the drain timer 
 /* touch_keys.c */
 void send_key(uint32_t keycode);
 void fire_macro(const char *dev);
+int touch_pad_count(void); /* bound PAD buttons (zmk,prospector-touch-pad) */
+void fire_pad(int idx);    /* invoke PAD binding idx (M1 = 0) */
 
 /* touch_rotation.c */
 void settings_apply_rotation(void);

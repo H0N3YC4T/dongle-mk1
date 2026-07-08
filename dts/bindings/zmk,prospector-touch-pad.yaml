@@ -1,0 +1,12 @@
+# User-bindable buttons for the touch PAD screen. Each entry is a standard
+# keymap-style behavior binding (&kp, &bt, macros, ...) in button order M1..M5;
+# entries beyond 5 are ignored, cells without a binding draw greyed.
+
+description: Touch PAD screen user bindings
+
+compatible: "zmk,prospector-touch-pad"
+
+properties:
+  bindings:
+    type: phandle-array
+    required: true

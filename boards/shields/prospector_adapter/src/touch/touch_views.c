@@ -14,8 +14,8 @@ static void tap_normal(int cell) {
 }
 
 /* -------------------------------- HOME ------------------------------------ */
-/* 3x3, every screen one tap away (the HUB sub-menu is gone). Cell 7 = keyboard
- * icon, reserved for a future programmable pad -- drawn greyed, tap is a no-op. */
+/* 3x3, every screen one tap away (the HUB sub-menu is gone). Cell 7 = the user
+ * macro pad (keyboard icon; greyed if the consuming keyboard binds nothing). */
 
 static void build_home(void) {
     draw_cell(0, 0, 1, "Fn", COLOR_ACCENT);
@@ -25,7 +25,8 @@ static void build_home(void) {
     draw_cell(1, 1, 1, LV_SYMBOL_SETTINGS, COLOR_ACCENT);
     draw_cell(1, 2, 1, LV_SYMBOL_GPS, COLOR_ACCENT);
     draw_cell(2, 0, 1, "MOD", COLOR_ACCENT);
-    draw_cell(2, 1, 1, LV_SYMBOL_KEYBOARD, COLOR_HINT_GLYPH); /* unbound */
+    draw_cell(2, 1, 1, LV_SYMBOL_KEYBOARD,
+              touch_pad_count() > 0 ? COLOR_ACCENT : COLOR_HINT_GLYPH);
     draw_cell(2, 2, 1, LV_SYMBOL_AUDIO, COLOR_ACCENT);
 }
 
@@ -33,9 +34,12 @@ static void tap_home(int cell) {
     static const enum ui_view targets[9] = {
         VIEW_FKEYS,     VIEW_NORMAL,   VIEW_NUMPAD,
         VIEW_SYMBOLS,   VIEW_SETTINGS, VIEW_TRACKPAD,
-        VIEW_MODIFIERS, VIEW_COUNT /* unbound */, VIEW_MEDIA,
+        VIEW_MODIFIERS, VIEW_PAD,      VIEW_MEDIA,
     };
-    if (cell >= 0 && cell < 9 && targets[cell] != VIEW_COUNT) {
+    if (cell == 7 && touch_pad_count() == 0) {
+        return; /* nothing bound -- stay put */
+    }
+    if (cell >= 0 && cell < 9) {
         show_view(targets[cell]);
     }
 }
@@ -228,6 +232,31 @@ static void tap_modifiers(int cell) {
     }
 }
 
+/* --------------------------------- PAD ------------------------------------- */
+/* User macro pad: up to 5 buttons bound in the consuming keyboard's keymap via a
+ * zmk,prospector-touch-pad node (standard binding syntax -- &kp, &bt, macros).
+ * M-number = binding order. Unbound cells draw greyed, tap = no-op. */
+
+static void build_pad(void) {
+    static const char *const lbls[6] = {"M1", NULL, "M2", "M3", "M4", "M5"};
+    int n = touch_pad_count();
+    draw_cell_l(1, LV_SYMBOL_UP, COLOR_BACK);
+    for (int c = 0, i = 0; c < 6; c++) {
+        if (lbls[c] != NULL) {
+            draw_cell_l(c, lbls[c], i < n ? COLOR_ACCENT : COLOR_HINT_GLYPH);
+            i++;
+        }
+    }
+}
+
+static void tap_pad(int cell) {
+    if (cell == 1) {
+        show_view(VIEW_HOME);
+    } else if (cell >= 0 && cell < 6) {
+        fire_pad(cell == 0 ? 0 : cell - 1); /* cells 0,2,3,4,5 -> M1..M5 */
+    }
+}
+
 /* ------------------------------- TRACKPAD ---------------------------------- */
 /* Whole screen = trackpad (gestures in touch_input.c): drag = move pointer,
  * 1 tap = L-click, 2 taps = R-click, tap-then-hold-and-drag = drag-lock,
@@ -323,4 +352,5 @@ const struct view_def view_defs[VIEW_COUNT] = {
     [VIEW_SYMBOLS]   = {build_symbols,   tap_symbols,   3, 3, NULL,      false, false, true},
     [VIEW_MODIFIERS] = {build_modifiers, tap_modifiers, 2, 3, p23_pos,   true,  false, true},
     [VIEW_TRACKPAD]  = {build_trackpad,  tap_trackpad,  2, 3, NULL,      false, false, true},
+    [VIEW_PAD]       = {build_pad,       tap_pad,       2, 3, p23_pos,   true,  false, true},
 };
