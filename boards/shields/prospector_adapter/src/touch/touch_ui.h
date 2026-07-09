@@ -6,7 +6,7 @@
  *   tools/touch_rotation.c -- 4-step display rotation (MADCTL + LVGL resolution swap)
  *   tools/touch_draw.c     -- grid geometry + button drawing
  *   tools/touch_nav.c      -- tap routing, view state, idle timeout, overlay + timer
- *   touch_main.c           -- view registry (view_defs[]) + build_view() dispatcher
+ *   touch_main.c           -- build_view() dispatcher
  *   views/                 -- per-view renderers (one file per view)
  * ../status_screen.c -- screen assembly (widgets + touch_ui_attach)
  */
@@ -54,42 +54,55 @@
 #define UI_PAD 5
 #define BTN_RADIUS 14
 
-/* Enum order carries no semantics -- per-view behaviour (grid, timeout, portrait
- * handling, one-shot-mod policy) is declared in view_defs[] (touch_views.c). */
-enum ui_view
-{
-  VIEW_NORMAL,
-  VIEW_HOME,
-  VIEW_SETTINGS,
-  VIEW_MEDIA,
-  VIEW_FKEYS,
-  VIEW_NUMPAD,
-  VIEW_SYMBOLS,
-  VIEW_MODIFIERS,
-  VIEW_TRACKPAD,
-  VIEW_PAD,
-  VIEW_CALC,
-  VIEW_COUNT,
+
+enum action_type {
+    ACT_NONE,
+    ACT_GO_VIEW,
+    ACT_SEND_KEY,
+    ACT_CUSTOM,
+    ACT_FIRE_MACRO,
+    ACT_NEXT_PAGE,
+    ACT_PREV_PAGE
+};
+
+struct view_def; // Forward declaration for page_cell arg
+
+struct page_cell {
+    int row;
+    int col;
+    int row_span;
+    int col_span;
+    const char *label;
+    const lv_image_dsc_t *icon;
+    uint32_t color;
+    enum action_type action;
+    union {
+        const struct view_def *view;
+        uint32_t keycode;
+        const char *macro;
+        void (*func)(int cell);
+    } arg;
 };
 
 /* Everything navigation needs to know about a view, declared not implied. */
 struct view_def
 {
+  const struct page_cell *cells; /* declarative layout and actions; NULL-terminated */
+  const struct page_cell *cells_portrait; /* optional explicit portrait layout override */
+  const struct page_cell *const *pages; /* array of paginated landscape layouts */
+  const struct page_cell *const *pages_portrait; /* array of paginated portrait overrides */
+  uint8_t num_pages;           /* number of pages in the pages array */
   void (*build)(void);         /* renderer; NULL = nothing to draw (NORMAL) */
-  void (*on_tap)(int cell);    /* tap handler (cell = logical cell id) */
-  uint8_t rows, cols;          /* landscape grid */
-  const uint8_t *portrait_map; /* portrait tap pos -> logical cell; NULL = identity */
-  bool rearrange_2x3;          /* portrait: re-arrange the 2x3 grid to 3x2 */
   bool idle_timeout;           /* return to NORMAL after TOUCH_TIMEOUT_MS idle */
   bool keeps_mods;             /* armed one-shot mods survive entering this view */
   void (*on_hold)(int cell);   /* long-press handler; NULL = holds act as taps */
 };
-extern const struct view_def view_defs[VIEW_COUNT];
 
 /* ----------------------------- shared state ------------------------------- */
 
 extern lv_obj_t *touch_overlay; /* full-screen touch UI layer (touch_nav.c) */
-extern enum ui_view cur_view;   /* current view (touch_nav.c) */
+extern lv_obj_t *cur_view_btns[32]; /* cached declarative button objects for mutation */
+extern const struct view_def *cur_view;   /* current view (touch_nav.c) */
 extern int cur_page;            /* page of the paginated key screens (touch_nav.c) */
 extern uint8_t pending_mods;    /* one-shot mods, applied to the next key (touch_keys.c) */
 extern int grid_rows;           /* current screen's grid (touch_draw.c) */
@@ -100,36 +113,28 @@ extern uint8_t ui_rot; /* 0..3 = 0/90/180/270 deg CW (touch_rotation.c) */
 static inline lv_coord_t scr_w(void) { return (ui_rot & 1) ? SCR_H : SCR_W; }
 static inline lv_coord_t scr_h(void) { return (ui_rot & 1) ? SCR_W : SCR_H; }
 
-/* Paginated key screens: the 7 key cells of a 3x3 page (touch_draw.c). */
-extern const int key_cells[KEYS_PER_PAGE];
-
-/* Portrait re-arrangement of the 2x3 screens (touch_draw.c). */
-extern const uint8_t p23_pos[6];
-
-/* Optional custom HOME icons (drop converted assets in src/icons/, see its
- * README). Weak: with no asset file present the symbol resolves to NULL and
- * the cell falls back to its text label. */
+/* Optional custom HOME icons (drop converted assets in src/icons */
 extern const lv_image_dsc_t icon_trackpad __weak;
 extern const lv_image_dsc_t icon_modkeys __weak;
 extern const lv_image_dsc_t icon_numpad __weak;
 extern const lv_image_dsc_t icon_symbols __weak;
 extern const lv_image_dsc_t icon_fkeys __weak;
 
+
 /* ------------------------------- functions -------------------------------- */
-
 /* touch_draw.c */
-void draw_cell(int row, int col, int w_cells, const char *text, uint32_t accent);
-void draw_cell_l(int lcell, const char *text, uint32_t accent);
-void draw_cell_on_l(int lcell, const char *text, uint32_t accent);
-void draw_cell_icon(int row, int col, const lv_image_dsc_t *icon, const char *fallback,
-                    uint32_t accent);
-void draw_key_page(const char *const *lbls, int n, int page);
+lv_obj_t *draw_cell(int row, int col, int w_cells, const char *text, uint32_t accent);
+lv_obj_t *draw_cell_ext(int row, int col, int w_cells, int h_cells, const char *text, uint32_t accent, bool filled);
+lv_obj_t *draw_cell_icon(int row, int col, const lv_image_dsc_t *icon, const char *fallback, uint32_t accent);
+lv_obj_t *draw_cell_icon_ext(int row, int col, int w_cells, int h_cells, const lv_image_dsc_t *icon, const char *fallback, uint32_t accent);
 
-/* touch_views.c */
-void build_view(enum ui_view v);
+/* touch_views.c (now in touch_main.c) */
+void build_view(const struct view_def *v);
+void tap_declarative(int cell);
+bool ui_has_action(int cell);
 
 /* touch_nav.c */
-void show_view(enum ui_view v);
+void show_view(const struct view_def *v);
 void touch_ui_attach(lv_obj_t *screen); /* create the overlay + the drain timer */
 
 /* touch_keys.c */
@@ -155,47 +160,17 @@ int prospector_touchpad_sens_get(void);
 void prospector_touchpad_sens_step(int delta);
 void prospector_touch_set_orientation(int rot);
 bool prospector_touch_tap(int sx, int sy, bool hold); /* touch_input.c -> touch_nav.c */
+bool prospector_touch_has_action(int sx, int sy);
 
 /* ------------------------------- views -------------------------------- */
-// NORMAL
-extern void tap_normal(int cell);
-
-// HOME
-extern void build_home(void);
-extern void tap_home(int cell);
-extern void hold_home(int cell);
-
-// SETTINGS
-extern void build_settings(void);
-extern void tap_settings(int cell);
-
-// MEDIA
-extern void build_media(void);
-extern void tap_media(int cell);
-
-// FKEYS / SYMBOLS
-extern void build_fkeys(void);
-extern void tap_fkeys(int cell);
-extern void build_symbols(void);
-extern void tap_symbols(int cell);
-
-// NUMPAD
-extern void build_numpad(void);
-extern void tap_numpad(int cell);
-
-// MODIFIERS
-extern void build_modifiers(void);
-extern void tap_modifiers(int cell);
-
-// PAD
-extern void build_pad(void);
-extern void tap_pad(int cell);
-
-// TRACKPAD
-extern void build_trackpad(void);
-extern void tap_trackpad(int cell);
-
-// CALCULATOR
-extern void build_calc(void);
-extern void tap_calc(int cell);
-extern void hold_calc(int cell);
+extern const struct view_def view_normal;
+extern const struct view_def view_home;
+extern const struct view_def view_settings;
+extern const struct view_def view_media;
+extern const struct view_def view_fkeys;
+extern const struct view_def view_symbols;
+extern const struct view_def view_numpad;
+extern const struct view_def view_modifiers;
+extern const struct view_def view_trackpad;
+extern const struct view_def view_pad;
+extern const struct view_def view_calc;

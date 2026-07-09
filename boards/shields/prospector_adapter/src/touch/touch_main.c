@@ -8,21 +8,143 @@
 
 /* ----------------------------- the registry -------------------------------- */
 
-void build_view(enum ui_view v)
+static const struct page_cell *get_active_cells(const struct view_def *d)
 {
-  const struct view_def *d = &view_defs[v];
-  lv_obj_clean(touch_overlay);
-  grid_rows = d->rows;
-  grid_cols = d->cols;
-  if ((ui_rot & 1) && d->rearrange_2x3)
-  {
-    grid_rows = 3;
-    grid_cols = 2;
+  if (!d) return NULL;
+  const struct page_cell *active_cells = d->cells;
+  if (cur_page > 0 && d->pages != NULL && (cur_page - 1) < d->num_pages) {
+      active_cells = d->pages[cur_page - 1];
   }
+  if (ui_rot & 1) {
+      if (d->cells_portrait != NULL) {
+          active_cells = d->cells_portrait;
+      }
+      if (cur_page > 0 && d->pages_portrait != NULL && (cur_page - 1) < d->num_pages) {
+          active_cells = d->pages_portrait[cur_page - 1];
+      }
+  }
+  return active_cells;
+}
+
+bool ui_has_action(int cell)
+{
+  const struct view_def *d = cur_view;
+  if (!d) return false;
+  
+  const struct page_cell *active_cells = get_active_cells(d);
+
+  if (!active_cells || grid_cols <= 0) return false;
+
+  int r = cell / grid_cols;
+  int c = cell % grid_cols;
+
+  for (int i = 0; active_cells[i].row_span != 0 || active_cells[i].col_span != 0; i++) {
+    const struct page_cell *pc = &active_cells[i];
+    int rs = pc->row_span > 0 ? pc->row_span : 1;
+    int cs = pc->col_span > 0 ? pc->col_span : 1;
+
+    if (r >= pc->row && r < pc->row + rs && c >= pc->col && c < pc->col + cs) {
+      if (pc->action != ACT_NONE || pc->label != NULL || pc->icon != NULL) {
+          return true;
+      }
+      return false;
+    }
+  }
+  return false;
+}
+
+void tap_declarative(int cell)
+{
+  const struct view_def *d = cur_view;
+  const struct page_cell *active_cells = get_active_cells(d);
+
+  if (!active_cells) return;
+
+  int r = cell / grid_cols;
+  int c = cell % grid_cols;
+
+  for (int i = 0; active_cells[i].row_span != 0 || active_cells[i].col_span != 0; i++) {
+    const struct page_cell *pc = &active_cells[i];
+    int rs = pc->row_span > 0 ? pc->row_span : 1;
+    int cs = pc->col_span > 0 ? pc->col_span : 1;
+
+    if (r >= pc->row && r < pc->row + rs && c >= pc->col && c < pc->col + cs) {
+      switch (pc->action) {
+        case ACT_GO_VIEW:
+          show_view(pc->arg.view);
+          break;
+        case ACT_SEND_KEY:
+          send_key(pc->arg.keycode);
+          break;
+        case ACT_FIRE_MACRO:
+          fire_macro(pc->arg.macro);
+          break;
+        case ACT_CUSTOM:
+          if (pc->arg.func) pc->arg.func(cell);
+          break;
+        case ACT_NEXT_PAGE:
+          if (d->num_pages > 0) {
+              cur_page = (cur_page + 1) % d->num_pages;
+              build_view(cur_view);
+          }
+          break;
+        case ACT_PREV_PAGE:
+          if (cur_page == 0) {
+              show_view(&view_home);
+          } else {
+              cur_page--;
+              build_view(cur_view);
+          }
+          break;
+        default:
+          break;
+      }
+      return;
+    }
+  }
+}
+
+    /* ----------------------------- dispatcher ---------------------------------- */
+
+lv_obj_t *cur_view_btns[32];
+
+void build_view(const struct view_def *d)
+{
+  lv_obj_clean(touch_overlay);
+  memset(cur_view_btns, 0, sizeof(cur_view_btns));
+
+  const struct page_cell *active_cells = get_active_cells(d);
+
+  if (active_cells != NULL) {
+    int max_r = 1, max_c = 1;
+    for (int i = 0; active_cells[i].row_span != 0 || active_cells[i].col_span != 0; i++) {
+        int r = active_cells[i].row + (active_cells[i].row_span > 0 ? active_cells[i].row_span : 1);
+        int c = active_cells[i].col + (active_cells[i].col_span > 0 ? active_cells[i].col_span : 1);
+        if (r > max_r) max_r = r;
+        if (c > max_c) max_c = c;
+    }
+    grid_rows = max_r;
+    grid_cols = max_c;
+
+    for (int i = 0; active_cells[i].row_span != 0 || active_cells[i].col_span != 0; i++) {
+        const struct page_cell *pc = &active_cells[i];
+        int rs = pc->row_span > 0 ? pc->row_span : 1;
+        int cs = pc->col_span > 0 ? pc->col_span : 1;
+        if (i < 32) {
+            if (pc->icon) {
+                cur_view_btns[i] = draw_cell_icon_ext(pc->row, pc->col, cs, rs, pc->icon, pc->label, pc->color);
+            } else if (pc->label) {
+                cur_view_btns[i] = draw_cell_ext(pc->row, pc->col, cs, rs, pc->label, pc->color, false);
+            }
+        }
+    }
+  }
+
   if (d->build != NULL)
   {
     d->build();
   }
+
 
   /* Armed one-shot modifier -> blue frame visible from any key page. Drawn as its
    * own rounded-rect child (radius = glass) so it follows the screen's physical
@@ -43,17 +165,3 @@ void build_view(enum ui_view v)
   }
 }
 
-const struct view_def view_defs[VIEW_COUNT] = {
-    /*                 build            on_tap         r   c   portrait  2x3    tmout  mods   on_hold */
-    [VIEW_NORMAL] =    {NULL,           tap_normal,    2,  3,  NULL,     false, false, false, NULL},
-    [VIEW_HOME] =      {build_home,     tap_home,      3,  3,  NULL,     false, true,  true,  hold_home},
-    [VIEW_SETTINGS] =  {build_settings, tap_settings,  3,  3,  NULL,     false, true,  false, NULL},
-    [VIEW_MEDIA] =     {build_media,    tap_media,     2,  3,  p23_pos,  true,  false, true,  NULL},
-    [VIEW_FKEYS] =     {build_fkeys,    tap_fkeys,     3,  3,  NULL,     false, false, true,  NULL},
-    [VIEW_NUMPAD] =    {build_numpad,   tap_numpad,    4,  4,  NULL,     false, false, true,  NULL},
-    [VIEW_SYMBOLS] =   {build_symbols,  tap_symbols,   3,  3,  NULL,     false, false, true,  NULL},
-    [VIEW_MODIFIERS] = {build_modifiers,tap_modifiers, 2,  3,  p23_pos,  true,  false, true,  NULL},
-    [VIEW_TRACKPAD] =  {build_trackpad, tap_trackpad,  2,  3,  NULL,     false, false, true,  NULL},
-    [VIEW_PAD] =       {build_pad,      tap_pad,       2,  3,  p23_pos,  true,  false, true,  NULL},
-    [VIEW_CALC] =      {build_calc,     tap_calc,      5,  4,  NULL,     false, false, false, hold_calc},
-};

@@ -4,32 +4,27 @@
 
 #include "../touch_ui.h"
 
-void build_media(void)
-{
-  draw_cell_l(0, LV_SYMBOL_VOLUME_MID, COLOR_PRIMARY);
-  draw_cell_l(1, LV_SYMBOL_UP, COLOR_RED);
-  draw_cell_l(2, LV_SYMBOL_VOLUME_MAX, COLOR_PRIMARY);
-  draw_cell_l(3, LV_SYMBOL_PREV, COLOR_PRIMARY);
-  draw_cell_l(4, LV_SYMBOL_PLAY, COLOR_PRIMARY);
-  draw_cell_l(5, LV_SYMBOL_NEXT, COLOR_PRIMARY);
-}
+static const struct page_cell media_cells[] = {
+    {0, 0, 1, 1, LV_SYMBOL_VOLUME_MID, NULL, COLOR_PRIMARY, ACT_FIRE_MACRO, .arg.macro = "touch_macro_0"},
+    {0, 1, 1, 1, LV_SYMBOL_UP,         NULL, COLOR_RED,     ACT_GO_VIEW,    .arg.view = &view_home},
+    {0, 2, 1, 1, LV_SYMBOL_VOLUME_MAX, NULL, COLOR_PRIMARY, ACT_FIRE_MACRO, .arg.macro = "touch_macro_2"},
+    {1, 0, 1, 1, LV_SYMBOL_PREV,       NULL, COLOR_PRIMARY, ACT_FIRE_MACRO, .arg.macro = "touch_macro_4"},
+    {1, 1, 1, 1, LV_SYMBOL_PLAY,       NULL, COLOR_PRIMARY, ACT_FIRE_MACRO, .arg.macro = "touch_macro_3"},
+    {1, 2, 1, 1, LV_SYMBOL_NEXT,       NULL, COLOR_PRIMARY, ACT_FIRE_MACRO, .arg.macro = "touch_macro_5"},
+    {0}
+};
 
-void tap_media(int cell)
-{
-  static const char *const macros[6] = {
-      "touch_macro_0",
-      NULL /* back */,
-      "touch_macro_2",
-      "touch_macro_4",
-      "touch_macro_3",
-      "touch_macro_5",
-  };
-  if (cell == 1)
-  {
-    show_view(VIEW_HOME);
-  }
-  else if (cell >= 0 && cell < 6 && macros[cell] != NULL)
-  {
-    fire_macro(macros[cell]);
-  }
-}
+static const struct page_cell media_cells_portrait[] = {
+    {0, 0, 1, 1, LV_SYMBOL_VOLUME_MID, NULL, COLOR_PRIMARY, ACT_FIRE_MACRO, .arg.macro = "touch_macro_0"},
+    {0, 1, 1, 1, LV_SYMBOL_VOLUME_MAX, NULL, COLOR_PRIMARY, ACT_FIRE_MACRO, .arg.macro = "touch_macro_2"},
+    {1, 0, 1, 1, LV_SYMBOL_UP,         NULL, COLOR_RED,     ACT_GO_VIEW,    .arg.view = &view_home},
+    {1, 1, 1, 1, LV_SYMBOL_PLAY,       NULL, COLOR_PRIMARY, ACT_FIRE_MACRO, .arg.macro = "touch_macro_3"},
+    {2, 0, 1, 1, LV_SYMBOL_PREV,       NULL, COLOR_PRIMARY, ACT_FIRE_MACRO, .arg.macro = "touch_macro_4"},
+    {2, 1, 1, 1, LV_SYMBOL_NEXT,       NULL, COLOR_PRIMARY, ACT_FIRE_MACRO, .arg.macro = "touch_macro_5"},
+    {0}
+};
+
+const struct view_def view_media = {
+    .cells = media_cells,
+    .cells_portrait = media_cells_portrait,
+};

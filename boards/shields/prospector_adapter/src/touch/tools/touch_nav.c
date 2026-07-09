@@ -5,8 +5,8 @@
 #include "../touch_ui.h"
 
 lv_obj_t *touch_overlay;
-enum ui_view cur_view = VIEW_NORMAL;
-int cur_page;
+const struct view_def *cur_view = &view_normal;
+int cur_page = 0;
 
 static atomic_t pending_tap = ATOMIC_INIT(0); /* 0 = none, else (bit20 | hold<<21 | sx<<10 | sy) */
 static int64_t last_tap_ms;
@@ -25,10 +25,6 @@ bool prospector_touch_tap(int sx, int sy, bool hold) {
     return true;
 }
 
-/* touch_input.c streams pointer motion/clicks (instead of cell taps) while true. */
-bool prospector_touchpad_active(void) {
-    return cur_view == VIEW_TRACKPAD;
-}
 
 /* Map raw rendered-screen coords to a cell in the CURRENT screen's grid. */
 static int cell_from_coords(int sx, int sy) {
@@ -43,25 +39,23 @@ static int cell_from_coords(int sx, int sy) {
     return row * grid_cols + col;
 }
 
-/* Portrait tap position -> the logical cell id the handlers use (identity unless
- * the view re-arranges its 2x3 grid and provides a map). */
-static int logical_cell(int cell) {
-    const uint8_t *map = view_defs[cur_view].portrait_map;
-    if (!(ui_rot & 1) || map == NULL || cell < 0 || cell > 5) {
-        return cell;
-    }
-    return map[cell];
+bool prospector_touch_has_action(int sx, int sy) {
+    if (cur_view == &view_normal) return false;
+    int cell = cell_from_coords(sx, sy);
+    return ui_has_action(cell);
 }
 
-void show_view(enum ui_view v) {
+
+
+void show_view(const struct view_def *v) {
     cur_view = v;
     cur_page = 0;
     /* Views that don't keep armed one-shot mods abandon them, so an armed mod
      * can't silently apply to normal typing later (e.g. a stray Ctrl+A). */
-    if (!view_defs[v].keeps_mods) {
+    if (!v->keeps_mods) {
         pending_mods = 0;
     }
-    if (v == VIEW_NORMAL) {
+    if (v == &view_normal) {
         lv_obj_add_flag(touch_overlay, LV_OBJ_FLAG_HIDDEN);
     } else {
         build_view(v);
@@ -76,21 +70,20 @@ static void ui_timer_cb(lv_timer_t *timer) {
     int v = atomic_set(&pending_tap, 0);
     if (v & (1 << 20)) {
         int sx = (v >> 10) & 0x3FF, sy = v & 0x3FF;
-        int cell = logical_cell(cell_from_coords(sx, sy));
+        int cell = cell_from_coords(sx, sy);
         last_tap_ms = k_uptime_get();
-        /* A long-press routes to on_hold when the view defines one; otherwise it
-         * falls through to on_tap, so holds are harmless on views that ignore them. */
-        void (*on_hold)(int) = view_defs[cur_view].on_hold;
+        
+        void (*on_hold)(int) = cur_view->on_hold;
         if ((v & (1 << 21)) && on_hold != NULL) {
             on_hold(cell);
         } else {
-            view_defs[cur_view].on_tap(cell);
+            tap_declarative(cell);
         }
     }
 
-    if (view_defs[cur_view].idle_timeout &&
+    if (cur_view->idle_timeout &&
         (k_uptime_get() - last_tap_ms) > TOUCH_TIMEOUT_MS) {
-        show_view(VIEW_NORMAL);
+        show_view(&view_normal);
     }
 }
 

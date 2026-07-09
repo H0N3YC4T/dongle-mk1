@@ -7,31 +7,51 @@
 
 #include "../touch_ui.h"
 
-void build_pad(void)
+static void tap_pad_0(int cell) { ARG_UNUSED(cell); fire_pad(0); }
+static void tap_pad_1(int cell) { ARG_UNUSED(cell); fire_pad(1); }
+static void tap_pad_2(int cell) { ARG_UNUSED(cell); fire_pad(2); }
+static void tap_pad_3(int cell) { ARG_UNUSED(cell); fire_pad(3); }
+static void tap_pad_4(int cell) { ARG_UNUSED(cell); fire_pad(4); }
+
+static const struct page_cell pad_cells[] = {
+    {0, 0, 1, 1, "$_", NULL, COLOR_PRIMARY, ACT_CUSTOM, .arg.func = tap_pad_0},
+    {0, 1, 1, 1, LV_SYMBOL_UP, NULL, COLOR_RED, ACT_GO_VIEW, .arg.view = &view_home},
+    {0, 2, 1, 1, LV_SYMBOL_LIST, NULL, COLOR_PRIMARY, ACT_CUSTOM, .arg.func = tap_pad_1},
+    {1, 0, 1, 1, LV_SYMBOL_WIFI, NULL, COLOR_PRIMARY, ACT_CUSTOM, .arg.func = tap_pad_2},
+    {1, 1, 1, 1, LV_SYMBOL_EYE_CLOSE, NULL, COLOR_PRIMARY, ACT_CUSTOM, .arg.func = tap_pad_3},
+    {1, 2, 1, 1, LV_SYMBOL_EDIT, NULL, COLOR_PRIMARY, ACT_CUSTOM, .arg.func = tap_pad_4},
+    {0}
+};
+
+static const struct page_cell pad_cells_portrait[] = {
+    {0, 0, 1, 1, "$_", NULL, COLOR_PRIMARY, ACT_CUSTOM, .arg.func = tap_pad_0},
+    {0, 1, 1, 1, LV_SYMBOL_LIST, NULL, COLOR_PRIMARY, ACT_CUSTOM, .arg.func = tap_pad_1},
+    {1, 0, 1, 1, LV_SYMBOL_UP, NULL, COLOR_RED, ACT_GO_VIEW, .arg.view = &view_home},
+    {1, 1, 1, 1, LV_SYMBOL_EYE_CLOSE, NULL, COLOR_PRIMARY, ACT_CUSTOM, .arg.func = tap_pad_3},
+    {2, 0, 1, 1, LV_SYMBOL_WIFI, NULL, COLOR_PRIMARY, ACT_CUSTOM, .arg.func = tap_pad_2},
+    {2, 1, 1, 1, LV_SYMBOL_EDIT, NULL, COLOR_PRIMARY, ACT_CUSTOM, .arg.func = tap_pad_4},
+    {0}
+};
+
+static void build_pad(void)
 {
-  static const char *const lbls[6] = {"$_", NULL,
-                                      LV_SYMBOL_LIST, LV_SYMBOL_WIFI,
-                                      LV_SYMBOL_EYE_CLOSE, LV_SYMBOL_EDIT};
   int n = touch_pad_count();
-  draw_cell_l(1, LV_SYMBOL_UP, COLOR_RED);
-  for (int c = 0, i = 0; c < 6; c++)
-  {
-    if (lbls[c] != NULL)
-    {
-      draw_cell_l(c, lbls[c], i < n ? COLOR_PRIMARY : COLOR_GREY);
-      i++;
-    }
+  int pads[] = {0, 2, 3, 4, 5}; // The indices of the pad buttons in pad_cells
+  if (ui_rot & 1) {
+      pads[0] = 0; pads[1] = 1; pads[2] = 4; pads[3] = 3; pads[4] = 5; // Portrait indices
+  }
+  
+  for (int i = 0; i < 5; i++) {
+      if (cur_view_btns[pads[i]]) {
+          lv_obj_set_style_border_color(cur_view_btns[pads[i]], lv_color_hex(i < n ? COLOR_PRIMARY : COLOR_GREY), LV_PART_MAIN);
+          lv_obj_t *l = lv_obj_get_child(cur_view_btns[pads[i]], 0);
+          if (l) lv_obj_set_style_text_color(l, lv_color_hex(i < n ? COLOR_PRIMARY : COLOR_GREY), LV_PART_MAIN);
+      }
   }
 }
 
-void tap_pad(int cell)
-{
-  if (cell == 1)
-  {
-    show_view(VIEW_HOME);
-  }
-  else if (cell >= 0 && cell < 6)
-  {
-    fire_pad(cell == 0 ? 0 : cell - 1); /* cells 0,2,3,4,5 -> M1..M5 */
-  }
-}
+const struct view_def view_pad = {
+    .cells = pad_cells,
+    .cells_portrait = pad_cells_portrait,
+    .build = build_pad,
+};

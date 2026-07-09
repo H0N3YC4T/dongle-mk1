@@ -82,7 +82,7 @@ uint8_t map_light_to_pwm(int32_t sensor_reading) {
 
 /* Fade the display to `target`, one FADE_STEP per sleep, clamped to the PWM
  * bounds. Signed maths on purpose -- stepping the uint8_t directly underflows. */
-uint8_t bl_fade(uint8_t source, uint8_t target) {
+void bl_fade(uint8_t source, uint8_t target) {
     ARG_UNUSED(source); /* fade always starts from the live current_brightness */
     int level = current_brightness;
     int step = (target > level) ? FADE_STEP : -FADE_STEP;
@@ -102,8 +102,6 @@ uint8_t bl_fade(uint8_t source, uint8_t target) {
         }
         k_msleep(step > 0 ? FADE_SLEEP_BRIGHTEN_MS : FADE_SLEEP_DARKEN_MS);
     }
-
-    return 0;
 }
 
 extern void als_thread(void *d0, void *d1, void *d2) {
@@ -118,6 +116,7 @@ extern void als_thread(void *d0, void *d1, void *d2) {
     dev = DEVICE_DT_GET_ONE(avago_apds9960);
     if (!device_is_ready(dev)) {
         printk("sensor: device not ready.\n");
+        return;
     }
 
     // led_set_brightness(pwm_leds_dev, DISP_BL, 100);
@@ -161,7 +160,6 @@ extern void als_thread(void *d0, void *d1, void *d2) {
                     // printk("integrator at: %d", integrator);
                     if (integrator >= BURST_SAMPLE_CONSECUTIVE) {
                         bl_fade(current_brightness, mapped_brightness);
-                        current_brightness = mapped_brightness;
                         // LOG_INF("SETTING NEW BRIGHTNESS: %d", mapped_brightness);
                         break;
                     }

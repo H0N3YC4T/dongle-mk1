@@ -6,49 +6,30 @@
 
 #include "../touch_ui.h"
 
-void build_numpad(void)
-{
-  static const char *const lbls[16] = {
-      "7",
-      "8",
-      "9",
-      "+",
-      "4",
-      "5",
-      "6",
-      "-",
-      "1",
-      "2",
-      "3",
-      "*",
-      LV_SYMBOL_UP,
-      "0",
-      LV_SYMBOL_NEW_LINE,
-      "/",
-  };
-  for (int c = 0; c < 16; c++)
-  {
-    uint32_t color = (c == 12)                 ? COLOR_RED
-                     : (c % 4 == 3 || c == 14) ? COLOR_ACCENT
-                                               : COLOR_PRIMARY;
-    draw_cell(c / 4, c % 4, 1, lbls[c], color);
-  }
-}
+static const struct page_cell numpad_cells[] = {
+    {0, 0, 1, 1, "7", NULL, COLOR_PRIMARY, ACT_SEND_KEY, .arg.keycode = KP_N7},
+    {0, 1, 1, 1, "8", NULL, COLOR_PRIMARY, ACT_SEND_KEY, .arg.keycode = KP_N8},
+    {0, 2, 1, 1, "9", NULL, COLOR_PRIMARY, ACT_SEND_KEY, .arg.keycode = KP_N9},
+    {0, 3, 1, 1, "+", NULL, COLOR_ACCENT,  ACT_SEND_KEY, .arg.keycode = KP_PLUS},
 
-void tap_numpad(int cell)
-{
-  /* Index 12 (Back) is 0 and handled first, so the np[cell] guard only skips
-   * it -- every real key code is non-zero. */
-  static const uint32_t np[16] = {KP_N7, KP_N8, KP_N9, KP_PLUS,
-                                  KP_N4, KP_N5, KP_N6, KP_MINUS,
-                                  KP_N1, KP_N2, KP_N3, KP_MULTIPLY,
-                                  0, KP_N0, KP_ENTER, KP_DIVIDE};
-  if (cell == 12)
-  {
-    show_view(VIEW_HOME);
-  }
-  else if (cell >= 0 && cell <= 15 && np[cell])
-  {
-    send_key(np[cell]);
-  }
-}
+    {1, 0, 1, 1, "4", NULL, COLOR_PRIMARY, ACT_SEND_KEY, .arg.keycode = KP_N4},
+    {1, 1, 1, 1, "5", NULL, COLOR_PRIMARY, ACT_SEND_KEY, .arg.keycode = KP_N5},
+    {1, 2, 1, 1, "6", NULL, COLOR_PRIMARY, ACT_SEND_KEY, .arg.keycode = KP_N6},
+    {1, 3, 1, 1, "-", NULL, COLOR_ACCENT,  ACT_SEND_KEY, .arg.keycode = KP_MINUS},
+
+    {2, 0, 1, 1, "1", NULL, COLOR_PRIMARY, ACT_SEND_KEY, .arg.keycode = KP_N1},
+    {2, 1, 1, 1, "2", NULL, COLOR_PRIMARY, ACT_SEND_KEY, .arg.keycode = KP_N2},
+    {2, 2, 1, 1, "3", NULL, COLOR_PRIMARY, ACT_SEND_KEY, .arg.keycode = KP_N3},
+    {2, 3, 1, 1, "*", NULL, COLOR_ACCENT,  ACT_SEND_KEY, .arg.keycode = KP_MULTIPLY},
+
+    {3, 0, 1, 1, LV_SYMBOL_UP, NULL, COLOR_RED, ACT_GO_VIEW, .arg.view = &view_home},
+    {3, 1, 1, 1, "0", NULL, COLOR_PRIMARY, ACT_SEND_KEY, .arg.keycode = KP_N0},
+    {3, 2, 1, 1, LV_SYMBOL_NEW_LINE, NULL, COLOR_ACCENT, ACT_SEND_KEY, .arg.keycode = KP_ENTER},
+    {3, 3, 1, 1, "/", NULL, COLOR_ACCENT,  ACT_SEND_KEY, .arg.keycode = KP_DIVIDE},
+
+    {0} /* End of list sentinel */
+};
+
+const struct view_def view_numpad = {
+    .cells = numpad_cells,
+};

@@ -48,10 +48,9 @@ LOG_MODULE_REGISTER(mk1_touch, LOG_LEVEL_INF);
  *   DRAG in the scroll lane (past TP_SCROLL_ZONE: right strip in landscape,
  *     bottom strip in portrait) -> scroll.
  *   1 TAP -> left click,  2 TAPS -> right click (resolved over TP_DTAP_MS).
- *   TAP then HOLD-AND-DRAG (2nd touch within TP_DTAP_MS that moves instead of
+/*   tap-then-hold-and-drag (2nd touch within TP_DTAP_MS that moves instead of
  *     releasing) -> drag-lock: left button held for the drag, released on lift.
- *   top-left corner TAP -> exit (the fork decides where to; currently HOME). */
-#define TP_CORNER_PX 40           /* top-left NxN screen corner tap = exit */
+ *   UI action tap -> handed to the fork UI (e.g. top-left corner exit). */
 #define TP_MOVE_DEADZONE_PX 8     /* travel this far commits a drag (else it's a tap) */
 #define TP_DTAP_MS 180            /* 2nd tap within this of the 1st = right click */
 /* TP_SCROLL_ZONE (the lane boundary) lives in touch_ui.h -- shared with the
@@ -327,9 +326,9 @@ static void touch_cb(struct input_event *evt, void *user_data) {
             if (prospector_touchpad_active()) {
                 /* A "tap" = finger lifted before committing to a drag (scroll or move). */
                 if (tp_mode == TP_PENDING) {
-                    if (tp_start_sx < TP_CORNER_PX && tp_start_sy < TP_CORNER_PX) {
-                        /* corner tap = exit; hand to the fork UI. Drop any pending
-                         * first-tap so a stray left click doesn't fire after exit. */
+                    if (prospector_touch_has_action(tp_start_sx, tp_start_sy)) {
+                        /* UI hit = action; hand to the fork UI. Drop any pending
+                         * first-tap so a stray left click doesn't fire after action. */
                         tp_first_tap = false;
                         k_work_cancel_delayable(&tp_tap_work);
                         pending_sx = tp_start_sx;
