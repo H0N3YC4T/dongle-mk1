@@ -49,6 +49,11 @@ static const char *const lbls[16] = {
     "/",
 };
 
+/* FORWARD DECLARATIONS */
+static void calc_controller(int cell);
+static double parse_term(void);
+static double parse_factor(void);
+
 /* DISPLAY FUNCTIONS */
 void build_calc(void)
 {
