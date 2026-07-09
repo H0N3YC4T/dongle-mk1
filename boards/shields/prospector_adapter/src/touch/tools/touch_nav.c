@@ -16,6 +16,10 @@ static int64_t last_tap_ms;
 __weak int prospector_touchpad_sens_get(void) { return -1; }
 __weak void prospector_touchpad_sens_step(int delta) { ARG_UNUSED(delta); }
 
+bool prospector_touchpad_active(void) {
+    return cur_view == &view_trackpad;
+}
+
 /* Called from the touch workqueue thread. Stash the packed tap coords; the lv_timer
  * drains + maps them to a cell on the display thread (no LVGL off-thread). Returns
  * true = the on-screen UI owns the tap. */
@@ -40,7 +44,6 @@ static int cell_from_coords(int sx, int sy) {
 }
 
 bool prospector_touch_has_action(int sx, int sy) {
-    if (cur_view == &view_normal) return false;
     int cell = cell_from_coords(sx, sy);
     return ui_has_action(cell);
 }
@@ -56,6 +59,8 @@ void show_view(const struct view_def *v) {
         pending_mods = 0;
     }
     if (v == &view_normal) {
+        grid_rows = 1;
+        grid_cols = 1;
         lv_obj_add_flag(touch_overlay, LV_OBJ_FLAG_HIDDEN);
     } else {
         build_view(v);

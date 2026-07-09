@@ -14,7 +14,7 @@ int bin_word_size = 32;
 
 
 
-static const struct page_cell *const calc_pages[] = {calc_cells, calc_cells_alt,
+static const struct page_cell *const calc_pages[] = {calc_cells_alt,
                                                      calc_cells_alt2};
 
 /* FORWARD DECLARATIONS */

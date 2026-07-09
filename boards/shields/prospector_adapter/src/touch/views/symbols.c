@@ -6,7 +6,7 @@
 
 static const struct page_cell sym_p0[] = {
     {0, 0, 1, 1, "!", NULL, COLOR_PRIMARY, ACT_SEND_KEY, .arg.keycode = EXCL},
-    {0, 1, 1, 1, LV_SYMBOL_UP, NULL, COLOR_YELLOW, ACT_PREV_PAGE},
+    {0, 1, 1, 1, LV_SYMBOL_UP, NULL, COLOR_RED, ACT_PREV_PAGE},
     {0, 2, 1, 1, "@", NULL, COLOR_PRIMARY, ACT_SEND_KEY, .arg.keycode = AT},
     {1, 0, 1, 1, "#", NULL, COLOR_PRIMARY, ACT_SEND_KEY, .arg.keycode = HASH},
     {1, 1, 1, 1, "$", NULL, COLOR_PRIMARY, ACT_SEND_KEY, .arg.keycode = DLLR},
