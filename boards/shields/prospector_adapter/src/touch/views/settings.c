@@ -16,14 +16,14 @@ static void tap_bright_dn(int cell) { ARG_UNUSED(cell); prospector_brightness_st
 static void tap_rotate(int cell) { ARG_UNUSED(cell); ui_rot = (ui_rot + 1) & 3; settings_apply_rotation(); }
 
 static const struct page_cell settings_cells[] = {
-    {0, 0, 2, 1, LV_SYMBOL_PLUS, NULL, COLOR_GREEN, ACT_CUSTOM, .arg.func = tap_sens_up},
-    {0, 2, 2, 1, LV_SYMBOL_UP, NULL, COLOR_RED, ACT_GO_VIEW, .arg.view = &view_home},
-    {0, 4, 2, 1, LV_SYMBOL_PLUS, NULL, COLOR_GREEN, ACT_CUSTOM, .arg.func = tap_bright_up},
-    {1, 0, 2, 1, LV_SYMBOL_MINUS, NULL, COLOR_YELLOW, ACT_CUSTOM, .arg.func = tap_sens_dn},
-    {1, 2, 2, 1, LV_SYMBOL_REFRESH, NULL, COLOR_ACCENT, ACT_CUSTOM, .arg.func = tap_rotate},
-    {1, 4, 2, 1, LV_SYMBOL_MINUS, NULL, COLOR_YELLOW, ACT_CUSTOM, .arg.func = tap_bright_dn},
-    {2, 0, 3, 1, " ", NULL, COLOR_PRIMARY, ACT_NONE},
-    {2, 3, 3, 1, " ", NULL, COLOR_PRIMARY, ACT_NONE},
+    {0, 0, 1, 2, LV_SYMBOL_PLUS, NULL, COLOR_GREEN, ACT_CUSTOM, .arg.func = tap_sens_up},
+    {0, 2, 1, 2, LV_SYMBOL_UP, NULL, COLOR_RED, ACT_GO_VIEW, .arg.view = &view_home},
+    {0, 4, 1, 2, LV_SYMBOL_PLUS, NULL, COLOR_GREEN, ACT_CUSTOM, .arg.func = tap_bright_up},
+    {1, 0, 1, 2, LV_SYMBOL_MINUS, NULL, COLOR_YELLOW, ACT_CUSTOM, .arg.func = tap_sens_dn},
+    {1, 2, 1, 2, LV_SYMBOL_REFRESH, NULL, COLOR_ACCENT, ACT_CUSTOM, .arg.func = tap_rotate},
+    {1, 4, 1, 2, LV_SYMBOL_MINUS, NULL, COLOR_YELLOW, ACT_CUSTOM, .arg.func = tap_bright_dn},
+    {2, 0, 1, 3, " ", NULL, COLOR_PRIMARY, ACT_NONE},
+    {2, 3, 1, 3, " ", NULL, COLOR_PRIMARY, ACT_NONE},
     {0}
 };
 
