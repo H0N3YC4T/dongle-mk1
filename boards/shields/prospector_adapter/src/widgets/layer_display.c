@@ -35,7 +35,6 @@ ZMK_DISPLAY_WIDGET_LISTENER(widget_layer_display, struct layer_display_state,
                             layer_display_update_cb, layer_display_get_state)
 ZMK_SUBSCRIPTION(widget_layer_display, zmk_layer_state_changed);
 
-/* Resize the dot row (portrait rotation): dots shrink to fit, keeping the gap. */
 void zmk_widget_layer_display_set_width(struct zmk_widget_layer_display *widget, int width) {
     const int dot_gap = 3;
     int dot_width = (width - (LAYER_DOT_COUNT - 1) * dot_gap) / LAYER_DOT_COUNT;

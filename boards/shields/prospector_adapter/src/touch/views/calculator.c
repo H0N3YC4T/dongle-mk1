@@ -360,6 +360,12 @@ static void calc_update_display(void) {
 /* ========================================================================== */
 /* TAP HANDLERS (DECIMAL)                                                     */
 /* ========================================================================== */
+static void tap_calc_char(int ch) {
+  calc_ensure_binary();
+  calc_push((char)ch);
+  calc_update_display();
+}
+
 static void tap_calc_14(int cell) { ARG_UNUSED(cell); calc_ensure_binary(); calc_tap_eval(); calc_update_display(); }
 
 static void tap_calc_backspace_cb(int cell) {
@@ -479,7 +485,7 @@ static void tap_calc_to_bin(int cell);
 static void tap_calc_to_dec(int cell);
 static void tap_calc_to_page2(int cell);
 
-const struct page_cell calc_cells[] = {
+static const struct page_cell calc_cells[] = {
     {0, 0, 1, 3, "0", NULL, COLOR_ACCENT, ACT_GO_VIEW, .arg.view = &view_home},
     {0, 3, 1, 1, LV_SYMBOL_BACKSPACE, NULL, COLOR_RED, ACT_CUSTOM, .arg.func = tap_calc_backspace_cb},
 
@@ -504,7 +510,7 @@ const struct page_cell calc_cells[] = {
     {4, 3, 1, 1, "/", NULL, COLOR_ACCENT, ACT_CUSTOM_VAL, .arg.custom = {tap_calc_char, '/'}},
     {0}};
 
-const struct page_cell calc_cells_alt[] = {
+static const struct page_cell calc_cells_alt[] = {
     {0, 0, 1, 3, "0", NULL, COLOR_ACCENT, ACT_GO_VIEW, .arg.view = &view_home},
     {0, 3, 1, 1, LV_SYMBOL_BACKSPACE, NULL, COLOR_RED, ACT_CUSTOM, .arg.func = tap_calc_backspace_cb},
 
@@ -529,7 +535,7 @@ const struct page_cell calc_cells_alt[] = {
     {4, 3, 1, 1, ".", NULL, COLOR_ACCENT, ACT_CUSTOM, .arg.func = tap_calc_dot},
     {0}};
 
-const struct page_cell calc_cells_alt2[] = {
+static const struct page_cell calc_cells_alt2[] = {
     {0, 0, 1, 4, "0", NULL, COLOR_ACCENT, ACT_GO_VIEW, .arg.view = &view_home},
 
     {1, 0, 1, 1, "+", NULL, COLOR_ACCENT, ACT_CUSTOM_VAL, .arg.custom = {tap_calc_char, '+'}},

@@ -34,9 +34,6 @@ struct layer_state
   uint8_t index;
 };
 
-/* Bar geometry, re-derived whenever the widget width changes (portrait rotation
- * narrows the meter). Bars keep a 2px gap and shrink to fit; labels re-anchor via
- * their lv_obj_align. Height is fixed (not re-derived like width). */
 #define WPM_BAR_GAP 2
 #define WPM_BAR_HEIGHT 90
 static int geo_width = 260;
@@ -269,8 +266,6 @@ lv_obj_t *zmk_widget_wpm_meter_obj(struct zmk_widget_wpm_meter *widget)
   return widget->obj;
 }
 
-/* Resize the meter (portrait rotation): bars shrink to fit, the peak indicator
- * follows via the shared geometry, labels re-anchor themselves. */
 void zmk_widget_wpm_meter_set_width(struct zmk_widget_wpm_meter *widget, int width)
 {
   geo_width = width;

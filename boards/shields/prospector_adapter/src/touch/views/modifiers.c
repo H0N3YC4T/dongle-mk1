@@ -1,6 +1,5 @@
 /* ------------------------------- MODIFIERS --------------------------------- */
-/* One-shot mods; armed = solid blue fill + black text, applied to the next key
- * sent (send_key). Leaving for NORMAL or SETTINGS clears them (keeps_mods). */
+
 
 #include "../touch_ui.h"
 
@@ -8,6 +7,9 @@ static void tap_mod(int mod) {
     pending_mods ^= mod;
     build_view(cur_view);
 }
+
+static const struct page_cell mod_cells[];
+static const struct page_cell mod_cells_portrait[];
 
 static void build_modifiers(void)
 {

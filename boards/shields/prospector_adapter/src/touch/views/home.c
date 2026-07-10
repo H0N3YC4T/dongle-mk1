@@ -1,6 +1,5 @@
 /* -------------------------------- HOME ------------------------------------ */
-/* 3x3, every screen one tap away (the HUB sub-menu is gone). Cell 7 = the user
- * macro pad (keyboard icon; greyed if the consuming keyboard binds nothing). */
+
 
 #include <zephyr/device.h>
 #include "../touch_ui.h"
@@ -15,9 +14,7 @@ static void tap_home_pad(int cell)
 
 
 
-/* Long-press shortcuts on HOME: hold 123 -> calculator, hold settings -> the
- * dongle's bootloader (fires ZMK's built-in reset behavior by its DT name, so it
- * does the right thing for whatever bootloader the board is configured with). */
+
 static void hold_home(int cell)
 {
   if (cell == 2)

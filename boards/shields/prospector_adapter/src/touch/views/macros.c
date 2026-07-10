@@ -1,13 +1,12 @@
 /* --------------------------------- MACROS ---------------------------------- */
-/* User macro pad: up to 5 buttons bound in the consuming keyboard's keymap via a
- * zmk,prospector-touch-pad node (standard binding syntax -- &kp, &bt, macros).
- * Binding order = cells 0,2,3,4,5. Unbound cells draw greyed, tap = no-op.
- * Faces match the keyboard repo's bindings: $_ terminal / LIST task manager /
- * WIFI browser / EYE_CLOSE show desktop / EDIT notes. */
+
 
 #include "../touch_ui.h"
 
 
+
+static const struct page_cell pad_cells[];
+static const struct page_cell pad_cells_portrait[];
 
 static void build_pad(void)
 {

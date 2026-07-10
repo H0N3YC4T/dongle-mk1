@@ -1,7 +1,3 @@
-/* The registry of all touch UI views and the build_view() dispatcher.
- * Per-view renderers (build_*) and tap handlers (tap_*) live in views/ --
- * one file per view -- and are declared in touch_ui.h. Navigation
- * (touch_nav.c) only ever consults the registry below. */
 
 #include <zephyr/device.h>
 #include "touch_ui.h"
@@ -107,7 +103,7 @@ void tap_declarative(int cell)
   }
 }
 
-    /* ----------------------------- dispatcher ---------------------------------- */
+/* ----------------------------- dispatcher ---------------------------------- */
 
 lv_obj_t *cur_view_btns[32];
 
@@ -149,9 +145,6 @@ void build_view(const struct view_def *d)
   }
 
 
-  /* Armed one-shot modifier -> blue frame visible from any key page. Drawn as its
-   * own rounded-rect child (radius = glass) so it follows the screen's physical
-   * corners. Cleaned up with the rest of the view. */
   if (pending_mods)
   {
     lv_obj_t *frame = lv_obj_create(touch_overlay);

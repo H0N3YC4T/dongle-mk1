@@ -1,6 +1,5 @@
 /* -------------------------------- MEDIA ------------------------------------ */
-/* Volume / transport, one macro per cell (defined in the consuming keyboard's
- * overlay). Cell 1 = back to HOME. */
+
 
 #include "../touch_ui.h"
 

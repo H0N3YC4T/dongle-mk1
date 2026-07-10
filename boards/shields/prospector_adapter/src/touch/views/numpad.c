@@ -1,8 +1,5 @@
 /* -------------------------------- NUMPAD ----------------------------------- */
-/* 4x4 calc grid; operators (blue) in column 3; cell 12 = Back, 14 = Enter. Keys
- * are true HID Keypad codes (KP_*), not the main-row digits/symbols -- so this
- * behaves as an actual numpad for apps/fields that distinguish the two (numeric
- * entry, spreadsheets, RDP), not just a second way to type "7890". Back -> HOME. */
+
 
 #include "../touch_ui.h"
 

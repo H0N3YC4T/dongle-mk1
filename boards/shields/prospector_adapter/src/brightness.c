@@ -8,21 +8,11 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(als, 4);
 
-/* SETTINGS_BRIGHT_MIN/MAX -- the clamp below and the settings UI's end-stop
- * greying share these (single source; src/touch is on the include path). */
 #include "touch_ui.h"
 
-/* Bind the DISPLAY's pwm-leds controller SPECIFICALLY, via disp_bl's parent node.
- * This build defines a SECOND pwm-leds node (the keyboard-backlight relay
- * placeholder in prototype_mk1_waveshare.overlay), which made the old
- * DEVICE_DT_GET_ONE(pwm_leds) ambiguous -- it could bind the placeholder (an
- * unconnected pad) instead of the display backlight, so brightness went nowhere. */
 static const struct device *pwm_leds_dev = DEVICE_DT_GET(DT_PARENT(DT_NODELABEL(disp_bl)));
 #define DISP_BL DT_NODE_CHILD_IDX(DT_NODELABEL(disp_bl))
 
-/* Public: step the DISPLAY backlight (0-100%) for the touch settings screen.
- * Only affects the dongle's own display (disp_bl) -- NOT the keyboard &bl relay,
- * which is a separate PWM channel on the halves. */
 static uint8_t touch_brightness = CONFIG_PROSPECTOR_FIXED_BRIGHTNESS;
 void prospector_brightness_step(int delta) {
     int b = (int)touch_brightness + delta;
@@ -35,7 +25,6 @@ void prospector_brightness_step(int delta) {
     }
 }
 
-/* Current display brightness % -- for the touch Settings on-screen readout. */
 uint8_t prospector_brightness_get(void) {
     return touch_brightness;
 }
@@ -80,10 +69,8 @@ uint8_t map_light_to_pwm(int32_t sensor_reading) {
     return pwm_value;
 }
 
-/* Fade the display to `target`, one FADE_STEP per sleep, clamped to the PWM
- * bounds. Signed maths on purpose -- stepping the uint8_t directly underflows. */
 void bl_fade(uint8_t source, uint8_t target) {
-    ARG_UNUSED(source); /* fade always starts from the live current_brightness */
+    ARG_UNUSED(source);
     int level = current_brightness;
     int step = (target > level) ? FADE_STEP : -FADE_STEP;
 
@@ -104,7 +91,7 @@ void bl_fade(uint8_t source, uint8_t target) {
     }
 }
 
-extern void als_thread(void *d0, void *d1, void *d2) {
+void als_thread(void *d0, void *d1, void *d2) {
     ARG_UNUSED(d0);
     ARG_UNUSED(d1);
     ARG_UNUSED(d2);
@@ -115,7 +102,7 @@ extern void als_thread(void *d0, void *d1, void *d2) {
 
     dev = DEVICE_DT_GET_ONE(avago_apds9960);
     if (!device_is_ready(dev)) {
-        printk("sensor: device not ready.\n");
+        LOG_ERR("sensor: device not ready.");
         return;
     }
 

@@ -97,8 +97,6 @@ static lv_obj_t *create_separator(lv_obj_t *parent) {
 static lv_obj_t *create_mod_label(lv_obj_t *parent, const char *text) {
     lv_obj_t *label = lv_label_create(parent);
     lv_label_set_text(label, text);
-    /* No custom font ships smaller than FG_Medium_20; lv_font_montserrat_16 (an
-     * LVGL built-in, enabled in prospector_adapter.conf) is the smaller option. */
     lv_obj_set_style_text_font(label, &lv_font_montserrat_16, LV_PART_MAIN);
     lv_obj_set_style_text_color(label, lv_color_hex(COLOR_MOD_INACTIVE), LV_PART_MAIN);
     return label;
@@ -106,12 +104,6 @@ static lv_obj_t *create_mod_label(lv_obj_t *parent, const char *text) {
 
 int zmk_widget_modifier_indicator_init(struct zmk_widget_modifier_indicator *widget, lv_obj_t *parent) {
     widget->obj = lv_obj_create(parent);
-    /* LV_FLEX_ALIGN_SPACE_BETWEEN stretches the gaps between the 4 labels/3
-     * separators to fill this whole declared width, so this number IS the row's
-     * total footprint (the margins between mod keys), not just a bounding box.
-     * 230 is the landscape size; status_screen_reflow() narrows it for portrait
-     * via zmk_widget_modifier_indicator_set_width(), where it was uncomfortably
-     * close to the screen edge (5px each side at 230, centred). */
     lv_obj_set_size(widget->obj, 230, 24);
     lv_obj_set_style_bg_opa(widget->obj, LV_OPA_TRANSP, LV_PART_MAIN);
     lv_obj_set_style_border_width(widget->obj, 0, LV_PART_MAIN);

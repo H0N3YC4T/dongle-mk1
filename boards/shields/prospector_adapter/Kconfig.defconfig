@@ -10,8 +10,6 @@ choice ZMK_DISPLAY_STATUS_SCREEN
     default ZMK_DISPLAY_STATUS_SCREEN_CUSTOM
 endchoice
 
-# Formerly src/layouts/operator/Kconfig.defconfig (the operator layout is the only
-# one this module carries, so the layouts/ tree was flattened into src/).
 if PROSPECTOR_STATUS_SCREEN_OPERATOR
 
 config ZMK_DISPLAY_STATUS_SCREEN_CUSTOM

@@ -1,6 +1,5 @@
 /* -------------------------------- SYMBOLS ---------------------------------- */
-/* Paginated 3x3 key screens: 7 keys per page; cell 1 = Back (page 0) / Prev,
- * cell 7 = Next. Key sends go through send_key (applies any armed one-shot mod). */
+
 
 #include "../touch_ui.h"
 

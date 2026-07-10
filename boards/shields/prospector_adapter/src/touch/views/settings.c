@@ -1,9 +1,5 @@
 /* ------------------------------- SETTINGS --------------------------------- */
-/* 3x3. One setting per outer column: left = trackpad sensitivity, right = display
- * brightness. Rows 0/1 = + (green) and - (yellow), greyed at the end stop; row 2 =
- * icon + value readouts (purple, not keys) splitting the row 50/50. Middle: back /
- * rotate -- the rotate button is the only blue on the screen, so it stands out.
- * (No sun glyph exists in LVGL's built-in set; eye-open marks brightness.) */
+
 
 #include "../touch_ui.h"
 

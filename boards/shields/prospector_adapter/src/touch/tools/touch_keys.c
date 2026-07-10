@@ -1,13 +1,3 @@
-/* Key/behaviour sending for the touch UI -- the thread-safety boundary.
- *
- * Sends are marshalled onto the system workqueue. ZMK's HID and endpoint code has
- * no cross-thread locking: zmk_behavior_invoke_binding() writes the shared keyboard
- * report on whichever thread calls it, so invoking from the LVGL display thread
- * races ZMK's own event processing and corrupts the report. Note that
- * zmk_behavior_queue_add() is not a thread hop by itself -- with wait=0 it runs the
- * behavior synchronously on the caller (see zmk's app/src/behavior_queue.c). The hop
- * has to come from our own k_work_submit(); queue_add is then called inside the
- * handler, where it also serialises with any in-flight delayed macro. */
 
 #include <zmk/behavior.h>
 #include <zmk/behavior_queue.h>
@@ -35,8 +25,6 @@ static void key_work_handler(struct k_work *work) {
                                          .param2 = pk.param2};
         struct zmk_behavior_binding_event ev = {.layer = 0, .position = 0x7000,
                                                 .timestamp = k_uptime_get()};
-        /* Runs on the system workqueue thread (this handler's context), so queue_add's
-         * synchronous fast-path is safe here -- it is NOT the display thread. */
         zmk_behavior_queue_add(&ev, b, true, 0);
         zmk_behavior_queue_add(&ev, b, false, 0);
         atomic_inc(&key_ring_tail);
@@ -62,9 +50,6 @@ void fire_macro(const char *dev) {
     queue_key(dev, 0, 0);
 }
 
-/* PAD buttons: keymap-syntax bindings (&kp, &bt, macros, ...) from the consuming
- * keyboard's zmk,prospector-touch-pad node. One-shot mods do NOT apply here (they
- * ride inside send_key's param encoding); bake mods into the binding instead. */
 #if DT_HAS_COMPAT_STATUS_OKAY(zmk_prospector_touch_pad)
 #define PAD_NODE DT_INST(0, zmk_prospector_touch_pad)
 static const struct zmk_behavior_binding pad_bindings[] = {

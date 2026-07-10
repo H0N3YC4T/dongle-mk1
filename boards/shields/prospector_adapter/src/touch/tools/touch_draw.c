@@ -1,17 +1,10 @@
-/* Grid geometry + button draawing for the touch UI, */
+/* Grid geometry + button drawing for the touch UI, */
 
 #include "../touch_ui.h"
 
 int grid_rows = 2; /* rows in the current screen's grid (2 / 3 / 4) */
 int grid_cols = 3; /* cols in the current screen's grid (2 / 3 / 4) */
 
-/* 3x3 paginated layout: 7 key cells (all but 1 = nav-top and 7 = nav-bottom). */
-const int key_cells[KEYS_PER_PAGE] = {0, 2, 3, 4, 5, 6, 8};
-
-/* One button: `pct`% of its cell width (centred), rounded, charcoal fill, accent
- * border+text; `filled` inverts (solid accent, black text) for armed/on states.
- * The grid lives inside a UI_PAD safe inset so corner buttons clear the glass arcs.
- * draw_cell() is the outline 80% default; wider variants give long labels room. */
 static lv_obj_t *make_btn(int row, int col, int w_cells, int h_cells, uint32_t accent, int pct, bool filled)
 {
   lv_coord_t cwc = (scr_w() - 2 * UI_PAD) / grid_cols;
@@ -71,9 +64,6 @@ lv_obj_t *draw_cell_ext(int row, int col, int w_cells, int h_cells, const char *
   return draw_cell_impl(row, col, w_cells, h_cells, text, accent, 80, filled);
 }
 
-/* Icon-faced button: `icon` is a weak symbol from src/icons/ (see its README) --
- * NULL when the asset file is absent, in which case the text fallback draws
- * instead. Icons are recolored to the accent, so draw them white-on-transparent. */
 lv_obj_t *draw_cell_icon_ext(int row, int col, int w_cells, int h_cells, const lv_image_dsc_t *icon, const char *fallback,
                         uint32_t accent)
 {

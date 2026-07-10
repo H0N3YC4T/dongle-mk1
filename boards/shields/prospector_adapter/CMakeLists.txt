@@ -18,14 +18,7 @@ if(CONFIG_SHIELD_PROSPECTOR_ADAPTER)
     zephyr_library_sources(src/modifier_order.c)
   endif()
 
-  # Touch UI (see src/touch/touch_ui.h):
-  #   touch_main.c        -- view registry + build_view() dispatcher
-  #   tools/touch_draw.c  -- grid geometry + button drawing
-  #   tools/touch_input.c -- CST816S gesture driver (gated on cst816s DT node)
-  #   tools/touch_keys.c  -- workqueue key/macro sending (thread-safety boundary)
-  #   tools/touch_nav.c   -- tap routing, view state, idle timeout
-  #   tools/touch_rotation.c -- 4-step display rotation
-  #   views/              -- per-view renderers (one file per view)
+  # Touch UI
   file(GLOB touch_sources src/touch/*.c)
   file(GLOB tool_sources src/touch/tools/*.c)
   file(GLOB view_sources src/touch/views/*.c)
@@ -40,8 +33,7 @@ if(CONFIG_SHIELD_PROSPECTOR_ADAPTER)
   file(GLOB font_sources src/fonts/*.c)
   zephyr_library_sources(${font_sources})
 
-  # Optional custom icons (weak symbols -- absent files just mean text fallbacks).
-  # Guarded: an empty glob would call zephyr_library_sources() with no args = error.
+  # Optional custom icons
   file(GLOB icon_sources src/icons/*.c)
   if(icon_sources)
     zephyr_library_sources(${icon_sources})
