@@ -191,6 +191,7 @@ static void touch_cb(struct input_event *evt, void *user_data) {
                         k_work_cancel_delayable(&tp_tap_work);
                         pending_sx = tp_start_sx;
                         pending_sy = tp_start_sy;
+                        pending_hold = false; /* was stale from the previous menu tap */
                         k_work_submit(&touch_work);
                     } else if (tp_first_tap) {
                         /* second tap within the window = right click */
@@ -216,9 +217,8 @@ static void touch_cb(struct input_event *evt, void *user_data) {
                 pending_sx = panel_to_screen_x(cur_x, cur_y);
                 pending_sy = panel_to_screen_y(cur_x, cur_y);
                 pending_hold = (k_uptime_get() - down_ms) >= TOUCH_HOLD_MS;
-                LOG_INF("tap raw(%d,%d) screen(%d,%d) -> cell %d%s",
-                        cur_x, cur_y, pending_sx, pending_sy,
-                        touch_cell(pending_sx, pending_sy), pending_hold ? " (hold)" : "");
+                LOG_INF("tap raw(%d,%d) screen(%d,%d)%s", cur_x, cur_y, pending_sx,
+                        pending_sy, pending_hold ? " (hold)" : "");
 
                 k_work_submit(&touch_work);
             }
