@@ -4,7 +4,7 @@ Everything this module adds on top of carrefinho/prospector-zmk-module (from whi
 extracted 2026-07-06, having lived as a fork branch until then), in one place. This file
 carries the detailed rationale and history that the code comments deliberately don't, so future
 edits have full context. Companion docs live in the keyboard repo
-(Keyboard-Prototype_Mk1: docs/information.md + docs/issues.md).
+(prototype-mk1: docs/information.md; the old issues.md is retired, see its git history).
 
 Consumed by the keyboard repo via an exact-SHA pin in `config/west.yml` — every change here
 needs a commit + push + pin bump there. Hardware: Seeed XIAO nRF52840 + Waveshare 1.69" LCD
