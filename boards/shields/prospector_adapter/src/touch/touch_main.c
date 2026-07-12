@@ -8,7 +8,6 @@ static const struct page_cell *get_active_cells(const struct view_def *d)
 {
   if (!d) return NULL;
   const struct page_cell *active_cells = d->cells;
-  /* pages[] holds pages 2..num_pages, so its last valid index is num_pages - 2 */
   bool paged = cur_page > 0 && (cur_page - 1) < d->num_pages - 1;
   if (paged && d->pages != NULL) {
       active_cells = d->pages[cur_page - 1];
@@ -24,7 +23,6 @@ static const struct page_cell *get_active_cells(const struct view_def *d)
   return active_cells;
 }
 
-/* Span-aware hit test: the current view's cell covering grid cell `cell`. */
 static const struct page_cell *find_cell_at(int cell)
 {
   const struct page_cell *active_cells = get_active_cells(cur_view);

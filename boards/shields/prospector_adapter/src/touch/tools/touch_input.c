@@ -40,8 +40,7 @@ LOG_MODULE_REGISTER(mk1_touch, LOG_LEVEL_INF);
 #define SCREEN_W 280
 #define SCREEN_H 240
 
-/* rot 0 = the hardware-calibrated baseline; if the portraits come out swapped on
- * hardware, swap cases 1/3 here AND rot_to_panel[]'s middle entries. */
+/* rot 0 = calibrated baseline; portraits swapped? swap cases 1/3 + rot_to_panel */
 static uint8_t tp_rot;
 void prospector_touch_set_orientation(int rot) { tp_rot = (uint8_t)(rot & 3); }
 static inline int32_t panel_to_screen_x(int32_t tx, int32_t ty) {

@@ -9,7 +9,6 @@ static void tap_sens(int delta) { prospector_touchpad_sens_step(delta); build_se
 static void tap_bright(int delta) { prospector_brightness_step(delta); build_settings(); }
 static void tap_rotate(int cell) { ARG_UNUSED(cell); ui_rot = (ui_rot + 1) & 3; settings_apply_rotation(); }
 
-/* cur_view_btns indexes of the mutated cells (order within settings_cells) */
 #define SET_BTN_SENS_PLUS 0
 #define SET_BTN_BRIGHT_PLUS 2
 #define SET_BTN_SENS_MINUS 3

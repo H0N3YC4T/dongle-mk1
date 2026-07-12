@@ -173,9 +173,7 @@ static double parse_bitwise_or(void) {
 
 static double parse_expr(void) { return parse_bitwise_or(); }
 
-/* Parse the whole expression. Anything the grammar didn't consume (e.g. a lone
- * '<' from a half-deleted shift) flags an error instead of silently returning
- * the partial result. */
+/* whole-expression parse; unconsumed input = error, not a partial result */
 static double calc_run_parser(void) {
   eval_okay = true;
   calc_cursor = &calc_expr[0];
@@ -214,7 +212,7 @@ static void calc_tap_backspace(void) {
       calc_expr[n - 1] = '\0';
       if (deleted == '(') bracket_open = false;
       else if (deleted == ')') bracket_open = true;
-      /* shifts are two chars ('<<' / '>>') -- delete them as one keystroke */
+      /* delete a two-char shift as one keystroke */
       else if ((deleted == '<' || deleted == '>') && n >= 2 &&
                calc_expr[n - 2] == deleted) {
         calc_expr[n - 2] = '\0';
@@ -341,7 +339,6 @@ static void calc_ensure_binary(void) {
 /* ========================================================================== */
 /* UI & LIFECYCLE HANDLERS                                                    */
 /* ========================================================================== */
-/* Fresh state on every entry, so leaving the calculator always resets it. */
 static void calc_on_enter(void) {
   calc_expr[0] = '\0';
   result_shown = false;
@@ -351,7 +348,6 @@ static void calc_on_enter(void) {
   bin_word_size = 8;
 }
 
-/* cur_view_btns indexes of the two mutated cells (order within the cell tables) */
 #define CALC_BTN_DISPLAY 0
 #define CALC_BTN_WORDSIZE 14
 
@@ -381,7 +377,7 @@ static void tap_calc_char(int ch) {
   calc_update_display();
 }
 
-/* Shift buttons: the parser reads << / >> as two chars, so one tap pushes both. */
+/* parser reads shifts as two chars -> one tap pushes both */
 static void tap_calc_shift(int ch) {
   calc_ensure_binary();
   calc_push((char)ch);
@@ -465,9 +461,7 @@ static void tap_calc_ws(int cell) {
     double r = calc_run_parser();
     if (eval_okay) {
       calc_print_result(r);
-      /* the expression is now binary-formatted; without this, the next
-       * calc_ensure_binary() would re-convert it as if it were decimal */
-      bin_converted = true;
+      bin_converted = true; /* expr is binary now; don't re-convert as decimal */
     } else {
       snprintf(calc_expr, sizeof(calc_expr), "Error");
     }
