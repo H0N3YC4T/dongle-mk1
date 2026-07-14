@@ -483,7 +483,7 @@ static void tap_calc_to_page2(int cell);
 
 static const struct page_cell calc_cells[] = {
     {0, 0, 1, 3, "0", NULL, COLOR_ACCENT, ACT_GO_VIEW, .arg.view = &view_home},
-    {0, 3, 1, 1, LV_SYMBOL_BACKSPACE, NULL, COLOR_RED, ACT_CUSTOM, .arg.func = tap_calc_backspace_cb},
+    {0, 3, 1, 1, NULL, &icon_backspace, COLOR_RED, ACT_CUSTOM, .arg.func = tap_calc_backspace_cb},
 
     {1, 0, 1, 1, "7", NULL, COLOR_PRIMARY, ACT_CUSTOM_VAL, .arg.custom = {tap_calc_char, '7'}},
     {1, 1, 1, 1, "8", NULL, COLOR_PRIMARY, ACT_CUSTOM_VAL, .arg.custom = {tap_calc_char, '8'}},
@@ -500,7 +500,7 @@ static const struct page_cell calc_cells[] = {
     {3, 2, 1, 1, "3", NULL, COLOR_PRIMARY, ACT_CUSTOM_VAL, .arg.custom = {tap_calc_char, '3'}},
     {3, 3, 1, 1, "*", NULL, COLOR_ACCENT, ACT_CUSTOM_VAL, .arg.custom = {tap_calc_char, '*'}},
 
-    {4, 0, 1, 1, LV_SYMBOL_NEXT, NULL, COLOR_ALERT, ACT_CUSTOM, .arg.func = tap_calc_to_page2},
+    {4, 0, 1, 1, NULL, &icon_right, COLOR_ALERT, ACT_CUSTOM, .arg.func = tap_calc_to_page2},
     {4, 1, 1, 1, "0", NULL, COLOR_PRIMARY, ACT_CUSTOM_VAL, .arg.custom = {tap_calc_char, '0'}},
     {4, 2, 1, 1, "=", NULL, COLOR_GREEN, ACT_CUSTOM, .arg.func = tap_calc_equals},
     {4, 3, 1, 1, "/", NULL, COLOR_ACCENT, ACT_CUSTOM_VAL, .arg.custom = {tap_calc_char, '/'}},
@@ -508,7 +508,7 @@ static const struct page_cell calc_cells[] = {
 
 static const struct page_cell calc_cells_alt[] = {
     {0, 0, 1, 3, "0", NULL, COLOR_ACCENT, ACT_GO_VIEW, .arg.view = &view_home},
-    {0, 3, 1, 1, LV_SYMBOL_BACKSPACE, NULL, COLOR_RED, ACT_CUSTOM, .arg.func = tap_calc_backspace_cb},
+    {0, 3, 1, 1, NULL, &icon_backspace, COLOR_RED, ACT_CUSTOM, .arg.func = tap_calc_backspace_cb},
 
     {1, 0, 1, 1, "7", NULL, COLOR_PRIMARY, ACT_CUSTOM_VAL, .arg.custom = {tap_calc_char, '7'}},
     {1, 1, 1, 1, "8", NULL, COLOR_PRIMARY, ACT_CUSTOM_VAL, .arg.custom = {tap_calc_char, '8'}},
@@ -525,9 +525,9 @@ static const struct page_cell calc_cells_alt[] = {
     {3, 2, 1, 1, "3", NULL, COLOR_PRIMARY, ACT_CUSTOM_VAL, .arg.custom = {tap_calc_char, '3'}},
     {3, 3, 1, 1, "!", NULL, COLOR_ACCENT, ACT_CUSTOM, .arg.func = tap_calc_factorial},
 
-    {4, 0, 1, 1, LV_SYMBOL_PREV, NULL, COLOR_ALERT, ACT_CUSTOM, .arg.func = tap_calc_to_dec},
+    {4, 0, 1, 1, NULL, &icon_left, COLOR_ALERT, ACT_CUSTOM, .arg.func = tap_calc_to_dec},
     {4, 1, 1, 1, "0", NULL, COLOR_PRIMARY, ACT_CUSTOM_VAL, .arg.custom = {tap_calc_char, '0'}},
-    {4, 2, 1, 1, LV_SYMBOL_NEXT, NULL, COLOR_ALERT, ACT_CUSTOM, .arg.func = tap_calc_to_bin},
+    {4, 2, 1, 1, NULL, &icon_right, COLOR_ALERT, ACT_CUSTOM, .arg.func = tap_calc_to_bin},
     {4, 3, 1, 1, ".", NULL, COLOR_ACCENT, ACT_CUSTOM, .arg.func = tap_calc_dot},
     {0}};
 
@@ -549,9 +549,9 @@ static const struct page_cell calc_cells_alt2[] = {
     {3, 2, 1, 1, "~", NULL, COLOR_ACCENT, ACT_CUSTOM_VAL, .arg.custom = {tap_calc_char, '~'}},
     {3, 3, 1, 1, "^", NULL, COLOR_ACCENT, ACT_CUSTOM_VAL, .arg.custom = {tap_calc_char, '^'}},
 
-    {4, 0, 1, 1, LV_SYMBOL_PREV, NULL, COLOR_ALERT, ACT_CUSTOM, .arg.func = tap_calc_to_dec},
+    {4, 0, 1, 1, NULL, &icon_left, COLOR_ALERT, ACT_CUSTOM, .arg.func = tap_calc_to_dec},
     {4, 1, 1, 1, "WS", NULL, COLOR_ALERT, ACT_CUSTOM, .arg.func = tap_calc_ws},
-    {4, 2, 1, 1, LV_SYMBOL_BACKSPACE, NULL, COLOR_RED, ACT_CUSTOM, .arg.func = tap_calc_backspace_cb},
+    {4, 2, 1, 1, NULL, &icon_backspace, COLOR_RED, ACT_CUSTOM, .arg.func = tap_calc_backspace_cb},
     {4, 3, 1, 1, "=", NULL, COLOR_GREEN, ACT_CUSTOM, .arg.func = tap_calc_equals},
     {0}};
 

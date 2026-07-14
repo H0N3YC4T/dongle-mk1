@@ -96,6 +96,39 @@ extern const lv_image_dsc_t icon_modkeys __weak;
 extern const lv_image_dsc_t icon_numpad __weak;
 extern const lv_image_dsc_t icon_symbols __weak;
 extern const lv_image_dsc_t icon_fkeys __weak;
+extern const lv_image_dsc_t icon_alt __weak;
+extern const lv_image_dsc_t icon_audio __weak;
+extern const lv_image_dsc_t icon_backspace __weak;
+extern const lv_image_dsc_t icon_bright __weak;
+extern const lv_image_dsc_t icon_browser __weak;
+extern const lv_image_dsc_t icon_close __weak;
+extern const lv_image_dsc_t icon_copy __weak;
+extern const lv_image_dsc_t icon_cut __weak;
+extern const lv_image_dsc_t icon_desktop __weak;
+extern const lv_image_dsc_t icon_down __weak;
+extern const lv_image_dsc_t icon_gui __weak;
+extern const lv_image_dsc_t icon_keyboard __weak;
+extern const lv_image_dsc_t icon_left __weak;
+extern const lv_image_dsc_t icon_list __weak;
+extern const lv_image_dsc_t icon_minus __weak;
+extern const lv_image_dsc_t icon_newline __weak;
+extern const lv_image_dsc_t icon_newline_32 __weak;
+extern const lv_image_dsc_t icon_next __weak;
+extern const lv_image_dsc_t icon_notes __weak;
+extern const lv_image_dsc_t icon_paste __weak;
+extern const lv_image_dsc_t icon_play __weak;
+extern const lv_image_dsc_t icon_plus __weak;
+extern const lv_image_dsc_t icon_prev __weak;
+extern const lv_image_dsc_t icon_right __weak;
+extern const lv_image_dsc_t icon_rotate __weak;
+extern const lv_image_dsc_t icon_sens __weak;
+extern const lv_image_dsc_t icon_settings __weak;
+extern const lv_image_dsc_t icon_shift __weak;
+extern const lv_image_dsc_t icon_terminal __weak;
+extern const lv_image_dsc_t icon_up __weak;
+extern const lv_image_dsc_t icon_up_32 __weak;
+extern const lv_image_dsc_t icon_voldown __weak;
+extern const lv_image_dsc_t icon_volup __weak;
 
 
 /* ------------------------------- functions -------------------------------- */
@@ -104,6 +137,7 @@ lv_obj_t *draw_cell(int row, int col, int w_cells, const char *text, uint32_t ac
 lv_obj_t *draw_cell_ext(int row, int col, int w_cells, int h_cells, const char *text, uint32_t accent, bool filled);
 lv_obj_t *draw_cell_icon(int row, int col, const lv_image_dsc_t *icon, const char *fallback, uint32_t accent);
 lv_obj_t *draw_cell_icon_ext(int row, int col, int w_cells, int h_cells, const lv_image_dsc_t *icon, const char *fallback, uint32_t accent);
+void cell_child_set_color(lv_obj_t *btn, uint32_t color_hex); /* label text or image recolor */
 
 /* touch_main.c */
 void build_view(const struct view_def *v);

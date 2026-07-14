@@ -21,29 +21,28 @@ static void build_modifiers(void)
           uint32_t color = armed ? COLOR_ACCENT : COLOR_PRIMARY;
           lv_obj_set_style_bg_color(cur_view_btns[i], lv_color_hex(armed ? color : COLOR_CHARCOAL), LV_PART_MAIN);
           lv_obj_set_style_border_color(cur_view_btns[i], lv_color_hex(color), LV_PART_MAIN);
-          lv_obj_t *l = lv_obj_get_child(cur_view_btns[i], 0);
-          if (l) lv_obj_set_style_text_color(l, lv_color_hex(armed ? COLOR_BACKGROUND : color), LV_PART_MAIN);
+          cell_child_set_color(cur_view_btns[i], armed ? COLOR_BACKGROUND : color);
       }
   }
 }
 
 static const struct page_cell mod_cells[] = {
     {0, 0, 1, 1, "CTRL", NULL, COLOR_PRIMARY, ACT_CUSTOM_VAL, .arg.custom = {tap_mod, MOD_LCTL}},
-    {0, 1, 1, 1, LV_SYMBOL_UP, NULL, COLOR_RED, ACT_GO_VIEW, .arg.view = &view_home},
-    {0, 2, 1, 1, "SHFT", NULL, COLOR_PRIMARY, ACT_CUSTOM_VAL, .arg.custom = {tap_mod, MOD_LSFT}},
-    {1, 0, 1, 1, "ALT", NULL, COLOR_PRIMARY, ACT_CUSTOM_VAL, .arg.custom = {tap_mod, MOD_LALT}},
+    {0, 1, 1, 1, NULL, &icon_up, COLOR_RED, ACT_GO_VIEW, .arg.view = &view_home},
+    {0, 2, 1, 1, NULL, &icon_shift, COLOR_PRIMARY, ACT_CUSTOM_VAL, .arg.custom = {tap_mod, MOD_LSFT}},
+    {1, 0, 1, 1, NULL, &icon_alt, COLOR_PRIMARY, ACT_CUSTOM_VAL, .arg.custom = {tap_mod, MOD_LALT}},
     {1, 1, 1, 1, NULL, NULL, COLOR_PRIMARY, ACT_NONE}, // Empty
-    {1, 2, 1, 1, "GUI", NULL, COLOR_PRIMARY, ACT_CUSTOM_VAL, .arg.custom = {tap_mod, MOD_LGUI}},
+    {1, 2, 1, 1, NULL, &icon_gui, COLOR_PRIMARY, ACT_CUSTOM_VAL, .arg.custom = {tap_mod, MOD_LGUI}},
     {0}
 };
 
 static const struct page_cell mod_cells_portrait[] = {
     {0, 0, 1, 1, "CTRL", NULL, COLOR_PRIMARY, ACT_CUSTOM_VAL, .arg.custom = {tap_mod, MOD_LCTL}},
-    {0, 1, 1, 1, "SHFT", NULL, COLOR_PRIMARY, ACT_CUSTOM_VAL, .arg.custom = {tap_mod, MOD_LSFT}},
-    {1, 0, 1, 1, LV_SYMBOL_UP, NULL, COLOR_RED, ACT_GO_VIEW, .arg.view = &view_home},
+    {0, 1, 1, 1, NULL, &icon_shift, COLOR_PRIMARY, ACT_CUSTOM_VAL, .arg.custom = {tap_mod, MOD_LSFT}},
+    {1, 0, 1, 1, NULL, &icon_up, COLOR_RED, ACT_GO_VIEW, .arg.view = &view_home},
     {1, 1, 1, 1, NULL, NULL, COLOR_PRIMARY, ACT_NONE}, // Empty
-    {2, 0, 1, 1, "ALT", NULL, COLOR_PRIMARY, ACT_CUSTOM_VAL, .arg.custom = {tap_mod, MOD_LALT}},
-    {2, 1, 1, 1, "GUI", NULL, COLOR_PRIMARY, ACT_CUSTOM_VAL, .arg.custom = {tap_mod, MOD_LGUI}},
+    {2, 0, 1, 1, NULL, &icon_alt, COLOR_PRIMARY, ACT_CUSTOM_VAL, .arg.custom = {tap_mod, MOD_LALT}},
+    {2, 1, 1, 1, NULL, &icon_gui, COLOR_PRIMARY, ACT_CUSTOM_VAL, .arg.custom = {tap_mod, MOD_LGUI}},
     {0}
 };
 

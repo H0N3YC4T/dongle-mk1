@@ -93,3 +93,26 @@ lv_obj_t *draw_cell_icon(int row, int col, const lv_image_dsc_t *icon, const cha
 {
   return draw_cell_icon_ext(row, col, 1, 1, icon, fallback, accent);
 }
+
+/* recolor a cell's first child whether it is a text label or an icon image */
+void cell_child_set_color(lv_obj_t *btn, uint32_t color_hex)
+{
+  if (btn == NULL)
+  {
+    return;
+  }
+  lv_obj_t *ch = lv_obj_get_child(btn, 0);
+  if (ch == NULL)
+  {
+    return;
+  }
+  if (lv_obj_check_type(ch, &lv_image_class))
+  {
+    lv_obj_set_style_image_recolor(ch, lv_color_hex(color_hex), LV_PART_MAIN);
+    lv_obj_set_style_image_recolor_opa(ch, LV_OPA_COVER, LV_PART_MAIN);
+  }
+  else if (lv_obj_check_type(ch, &lv_label_class))
+  {
+    lv_obj_set_style_text_color(ch, lv_color_hex(color_hex), LV_PART_MAIN);
+  }
+}

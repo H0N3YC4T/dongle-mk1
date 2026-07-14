@@ -25,12 +25,12 @@ static void build_trackpad(void)
     lv_obj_set_style_radius(lane, 0, LV_PART_MAIN);
     lv_obj_set_style_pad_all(lane, 0, LV_PART_MAIN);
   }
-  lv_obj_t *ex = lv_label_create(touch_overlay);
+  lv_obj_t *ex = lv_image_create(touch_overlay);
   if (ex != NULL)
   {
-    lv_label_set_text(ex, LV_SYMBOL_CLOSE);
-    lv_obj_set_style_text_font(ex, &lv_font_montserrat_20, LV_PART_MAIN);
-    lv_obj_set_style_text_color(ex, lv_color_hex(COLOR_RED), LV_PART_MAIN);
+    lv_image_set_src(ex, &icon_close);
+    lv_obj_set_style_image_recolor(ex, lv_color_hex(COLOR_RED), LV_PART_MAIN);
+    lv_obj_set_style_image_recolor_opa(ex, LV_OPA_COVER, LV_PART_MAIN);
     lv_obj_set_pos(ex, 16, 12);
   }
   lv_obj_t *hint = lv_label_create(touch_overlay);

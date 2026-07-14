@@ -19,9 +19,9 @@ static const struct page_cell numpad_cells[] = {
     {2, 2, 1, 1, "3", NULL, COLOR_PRIMARY, ACT_SEND_KEY, .arg.keycode = KP_N3},
     {2, 3, 1, 1, "*", NULL, COLOR_ACCENT,  ACT_SEND_KEY, .arg.keycode = KP_MULTIPLY},
 
-    {3, 0, 1, 1, LV_SYMBOL_UP, NULL, COLOR_RED, ACT_GO_VIEW, .arg.view = &view_home},
+    {3, 0, 1, 1, NULL, &icon_up_32, COLOR_RED, ACT_GO_VIEW, .arg.view = &view_home},
     {3, 1, 1, 1, "0", NULL, COLOR_PRIMARY, ACT_SEND_KEY, .arg.keycode = KP_N0},
-    {3, 2, 1, 1, LV_SYMBOL_NEW_LINE, NULL, COLOR_ACCENT, ACT_SEND_KEY, .arg.keycode = KP_ENTER},
+    {3, 2, 1, 1, NULL, &icon_newline_32, COLOR_ACCENT, ACT_SEND_KEY, .arg.keycode = KP_ENTER},
     {3, 3, 1, 1, "/", NULL, COLOR_ACCENT,  ACT_SEND_KEY, .arg.keycode = KP_DIVIDE},
 
     {0} /* End of list sentinel */

@@ -1,6 +1,7 @@
 /* ------------------------------- SETTINGS --------------------------------- */
 
 
+#include <stdio.h>
 #include "../touch_ui.h"
 
 static void build_settings(void);
@@ -16,6 +17,42 @@ static void tap_rotate(int cell) { ARG_UNUSED(cell); ui_rot = (ui_rot + 1) & 3; 
 #define SET_BTN_SENS_READOUT 6
 #define SET_BTN_BRIGHT_READOUT 7
 
+/* icon + number readout; buttons are recreated per build_view, but this also
+   runs standalone after taps -> find existing children instead of re-adding */
+static void readout_set(int idx, const lv_image_dsc_t *icon, const char *text)
+{
+  lv_obj_t *btn = cur_view_btns[idx];
+  if (btn == NULL)
+  {
+    return;
+  }
+  lv_obj_t *img = NULL, *lbl = NULL;
+  for (uint32_t i = 0; i < lv_obj_get_child_count(btn); i++)
+  {
+    lv_obj_t *ch = lv_obj_get_child(btn, i);
+    if (lv_obj_check_type(ch, &lv_image_class)) img = ch;
+    else if (lv_obj_check_type(ch, &lv_label_class)) lbl = ch;
+  }
+  if (img == NULL)
+  {
+    img = lv_image_create(btn);
+    if (img != NULL)
+    {
+      lv_image_set_src(img, icon);
+      lv_obj_set_style_image_recolor(img, lv_color_hex(COLOR_PRIMARY), LV_PART_MAIN);
+      lv_obj_set_style_image_recolor_opa(img, LV_OPA_COVER, LV_PART_MAIN);
+      lv_obj_move_to_index(img, 0);
+    }
+    lv_obj_set_flex_flow(btn, LV_FLEX_FLOW_ROW);
+    lv_obj_set_flex_align(btn, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
+    lv_obj_set_style_pad_column(btn, 6, LV_PART_MAIN);
+  }
+  if (lbl != NULL)
+  {
+    lv_label_set_text(lbl, text);
+  }
+}
+
 static void build_settings(void)
 {
   int br = prospector_brightness_get();
@@ -25,8 +62,9 @@ static void build_settings(void)
       if (cur_view_btns[SET_BTN_SENS_PLUS]) lv_obj_set_style_border_color(cur_view_btns[SET_BTN_SENS_PLUS], lv_color_hex(sn >= SETTINGS_SENS_MAX ? COLOR_GREY : COLOR_GREEN), LV_PART_MAIN);
       if (cur_view_btns[SET_BTN_SENS_MINUS]) lv_obj_set_style_border_color(cur_view_btns[SET_BTN_SENS_MINUS], lv_color_hex(sn <= 0 ? COLOR_GREY : COLOR_ALERT), LV_PART_MAIN);
       if (cur_view_btns[SET_BTN_SENS_READOUT]) {
-          lv_obj_t *l = lv_obj_get_child(cur_view_btns[SET_BTN_SENS_READOUT], 0);
-          if (l) lv_label_set_text_fmt(l, LV_SYMBOL_GPS " %d", sn);
+          static char sens_text[8];
+          snprintf(sens_text, sizeof(sens_text), "%d", sn);
+          readout_set(SET_BTN_SENS_READOUT, &icon_sens, sens_text);
       }
   } else {
       if (cur_view_btns[SET_BTN_SENS_PLUS]) lv_obj_add_flag(cur_view_btns[SET_BTN_SENS_PLUS], LV_OBJ_FLAG_HIDDEN);
@@ -37,18 +75,19 @@ static void build_settings(void)
   if (cur_view_btns[SET_BTN_BRIGHT_PLUS]) lv_obj_set_style_border_color(cur_view_btns[SET_BTN_BRIGHT_PLUS], lv_color_hex(br >= SETTINGS_BRIGHT_MAX ? COLOR_GREY : COLOR_GREEN), LV_PART_MAIN);
   if (cur_view_btns[SET_BTN_BRIGHT_MINUS]) lv_obj_set_style_border_color(cur_view_btns[SET_BTN_BRIGHT_MINUS], lv_color_hex(br <= SETTINGS_BRIGHT_MIN ? COLOR_GREY : COLOR_ALERT), LV_PART_MAIN);
   if (cur_view_btns[SET_BTN_BRIGHT_READOUT]) {
-      lv_obj_t *l = lv_obj_get_child(cur_view_btns[SET_BTN_BRIGHT_READOUT], 0);
-      if (l) lv_label_set_text_fmt(l, LV_SYMBOL_EYE_OPEN " %d%%", br);
+      static char bright_text[8];
+      snprintf(bright_text, sizeof(bright_text), "%d%%", br);
+      readout_set(SET_BTN_BRIGHT_READOUT, &icon_bright, bright_text);
   }
 }
 
 static const struct page_cell settings_cells[] = {
-    {0, 0, 1, 2, LV_SYMBOL_PLUS, NULL, COLOR_GREEN, ACT_CUSTOM_VAL, .arg.custom = {tap_sens, +1}},
-    {0, 2, 1, 2, LV_SYMBOL_UP, NULL, COLOR_RED, ACT_GO_VIEW, .arg.view = &view_home},
-    {0, 4, 1, 2, LV_SYMBOL_PLUS, NULL, COLOR_GREEN, ACT_CUSTOM_VAL, .arg.custom = {tap_bright, +BRIGHTNESS_STEP}},
-    {1, 0, 1, 2, LV_SYMBOL_MINUS, NULL, COLOR_ALERT, ACT_CUSTOM_VAL, .arg.custom = {tap_sens, -1}},
-    {1, 2, 1, 2, LV_SYMBOL_REFRESH, NULL, COLOR_ACCENT, ACT_CUSTOM, .arg.func = tap_rotate},
-    {1, 4, 1, 2, LV_SYMBOL_MINUS, NULL, COLOR_ALERT, ACT_CUSTOM_VAL, .arg.custom = {tap_bright, -BRIGHTNESS_STEP}},
+    {0, 0, 1, 2, NULL, &icon_plus, COLOR_GREEN, ACT_CUSTOM_VAL, .arg.custom = {tap_sens, +1}},
+    {0, 2, 1, 2, NULL, &icon_up, COLOR_RED, ACT_GO_VIEW, .arg.view = &view_home},
+    {0, 4, 1, 2, NULL, &icon_plus, COLOR_GREEN, ACT_CUSTOM_VAL, .arg.custom = {tap_bright, +BRIGHTNESS_STEP}},
+    {1, 0, 1, 2, NULL, &icon_minus, COLOR_ALERT, ACT_CUSTOM_VAL, .arg.custom = {tap_sens, -1}},
+    {1, 2, 1, 2, NULL, &icon_rotate, COLOR_ACCENT, ACT_CUSTOM, .arg.func = tap_rotate},
+    {1, 4, 1, 2, NULL, &icon_minus, COLOR_ALERT, ACT_CUSTOM_VAL, .arg.custom = {tap_bright, -BRIGHTNESS_STEP}},
     {2, 0, 1, 3, " ", NULL, COLOR_PRIMARY, ACT_NONE},
     {2, 3, 1, 3, " ", NULL, COLOR_PRIMARY, ACT_NONE},
     {0}
