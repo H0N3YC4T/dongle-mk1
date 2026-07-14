@@ -146,3 +146,4 @@ extern const struct view_def view_modifiers;
 extern const struct view_def view_trackpad;
 extern const struct view_def view_pad;
 extern const struct view_def view_calc;
+extern const struct view_def view_clipboard;

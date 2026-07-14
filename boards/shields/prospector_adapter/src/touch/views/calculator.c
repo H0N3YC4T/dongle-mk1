@@ -355,6 +355,7 @@ static void calc_update_display(void) {
   if (cur_view_btns[CALC_BTN_DISPLAY]) {
     lv_obj_t *l = lv_obj_get_child(cur_view_btns[CALC_BTN_DISPLAY], 0);
     if (l) {
+      lv_obj_set_style_text_font(l, &lv_font_montserrat_16, LV_PART_MAIN);
       lv_label_set_text(l, calc_expr[0] ? calc_expr : "0");
     }
   }
