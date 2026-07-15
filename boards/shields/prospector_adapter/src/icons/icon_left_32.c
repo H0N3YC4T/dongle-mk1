@@ -270,6 +270,6 @@ const lv_image_dsc_t icon_left_32 = {
         .h = 32,
         .stride = 128,
     },
-    .data_size = sizeof(icon_left_32),
-    .data = icon_left_32,
+    .data_size = sizeof(icon_left_32_map),
+    .data = icon_left_32_map,
 };
