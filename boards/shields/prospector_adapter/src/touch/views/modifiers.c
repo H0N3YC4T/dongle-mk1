@@ -58,21 +58,23 @@ static void build_modifiers(void)
 }
 
 static const struct page_cell mod_cells[] = {
-    {0, 0, 1, 1, "CTRL", NULL, THEME_PRIMARY, ACT_CUSTOM_VAL, .arg.custom = {tap_mod, MOD_LCTL}},
-    {0, 1, 1, 1, NULL, &icon_up, THEME_DENY, ACT_GO_VIEW, .arg.view = &view_home},
-    {0, 2, 1, 1, NULL, &icon_shift, THEME_SECONDARY, ACT_CUSTOM_VAL, .arg.custom = {tap_mod, MOD_LSFT}},
-    {1, 0, 1, 1, NULL, &icon_alt, THEME_FOCUS, ACT_CUSTOM_VAL, .arg.custom = {tap_mod, MOD_LALT}},
-    // Empty cell for symmetry
-    {1, 2, 1, 1, NULL, &icon_gui, THEME_DECREMENT, ACT_CUSTOM_VAL, .arg.custom = {tap_mod, MOD_LGUI}},
+    {0, 0, 1, 2, NULL, &icon_up, THEME_DENY, ACT_GO_VIEW, .arg.view = &view_home},
+
+    {0, 2, 1, 2, "CTRL", NULL, THEME_PRIMARY, ACT_CUSTOM_VAL, .arg.custom = {tap_mod, MOD_LCTL}},
+    {0, 4, 1, 2, NULL, &icon_alt, THEME_FOCUS, ACT_CUSTOM_VAL, .arg.custom = {tap_mod, MOD_LALT}},
+
+    {1, 0, 1, 3, NULL, &icon_gui, THEME_DECREMENT, ACT_CUSTOM_VAL, .arg.custom = {tap_mod, MOD_LGUI}},
+    {1, 3, 1, 3, NULL, &icon_shift, THEME_SECONDARY, ACT_CUSTOM_VAL, .arg.custom = {tap_mod, MOD_LSFT}},
     {0}};
 
 static const struct page_cell mod_cells_portrait[] = {
-    {0, 0, 1, 1, "CTRL", NULL, THEME_PRIMARY, ACT_CUSTOM_VAL, .arg.custom = {tap_mod, MOD_LCTL}},
-    {0, 1, 1, 1, NULL, &icon_shift, THEME_SECONDARY, ACT_CUSTOM_VAL, .arg.custom = {tap_mod, MOD_LSFT}},
-    {1, 0, 1, 1, NULL, &icon_up, THEME_DENY, ACT_GO_VIEW, .arg.view = &view_home},
-    // Empty cell for symmetry
-    {2, 0, 1, 1, NULL, &icon_alt, THEME_FOCUS, ACT_CUSTOM_VAL, .arg.custom = {tap_mod, MOD_LALT}},
-    {2, 1, 1, 1, NULL, &icon_gui, THEME_DECREMENT, ACT_CUSTOM_VAL, .arg.custom = {tap_mod, MOD_LGUI}},
+    {0, 0, 1, 2, NULL, &icon_up, THEME_DENY, ACT_GO_VIEW, .arg.view = &view_home},
+
+    {1, 0, 1, 1, "CTRL", NULL, THEME_PRIMARY, ACT_CUSTOM_VAL, .arg.custom = {tap_mod, MOD_LCTL}},
+    {1, 1, 1, 1, NULL, &icon_alt, THEME_FOCUS, ACT_CUSTOM_VAL, .arg.custom = {tap_mod, MOD_LALT}},
+
+    {2, 0, 1, 1, NULL, &icon_gui, THEME_DECREMENT, ACT_CUSTOM_VAL, .arg.custom = {tap_mod, MOD_LGUI}},
+    {2, 1, 1, 1, NULL, &icon_shift, THEME_SECONDARY, ACT_CUSTOM_VAL, .arg.custom = {tap_mod, MOD_LSFT}},
     {0}};
 
 const struct view_def view_modifiers = {
