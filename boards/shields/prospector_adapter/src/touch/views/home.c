@@ -51,4 +51,5 @@ const struct view_def view_home = {
     .cells = home_cells,
     .keeps_mods = true,
     .on_hold = hold_home,
+    .idle_timeout = true,
 };
