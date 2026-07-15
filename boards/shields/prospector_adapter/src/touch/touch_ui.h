@@ -12,7 +12,7 @@
 
 #define SCR_W 280
 #define SCR_H 240
-#define TOUCH_TIMEOUT_MS 30000
+#define TOUCH_TIMEOUT_MS 600000
 #define TOUCH_HOLD_MS 500 /* press-and-lift >= this = a hold, not a tap */
 #define BRIGHTNESS_STEP 10
 #define KEYS_PER_PAGE 7
@@ -80,13 +80,13 @@ struct view_def
 };
 
 /* ----------------------------- shared state ------------------------------- */
-extern lv_obj_t *touch_overlay;         /* full-screen touch UI layer (touch_nav.c) */
-extern lv_obj_t *cur_view_btns[32];     /* cached declarative button objects for mutation */
-extern const struct view_def *cur_view; /* current view (touch_nav.c) */
-extern int cur_page;                    /* page of the paginated key screens (touch_nav.c) */
-extern uint8_t pending_mods;            /* one-shot mods, applied to the next key (touch_keys.c) */
+extern lv_obj_t *touch_overlay;          /* full-screen touch UI layer (touch_nav.c) */
+extern lv_obj_t *cur_view_btns[32];      /* cached declarative button objects for mutation */
+extern const struct view_def *cur_view;  /* current view (touch_nav.c) */
+extern int cur_page;                     /* page of the paginated key screens (touch_nav.c) */
+extern uint8_t pending_mods;             /* one-shot mods, applied to the next key (touch_keys.c) */
 extern enum theme_role pending_mod_role; /* armed-mod ring colour (views/modifiers.c) */
-extern int grid_rows;                   /* current screen's grid (touch_draw.c) */
+extern int grid_rows;                    /* current screen's grid (touch_draw.c) */
 extern int grid_cols;
 extern uint8_t ui_rot; /* 0..3 = 0/90/180/270 deg CW (touch_rotation.c) */
 
