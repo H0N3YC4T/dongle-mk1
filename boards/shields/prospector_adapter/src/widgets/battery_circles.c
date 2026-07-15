@@ -103,6 +103,10 @@ static void init_styles(void)
 
   lv_style_init(&style_label_connected);
   lv_style_set_text_color(&style_label_connected, lv_color_hex(theme_color(THEME_BACKGROUND)));
+  lv_style_set_image_recolor(&style_charge_icon_connected, lv_color_hex(theme_color(THEME_FOCUS)));
+  lv_style_set_image_recolor(&style_charge_icon_disconnected, lv_color_hex(theme_color(THEME_SURFACE)));
+  lv_obj_report_style_change(&style_charge_icon_connected);
+  lv_obj_report_style_change(&style_charge_icon_disconnected);
 
   lv_style_init(&style_battery_label_disconnected);
   lv_style_set_text_color(&style_battery_label_disconnected, lv_color_hex(COLOR_BATTERY_DISCONNECTED_FILL));
@@ -111,10 +115,12 @@ static void init_styles(void)
   lv_style_set_text_color(&style_battery_label_connected, lv_color_hex(COLOR_BATTERY_HIGH));
 
   lv_style_init(&style_charge_icon_connected);
-  lv_obj_set_style_image_recolor(&style_charge_icon_connected, lv_color_hex(theme_color(THEME_FOCUS), LV_PART_MAIN));
+  lv_style_set_image_recolor(&style_charge_icon_connected, lv_color_hex(theme_color(THEME_FOCUS)));
+  lv_style_set_image_recolor_opa(&style_charge_icon_connected, LV_OPA_COVER);
 
   lv_style_init(&style_charge_icon_disconnected);
-  lv_obj_set_style_image_recolor(&style_charge_icon_disconnected, lv_color_hex(theme_color(THEME_SURFACE), LV_PART_MAIN));
+  lv_style_set_image_recolor(&style_charge_icon_disconnected, lv_color_hex(theme_color(THEME_SURFACE)));
+  lv_style_set_image_recolor_opa(&style_charge_icon_disconnected, LV_OPA_COVER);
 
   styles_initialized = true;
 }
@@ -214,24 +220,6 @@ static void animate_arc_value(lv_obj_t *arc, int32_t target_value)
   lv_anim_set_exec_cb(&anim, arc_value_anim_cb);
   lv_anim_set_path_cb(&anim, lv_anim_path_bezier_battery);
   lv_anim_start(&anim);
-}
-
-void zmk_widget_charge_icon_recolor(lv_obj_t *icon, bool charging)
-{
-  if (icon == NULL)
-  {
-    return;
-  }
-  lv_obj_remove_style(icon, &style_charge_icon_connected, LV_PART_MAIN);
-  lv_obj_remove_style(icon, &style_charge_icon_disconnected, LV_PART_MAIN);
-  if (charging)
-  {
-    lv_obj_add_style(icon, &style_charge_icon_connected, LV_PART_MAIN);
-  }
-  else
-  {
-    lv_obj_add_style(icon, &style_charge_icon_disconnected, LV_PART_MAIN);
-  }
 }
 
 struct battery_update_state
@@ -532,13 +520,11 @@ int zmk_widget_battery_circles_init(struct zmk_widget_battery_circles *widget, l
     lv_obj_remove_style(arc, NULL, LV_PART_KNOB);
     lv_obj_clear_flag(arc, LV_OBJ_FLAG_CLICKABLE);
 
-    lv_obj_t *charge_icon = lv_image_create(widget->obj);
+    lv_obj_t *charge_icon = lv_image_create(arc);
     peripheral_charge_icons[0] = charge_icon;
     lv_image_set_src(charge_icon, &icon_lightning_24);
-    lv_obj_center(charge_icon, LV_ALIGN_MID, -6, arc_left);
-    lv_image_add_style(charge_icon, &style_charge_icon_disconnected, LV_PART_MAIN);
-    lv_image_set_style_image_recolor_opa(charge_icon, LV_OPA_COVER, LV_PART_MAIN);
-    lv_image_clear_flag(charge_icon, LV_OBJ_FLAG_CLICKABLE);
+    lv_obj_add_style(charge_icon, &style_charge_icon_disconnected, LV_PART_MAIN);
+    lv_obj_center(charge_icon);
 
     lv_obj_t *label_box = lv_obj_create(widget->obj);
     peripheral_label_boxes[0] = label_box;
@@ -589,15 +575,11 @@ int zmk_widget_battery_circles_init(struct zmk_widget_battery_circles *widget, l
       lv_obj_remove_style(arc, NULL, LV_PART_KNOB);
       lv_obj_clear_flag(arc, LV_OBJ_FLAG_CLICKABLE);
 
-      lv_obj_t *charge_icon = lv_image_create(widget->obj);
+      lv_obj_t *charge_icon = lv_image_create(arc);
       peripheral_charge_icons[i] = charge_icon;
-      lv_image_set_pos(charge_icon, i * spacing, y_center);
       lv_image_set_src(charge_icon, &icon_lightning_24);
-
-      lv_obj_align(charge_icon, LV_ALIGN_RIGHT_MID, -6, arc_size / 2);
       lv_obj_add_style(charge_icon, &style_charge_icon_disconnected, LV_PART_MAIN);
-      lv_obj_set_style_image_recolor_opa(charge_icon, LV_OPA_COVER, LV_PART_MAIN);
-      lv_obj_clear_flag(charge_icon, LV_OBJ_FLAG_CLICKABLE);
+      lv_obj_center(charge_icon);
 
       lv_obj_t *label_box = lv_obj_create(arc);
       peripheral_label_boxes[i] = label_box;
