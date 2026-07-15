@@ -76,6 +76,10 @@ static struct modifier_indicator_state modifier_indicator_get_state(const zmk_ev
     return state;
 }
 
+void zmk_widget_modifier_indicator_retheme(void) {
+    modifier_indicator_update_cb(modifier_indicator_get_state(NULL));
+}
+
 ZMK_DISPLAY_WIDGET_LISTENER(widget_modifier_indicator, struct modifier_indicator_state,
                             modifier_indicator_update_cb, modifier_indicator_get_state)
 ZMK_SUBSCRIPTION(widget_modifier_indicator, zmk_keycode_state_changed);

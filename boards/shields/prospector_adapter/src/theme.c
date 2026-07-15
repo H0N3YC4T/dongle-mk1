@@ -1,6 +1,12 @@
-/* Runtime UI theme: role -> colour lookup + category base swapping. */
+/* Runtime UI theme: role -> colour lookup, category base swapping,
+ * settings persistence ("prospector_theme/bases"). */
+
+#include <zephyr/kernel.h>
+#include <zephyr/settings/settings.h>
 
 #include "theme.h"
+
+__weak void theme_changed(void) {}
 
 /* Classic palette; the default build renders pixel-identical to the
  * pre-theme hardcoded colours. */
@@ -90,10 +96,7 @@ static uint32_t shift_shade(uint32_t base, uint32_t ref_base, uint32_t ref_shade
     return (r << 16) | (g << 8) | b;
 }
 
-void theme_set_base(enum theme_category cat, uint32_t base_rgb) {
-    if (cat >= THEME_CAT_COUNT) {
-        return;
-    }
+static void theme_apply_base(enum theme_category cat, uint32_t base_rgb) {
     uint32_t ref_base = theme_classic[cat_base[cat]];
     for (int r = 0; r < THEME_ROLE_COUNT; r++) {
         if (role_cat[r] != cat) {
@@ -102,4 +105,49 @@ void theme_set_base(enum theme_category cat, uint32_t base_rgb) {
         palette[r] = (r == cat_base[cat]) ? base_rgb
                                           : shift_shade(base_rgb, ref_base, theme_classic[r]);
     }
+}
+
+#if IS_ENABLED(CONFIG_SETTINGS)
+
+static void theme_save_cb(struct k_work *work) {
+    uint32_t bases[THEME_CAT_COUNT];
+    for (int c = 0; c < THEME_CAT_COUNT; c++) {
+        bases[c] = palette[cat_base[c]];
+    }
+    settings_save_one("prospector_theme/bases", bases, sizeof(bases));
+}
+static K_WORK_DELAYABLE_DEFINE(theme_save_work, theme_save_cb);
+
+static int theme_settings_set(const char *name, size_t len, settings_read_cb read_cb,
+                              void *cb_arg) {
+    uint32_t bases[THEME_CAT_COUNT];
+    if (settings_name_steq(name, "bases", NULL) && len == sizeof(bases)) {
+        if (read_cb(cb_arg, bases, sizeof(bases)) == sizeof(bases)) {
+            for (int c = 0; c < THEME_CAT_COUNT; c++) {
+                theme_apply_base(c, bases[c]);
+            }
+        }
+    }
+    return 0;
+}
+
+static int theme_settings_commit(void) {
+    theme_changed(); /* no-op at boot (screen not built yet); palette is ready */
+    return 0;
+}
+
+SETTINGS_STATIC_HANDLER_DEFINE(prospector_theme, "prospector_theme", NULL, theme_settings_set,
+                               theme_settings_commit, NULL);
+
+#endif /* IS_ENABLED(CONFIG_SETTINGS) */
+
+void theme_set_base(enum theme_category cat, uint32_t base_rgb) {
+    if (cat >= THEME_CAT_COUNT) {
+        return;
+    }
+    theme_apply_base(cat, base_rgb);
+    theme_changed();
+#if IS_ENABLED(CONFIG_SETTINGS)
+    k_work_schedule(&theme_save_work, K_SECONDS(2)); /* debounce flash writes */
+#endif
 }

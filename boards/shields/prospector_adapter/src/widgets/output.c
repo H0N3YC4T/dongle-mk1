@@ -144,6 +144,19 @@ static lv_obj_t *create_slot_btn(lv_obj_t *parent, int index, int x, int width, 
     return slot;
 }
 
+void zmk_widget_output_retheme(void) {
+    struct zmk_widget_output *widget;
+    SYS_SLIST_FOR_EACH_CONTAINER(&widgets, widget, node) {
+        for (int i = 0; i < ZMK_BLE_PROFILE_COUNT; i++) {
+            lv_obj_t *label = lv_obj_get_child(widget->slots[i], 0);
+            if (label != NULL) {
+                lv_obj_set_style_text_color(label, lv_color_hex(theme_color(THEME_BACKGROUND)),
+                                            LV_PART_MAIN);
+            }
+        }
+    }
+}
+
 int zmk_widget_output_init(struct zmk_widget_output *widget, lv_obj_t *parent) {
     widget->obj = lv_obj_create(parent);
     lv_obj_set_size(widget->obj, 116, 62);

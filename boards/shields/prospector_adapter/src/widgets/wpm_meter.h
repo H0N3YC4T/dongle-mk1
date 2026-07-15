@@ -19,3 +19,4 @@ int zmk_widget_wpm_meter_init(struct zmk_widget_wpm_meter *widget, lv_obj_t *par
 lv_obj_t *zmk_widget_wpm_meter_obj(struct zmk_widget_wpm_meter *widget);
 /* Resize (portrait rotation): bars shrink to fit, labels re-anchor. */
 void zmk_widget_wpm_meter_set_width(struct zmk_widget_wpm_meter *widget, int width);
+void zmk_widget_wpm_meter_retheme(void); /* re-apply themed colours in place */

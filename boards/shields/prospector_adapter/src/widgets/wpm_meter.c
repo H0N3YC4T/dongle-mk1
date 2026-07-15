@@ -52,6 +52,21 @@ static void wpm_meter_layout(struct zmk_widget_wpm_meter *widget)
   }
 }
 
+void zmk_widget_wpm_meter_retheme(void) {
+    struct zmk_widget_wpm_meter *widget;
+    SYS_SLIST_FOR_EACH_CONTAINER(&widgets, widget, node) {
+        for (int i = 0; i < WPM_BAR_COUNT; i++) {
+            lv_obj_set_style_bg_color(widget->bars[i],
+                lv_color_hex(theme_color(i < prev_active_bars ? THEME_PRIMARY : THEME_PRIMARY_DIM)),
+                LV_PART_MAIN);
+        }
+        lv_obj_set_style_bg_color(widget->peak_indicator, lv_color_hex(theme_color(THEME_MUTED)), LV_PART_MAIN);
+        lv_obj_set_style_text_color(widget->wpm_label, lv_color_hex(theme_color(THEME_PRIMARY)), LV_PART_MAIN);
+        lv_obj_set_style_bg_color(widget->wpm_label, lv_color_hex(theme_color(THEME_BACKGROUND)), LV_PART_MAIN);
+        lv_obj_set_style_bg_color(widget->layer_label, lv_color_hex(theme_color(THEME_BACKGROUND)), LV_PART_MAIN);
+    }
+}
+
 static void wpm_meter_render(int active_bars)
 {
   struct zmk_widget_wpm_meter *widget;

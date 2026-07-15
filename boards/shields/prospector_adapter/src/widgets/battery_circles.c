@@ -109,6 +109,14 @@ static void init_styles(void)
   styles_initialized = true;
 }
 
+void zmk_widget_battery_circles_retheme(void) {
+    if (!styles_initialized) {
+        return;
+    }
+    lv_style_set_text_color(&style_label_connected, lv_color_hex(theme_color(THEME_BACKGROUND)));
+    lv_obj_report_style_change(&style_label_connected);
+}
+
 static float cubic_bezier_y(float t, float y1, float y2)
 {
   float mt = 1.0f - t;

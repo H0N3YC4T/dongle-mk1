@@ -11,3 +11,4 @@ struct zmk_widget_battery_circles {
 
 int zmk_widget_battery_circles_init(struct zmk_widget_battery_circles *widget, lv_obj_t *parent);
 lv_obj_t *zmk_widget_battery_circles_obj(struct zmk_widget_battery_circles *widget);
+void zmk_widget_battery_circles_retheme(void); /* re-apply themed colours in place */

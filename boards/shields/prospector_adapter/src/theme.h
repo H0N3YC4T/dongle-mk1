@@ -41,6 +41,12 @@ enum theme_category {
 uint32_t theme_color(enum theme_role role);
 
 /* Set a category's base colour; linked shades keep their per-channel offset
- * from the classic palette (dark stays "that much darker" than its base). */
+ * from the classic palette (dark stays "that much darker" than its base).
+ * Applies live (no restart), notifies theme_changed(), persists to settings. */
 void theme_set_base(enum theme_category cat, uint32_t base_rgb);
 uint32_t theme_get_base(enum theme_category cat);
+
+/* Notified after any palette change (live set_base or boot settings load).
+ * Weak no-op in theme.c; the status screen overrides it to restyle live
+ * widgets. Touch views restyle themselves via build_view() as usual. */
+void theme_changed(void);

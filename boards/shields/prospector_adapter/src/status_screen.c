@@ -42,8 +42,25 @@ void status_screen_reflow(void) {
     }
 }
 
+static lv_obj_t *status_screen_obj;
+
+/* live retheme: restyle the status widgets in place (touch views rebuild
+ * themselves via build_view) */
+void theme_changed(void) {
+    if (status_screen_obj == NULL) {
+        return;
+    }
+    lv_obj_set_style_bg_color(status_screen_obj, lv_color_hex(theme_color(THEME_BACKGROUND)),
+                              LV_PART_MAIN);
+    zmk_widget_wpm_meter_retheme();
+    zmk_widget_modifier_indicator_retheme();
+    zmk_widget_battery_circles_retheme();
+    zmk_widget_output_retheme();
+}
+
 lv_obj_t *zmk_display_status_screen() {
     lv_obj_t *screen = lv_obj_create(NULL);
+    status_screen_obj = screen;
     lv_obj_set_style_bg_color(screen, lv_color_hex(theme_color(THEME_BACKGROUND)), LV_PART_MAIN);
     lv_obj_set_style_bg_opa(screen, 255, LV_PART_MAIN);
 
