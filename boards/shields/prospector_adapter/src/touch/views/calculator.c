@@ -25,50 +25,66 @@ static void calc_update_display(void);
 /* ========================================================================== */
 /* MATH ENGINE & PARSER                                                       */
 /* ========================================================================== */
-static double parse_factor(void) {
+static double parse_factor(void)
+{
   double sum = 0;
   bool num_empty = true;
   bool is_negative = false;
   bool is_bitwise_not = false;
 
-  if (*calc_cursor == '~') {
+  if (*calc_cursor == '~')
+  {
     is_bitwise_not = true;
     calc_cursor++;
   }
 
-  if (*calc_cursor == '-') {
+  if (*calc_cursor == '-')
+  {
     is_negative = true;
     calc_cursor++;
-  } else if (*calc_cursor == '+') {
+  }
+  else if (*calc_cursor == '+')
+  {
     calc_cursor++;
   }
 
-  if (*calc_cursor == '(') {
+  if (*calc_cursor == '(')
+  {
     calc_cursor++;
     sum = parse_expr();
-    if (*calc_cursor == ')') calc_cursor++;
-    else eval_okay = false;
+    if (*calc_cursor == ')')
+      calc_cursor++;
+    else
+      eval_okay = false;
     sum = is_negative ? -sum : sum;
-    if (is_bitwise_not) sum = (double)(~(long long)sum);
+    if (is_bitwise_not)
+      sum = (double)(~(long long)sum);
     return sum;
   }
 
-  if (bin_mode) {
-    while (*calc_cursor == '0' || *calc_cursor == '1') {
+  if (bin_mode)
+  {
+    while (*calc_cursor == '0' || *calc_cursor == '1')
+    {
       sum = sum * 2 + (*calc_cursor - '0');
       calc_cursor++;
       num_empty = false;
     }
-  } else {
-    while (*calc_cursor >= '0' && *calc_cursor <= '9') {
+  }
+  else
+  {
+    while (*calc_cursor >= '0' && *calc_cursor <= '9')
+    {
       sum = sum * 10 + (*calc_cursor - '0');
       calc_cursor++;
       num_empty = false;
     }
-    if (*calc_cursor == '.') {
+    if (*calc_cursor == '.')
+    {
       calc_cursor++;
       double fraction = 0.1;
-      while (*calc_cursor >= '0' && *calc_cursor <= '9') {
+      while (*calc_cursor >= '0' && *calc_cursor <= '9')
+      {
         sum += (*calc_cursor - '0') * fraction;
         fraction /= 10.0;
         calc_cursor++;
@@ -77,46 +93,71 @@ static double parse_factor(void) {
     }
   }
 
-  if (*calc_cursor == '!') {
+  if (*calc_cursor == '!')
+  {
     calc_cursor++;
-    if (sum >= 0 && sum == (long long)sum) {
+    if (sum >= 0 && sum == (long long)sum)
+    {
       long long n = (long long)sum;
-      if (n > 20) eval_okay = false;
-      else {
+      if (n > 20)
+        eval_okay = false;
+      else
+      {
         double f = 1;
-        for (long long i = 2; i <= n; i++) f *= i;
+        for (long long i = 2; i <= n; i++)
+          f *= i;
         sum = f;
       }
-    } else {
+    }
+    else
+    {
       eval_okay = false;
     }
   }
 
-  if (num_empty) eval_okay = false;
+  if (num_empty)
+    eval_okay = false;
   sum = is_negative ? -sum : sum;
-  if (is_bitwise_not) sum = (double)(~(long long)sum);
+  if (is_bitwise_not)
+    sum = (double)(~(long long)sum);
   return sum;
 }
 
-static double parse_term(void) {
+static double parse_term(void)
+{
   double a = parse_factor();
-  while (eval_okay && (*calc_cursor == '*' || *calc_cursor == '/' || *calc_cursor == '%')) {
+  while (eval_okay && (*calc_cursor == '*' || *calc_cursor == '/' || *calc_cursor == '%'))
+  {
     char op = *calc_cursor++;
     double b = parse_factor();
-    if (op == '*') a *= b;
-    else if (op == '%') {
-      if (b == 0) { eval_okay = false; a = 0; }
-      else a = (double)((long long)a % (long long)b);
-    } else if (b == 0) {
-      eval_okay = false; a = 0;
-    } else a /= b;
+    if (op == '*')
+      a *= b;
+    else if (op == '%')
+    {
+      if (b == 0)
+      {
+        eval_okay = false;
+        a = 0;
+      }
+      else
+        a = (double)((long long)a % (long long)b);
+    }
+    else if (b == 0)
+    {
+      eval_okay = false;
+      a = 0;
+    }
+    else
+      a /= b;
   }
   return a;
 }
 
-static double parse_add_sub(void) {
+static double parse_add_sub(void)
+{
   double a = parse_term();
-  while (eval_okay && (*calc_cursor == '+' || *calc_cursor == '-')) {
+  while (eval_okay && (*calc_cursor == '+' || *calc_cursor == '-'))
+  {
     char op = *calc_cursor++;
     double b = parse_term();
     a = (op == '+') ? a + b : a - b;
@@ -124,26 +165,34 @@ static double parse_add_sub(void) {
   return a;
 }
 
-static double parse_shift(void) {
+static double parse_shift(void)
+{
   double a = parse_add_sub();
   while (eval_okay && ((*calc_cursor == '<' && *(calc_cursor + 1) == '<') ||
-                       (*calc_cursor == '>' && *(calc_cursor + 1) == '>'))) {
+                       (*calc_cursor == '>' && *(calc_cursor + 1) == '>')))
+  {
     char op = *calc_cursor;
     calc_cursor += 2;
     double b = parse_add_sub();
     long long shift_amt = (long long)b;
-    if (shift_amt < 0 || shift_amt > 63) eval_okay = false;
-    else {
-      if (op == '<') a = (double)((long long)a << shift_amt);
-      else a = (double)((long long)a >> shift_amt);
+    if (shift_amt < 0 || shift_amt > 63)
+      eval_okay = false;
+    else
+    {
+      if (op == '<')
+        a = (double)((long long)a << shift_amt);
+      else
+        a = (double)((long long)a >> shift_amt);
     }
   }
   return a;
 }
 
-static double parse_bitwise_and(void) {
+static double parse_bitwise_and(void)
+{
   double a = parse_shift();
-  while (eval_okay && (*calc_cursor == '&')) {
+  while (eval_okay && (*calc_cursor == '&'))
+  {
     calc_cursor++;
     double b = parse_shift();
     a = (double)((long long)a & (long long)b);
@@ -151,9 +200,11 @@ static double parse_bitwise_and(void) {
   return a;
 }
 
-static double parse_bitwise_xor(void) {
+static double parse_bitwise_xor(void)
+{
   double a = parse_bitwise_and();
-  while (eval_okay && (*calc_cursor == '^')) {
+  while (eval_okay && (*calc_cursor == '^'))
+  {
     calc_cursor++;
     double b = parse_bitwise_and();
     a = (double)((long long)a ^ (long long)b);
@@ -161,9 +212,11 @@ static double parse_bitwise_xor(void) {
   return a;
 }
 
-static double parse_bitwise_or(void) {
+static double parse_bitwise_or(void)
+{
   double a = parse_bitwise_xor();
-  while (eval_okay && (*calc_cursor == '|')) {
+  while (eval_okay && (*calc_cursor == '|'))
+  {
     calc_cursor++;
     double b = parse_bitwise_xor();
     a = (double)((long long)a | (long long)b);
@@ -174,72 +227,93 @@ static double parse_bitwise_or(void) {
 static double parse_expr(void) { return parse_bitwise_or(); }
 
 /* whole-expression parse; unconsumed input = error, not a partial result */
-static double calc_run_parser(void) {
+static double calc_run_parser(void)
+{
   eval_okay = true;
   calc_cursor = &calc_expr[0];
   double r = (*calc_cursor != '\0') ? parse_expr() : 0;
-  if (*calc_cursor != '\0') eval_okay = false;
+  if (*calc_cursor != '\0')
+    eval_okay = false;
   return r;
 }
 
 /* ========================================================================== */
 /* USER INPUT & STATE UPDATES                                                 */
 /* ========================================================================== */
-static void calc_push(char ch) {
-  if (result_shown) {
-    if ((ch >= '0' && ch <= '9') || ch == '.') {
+static void calc_push(char ch)
+{
+  if (result_shown)
+  {
+    if ((ch >= '0' && ch <= '9') || ch == '.')
+    {
       calc_expr[0] = '\0';
     }
     result_shown = false;
     bracket_open = false;
   }
   size_t n = strlen(calc_expr);
-  if (n < sizeof(calc_expr) - 1) {
+  if (n < sizeof(calc_expr) - 1)
+  {
     calc_expr[n] = ch;
     calc_expr[n + 1] = '\0';
   }
 }
 
-static void calc_tap_backspace(void) {
-  if (result_shown) {
+static void calc_tap_backspace(void)
+{
+  if (result_shown)
+  {
     calc_expr[0] = '\0';
     result_shown = false;
     bracket_open = false;
-  } else {
+  }
+  else
+  {
     size_t n = strlen(calc_expr);
-    if (n) {
+    if (n)
+    {
       char deleted = calc_expr[n - 1];
       calc_expr[n - 1] = '\0';
-      if (deleted == '(') bracket_open = false;
-      else if (deleted == ')') bracket_open = true;
+      if (deleted == '(')
+        bracket_open = false;
+      else if (deleted == ')')
+        bracket_open = true;
       /* delete a two-char shift as one keystroke */
       else if ((deleted == '<' || deleted == '>') && n >= 2 &&
-               calc_expr[n - 2] == deleted) {
+               calc_expr[n - 2] == deleted)
+      {
         calc_expr[n - 2] = '\0';
       }
     }
   }
 }
 
-static void calc_print_result(double result) {
-  if (bin_mode) {
+static void calc_print_result(double result)
+{
+  if (bin_mode)
+  {
     long long val = (long long)(result > 0 ? result + 0.5 : result - 0.5);
     unsigned long long mask = bin_word_size == 64
                                   ? 0xFFFFFFFFFFFFFFFFULL
                                   : (1ULL << bin_word_size) - 1;
     val = val & mask;
-    if (val == 0) {
+    if (val == 0)
+    {
       snprintf(calc_expr, sizeof(calc_expr), "0");
-    } else {
+    }
+    else
+    {
       char buf[65];
       int i = 0;
       unsigned long long u = val;
-      while (u > 0 && i < 64) {
+      while (u > 0 && i < 64)
+      {
         buf[i++] = (u % 2) ? '1' : '0';
         u /= 2;
       }
       buf[i] = '\0';
-      for (int j = 0; j < i / 2; j++) {
+      for (int j = 0; j < i / 2; j++)
+      {
         char tmp = buf[j];
         buf[j] = buf[i - 1 - j];
         buf[i - 1 - j] = tmp;
@@ -254,7 +328,8 @@ static void calc_print_result(double result) {
 
   long long whole = (long long)result;
   int fraction = (int)((result - whole) * 100.0 + 0.5);
-  if (fraction >= 100) {
+  if (fraction >= 100)
+  {
     whole++;
     fraction = 0;
   }
@@ -269,11 +344,15 @@ static void calc_print_result(double result) {
     calc_expr[--len] = '\0';
 }
 
-static void calc_tap_eval(void) {
-  if (bracket_open) calc_push(')');
+static void calc_tap_eval(void)
+{
+  if (bracket_open)
+    calc_push(')');
   double result = calc_run_parser();
-  if (eval_okay) calc_print_result(result);
-  else snprintf(calc_expr, sizeof(calc_expr), "Error");
+  if (eval_okay)
+    calc_print_result(result);
+  else
+    snprintf(calc_expr, sizeof(calc_expr), "Error");
   result_shown = true;
   bracket_open = false;
 }
@@ -281,57 +360,77 @@ static void calc_tap_eval(void) {
 /* ========================================================================== */
 /* CONVERSION HELPERS                                                         */
 /* ========================================================================== */
-static void convert_to_binary(void) {
-    if (calc_expr[0] == '\0') return;
+static void convert_to_binary(void)
+{
+  if (calc_expr[0] == '\0')
+    return;
 
-    bool old_mode = bin_mode;
-    bin_mode = false;
-    double r = calc_run_parser();
-    bin_mode = old_mode;
+  bool old_mode = bin_mode;
+  bin_mode = false;
+  double r = calc_run_parser();
+  bin_mode = old_mode;
 
-    if (eval_okay) {
-        long long val = (long long)(r > 0 ? r + 0.5 : r - 0.5);
+  if (eval_okay)
+  {
+    long long val = (long long)(r > 0 ? r + 0.5 : r - 0.5);
 
-        unsigned long long abs_val = val >= 0 ? val : -val;
-        if (abs_val <= 3) bin_word_size = 2;
-        else if (abs_val <= 15) bin_word_size = 4;
-        else if (abs_val <= 255) bin_word_size = 8;
-        else if (abs_val <= 65535) bin_word_size = 16;
-        else { val = 0; bin_word_size = 16; }
-
-        bin_mode = true;
-        calc_print_result(val);
-        bin_converted = true;
-        result_shown = true;
-        bracket_open = false;
-    } else {
-        snprintf(calc_expr, sizeof(calc_expr), "Error");
-        result_shown = true;
+    unsigned long long abs_val = val >= 0 ? val : -val;
+    if (abs_val <= 3)
+      bin_word_size = 2;
+    else if (abs_val <= 15)
+      bin_word_size = 4;
+    else if (abs_val <= 255)
+      bin_word_size = 8;
+    else if (abs_val <= 65535)
+      bin_word_size = 16;
+    else
+    {
+      val = 0;
+      bin_word_size = 16;
     }
-}
 
-static void convert_to_decimal(void) {
-    if (calc_expr[0] == '\0') return;
-
-    bool old_mode = bin_mode;
     bin_mode = true;
-    double r = calc_run_parser();
-    bin_mode = old_mode;
-
-    if (eval_okay) {
-        bin_mode = false;
-        calc_print_result(r);
-        bin_converted = false;
-        result_shown = true;
-        bracket_open = false;
-    } else {
-        snprintf(calc_expr, sizeof(calc_expr), "Error");
-        result_shown = true;
-    }
+    calc_print_result(val);
+    bin_converted = true;
+    result_shown = true;
+    bracket_open = false;
+  }
+  else
+  {
+    snprintf(calc_expr, sizeof(calc_expr), "Error");
+    result_shown = true;
+  }
 }
 
-static void calc_ensure_binary(void) {
-  if (bin_mode && !bin_converted) {
+static void convert_to_decimal(void)
+{
+  if (calc_expr[0] == '\0')
+    return;
+
+  bool old_mode = bin_mode;
+  bin_mode = true;
+  double r = calc_run_parser();
+  bin_mode = old_mode;
+
+  if (eval_okay)
+  {
+    bin_mode = false;
+    calc_print_result(r);
+    bin_converted = false;
+    result_shown = true;
+    bracket_open = false;
+  }
+  else
+  {
+    snprintf(calc_expr, sizeof(calc_expr), "Error");
+    result_shown = true;
+  }
+}
+
+static void calc_ensure_binary(void)
+{
+  if (bin_mode && !bin_converted)
+  {
     convert_to_binary();
   }
 }
@@ -339,7 +438,8 @@ static void calc_ensure_binary(void) {
 /* ========================================================================== */
 /* UI & LIFECYCLE HANDLERS                                                    */
 /* ========================================================================== */
-static void calc_on_enter(void) {
+static void calc_on_enter(void)
+{
   calc_expr[0] = '\0';
   result_shown = false;
   bracket_open = false;
@@ -351,17 +451,22 @@ static void calc_on_enter(void) {
 #define CALC_BTN_DISPLAY 0
 #define CALC_BTN_WORDSIZE 14
 
-static void calc_update_display(void) {
-  if (cur_view_btns[CALC_BTN_DISPLAY]) {
+static void calc_update_display(void)
+{
+  if (cur_view_btns[CALC_BTN_DISPLAY])
+  {
     lv_obj_t *l = lv_obj_get_child(cur_view_btns[CALC_BTN_DISPLAY], 0);
-    if (l) {
+    if (l)
+    {
       lv_obj_set_style_text_font(l, &lv_font_montserrat_16, LV_PART_MAIN);
       lv_label_set_text(l, calc_expr[0] ? calc_expr : "0");
     }
   }
-  if (cur_page == 2 && cur_view_btns[CALC_BTN_WORDSIZE]) {
+  if (cur_page == 2 && cur_view_btns[CALC_BTN_WORDSIZE])
+  {
     lv_obj_t *ws_label = lv_obj_get_child(cur_view_btns[CALC_BTN_WORDSIZE], 0);
-    if (ws_label) {
+    if (ws_label)
+    {
       static char ws_text[8];
       snprintf(ws_text, sizeof(ws_text), "%db", bin_word_size);
       lv_label_set_text(ws_label, ws_text);
@@ -372,73 +477,96 @@ static void calc_update_display(void) {
 /* ========================================================================== */
 /* TAP HANDLERS (DECIMAL)                                                     */
 /* ========================================================================== */
-static void tap_calc_char(int ch) {
+static void tap_calc_char(int ch)
+{
   calc_ensure_binary();
   calc_push((char)ch);
   calc_update_display();
 }
 
 /* parser reads shifts as two chars -> one tap pushes both */
-static void tap_calc_shift(int ch) {
+static void tap_calc_shift(int ch)
+{
   calc_ensure_binary();
   calc_push((char)ch);
   calc_push((char)ch);
   calc_update_display();
 }
 
-static void tap_calc_equals(int cell) { ARG_UNUSED(cell); calc_ensure_binary(); calc_tap_eval(); calc_update_display(); }
+static void tap_calc_equals(int cell)
+{
+  ARG_UNUSED(cell);
+  calc_ensure_binary();
+  calc_tap_eval();
+  calc_update_display();
+}
 
-static void tap_calc_backspace_cb(int cell) {
+static void tap_calc_backspace_cb(int cell)
+{
   ARG_UNUSED(cell);
   calc_ensure_binary();
   calc_tap_backspace();
   calc_update_display();
 }
-static void tap_calc_dot(int cell) {
+static void tap_calc_dot(int cell)
+{
   ARG_UNUSED(cell);
   calc_ensure_binary();
   calc_push('.');
   calc_update_display();
 }
-static void tap_calc_bracket(int cell) {
+static void tap_calc_bracket(int cell)
+{
   ARG_UNUSED(cell);
   calc_ensure_binary();
-  if (!bracket_open) {
+  if (!bracket_open)
+  {
     size_t n = strlen(calc_expr);
     if (n > 0 && ((calc_expr[n - 1] >= '0' && calc_expr[n - 1] <= '9') ||
-                  calc_expr[n - 1] == ')')) {
+                  calc_expr[n - 1] == ')'))
+    {
       calc_push('*');
     }
     calc_push('(');
     bracket_open = true;
-  } else {
+  }
+  else
+  {
     calc_push(')');
     bracket_open = false;
   }
   calc_update_display();
 }
-static void tap_calc_percent(int cell) {
+static void tap_calc_percent(int cell)
+{
   ARG_UNUSED(cell);
   calc_ensure_binary();
   calc_push('%');
   calc_update_display();
 }
-static void tap_calc_factorial(int cell) {
+static void tap_calc_factorial(int cell)
+{
   ARG_UNUSED(cell);
   calc_ensure_binary();
   calc_push('!');
   calc_update_display();
 }
 
-static void hold_calc(int cell) {
-  if ((cur_page < 2 && cell == 3) || (cur_page == 2 && cell == 18)) {
+static void hold_calc(int cell)
+{
+  if ((cur_page < 2 && cell == 3) || (cur_page == 2 && cell == 18))
+  {
     calc_expr[0] = '\0';
     result_shown = false;
     bracket_open = false;
     calc_update_display();
-  } else if ((cur_page == 0 && cell == 19) || (cur_page == 2 && cell == 7)) {
+  }
+  else if ((cur_page == 0 && cell == 19) || (cur_page == 2 && cell == 7))
+  {
     tap_calc_percent(cell);
-  } else {
+  }
+  else
+  {
     tap_declarative(cell);
   }
 }
@@ -446,7 +574,8 @@ static void hold_calc(int cell) {
 /* ========================================================================== */
 /* TAP HANDLERS (BINARY)                                                      */
 /* ========================================================================== */
-static void tap_calc_ws(int cell) {
+static void tap_calc_ws(int cell)
+{
   ARG_UNUSED(cell);
   calc_ensure_binary();
   if (bin_word_size == 16)
@@ -458,12 +587,16 @@ static void tap_calc_ws(int cell) {
   else
     bin_word_size = 16;
 
-  if (calc_expr[0] != '\0') {
+  if (calc_expr[0] != '\0')
+  {
     double r = calc_run_parser();
-    if (eval_okay) {
+    if (eval_okay)
+    {
       calc_print_result(r);
       bin_converted = true; /* expr is binary now; don't re-convert as decimal */
-    } else {
+    }
+    else
+    {
       snprintf(calc_expr, sizeof(calc_expr), "Error");
     }
   }
@@ -471,7 +604,6 @@ static void tap_calc_ws(int cell) {
   bracket_open = false;
   calc_update_display();
 }
-
 
 /* ========================================================================== */
 /* CELL OBJECTS & LAYOUTS                                                     */
@@ -566,26 +698,32 @@ const struct view_def view_calc = {
     .on_enter = calc_on_enter,
 };
 
-static void tap_calc_to_bin(int cell) {
+static void tap_calc_to_dec(int cell)
+{
   ARG_UNUSED(cell);
-  if (!bin_mode) convert_to_binary();
+  if (bin_mode)
+    convert_to_decimal();
+  bin_mode = false;
+  cur_page = 0;
+  build_view(&view_calc);
+}
+
+static void tap_calc_to_page2(int cell)
+{
+  ARG_UNUSED(cell);
+  if (bin_mode)
+    convert_to_decimal();
+  bin_mode = false;
+  cur_page = 1;
+  build_view(&view_calc);
+}
+
+static void tap_calc_to_bin(int cell)
+{
+  ARG_UNUSED(cell);
+  if (!bin_mode)
+    convert_to_binary();
   bin_mode = true;
-  cur_page = 2; // page 3
-  build_view(&view_calc);
-}
-
-static void tap_calc_to_dec(int cell) {
-  ARG_UNUSED(cell);
-  if (bin_mode) convert_to_decimal();
-  bin_mode = false;
-  cur_page = 0; // page 1
-  build_view(&view_calc);
-}
-
-static void tap_calc_to_page2(int cell) {
-  ARG_UNUSED(cell);
-  if (bin_mode) convert_to_decimal();
-  bin_mode = false;
-  cur_page = 1; // page 2
+  cur_page = 2;
   build_view(&view_calc);
 }

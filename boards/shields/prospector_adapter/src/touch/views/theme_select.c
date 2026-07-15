@@ -7,22 +7,21 @@ static const struct view_def view_swatch;
 
 /* preset bases: the six classic defaults + cream / apricot / magenta */
 static const uint32_t swatch_colors[9] = {
-    0xc8a2c8, /* lilac    */
-    0xa8d0e6, /* sky      */
-    0xf5e08c, /* pastel yellow */
-    0xa8e6b8, /* mint     */
-    0xc2526a, /* rose     */
-    0xe08cd0, /* magenta  */
-    0xf5b98c, /* apricot  */
-    0xf0e8d8, /* cream    */
-    0x000000, /* black    */
+    0xc8a2c8, /* lilac      */
+    0xa8d0e6, /* sky        */
+    0xf5e08c, /* chardonnay */
+    0xa8e6b8, /* mint       */
+    0xc2526a, /* rose       */
+    0xe08cd0, /* magenta    */
+    0xf5b98c, /* apricot    */
+    0xf0e8d8, /* cream      */
+    0x000000, /* charcole   */
 };
 
 static enum theme_category swatch_cat;
 static int categories_page; /* theme page to return to after picking */
 
 /* ------------------------------ categories -------------------------------- */
-
 static void open_swatch(int cat)
 {
   swatch_cat = (enum theme_category)cat;
@@ -31,23 +30,21 @@ static void open_swatch(int cat)
 }
 
 static const struct page_cell theme_p0[] = {
-    {0, 0, 1, 1, NULL, &icon_up,   THEME_DENY,      ACT_GO_VIEW, .arg.view = &view_settings},
-    {0, 1, 1, 2, "PRIMARY",  NULL, THEME_PRIMARY,   ACT_CUSTOM_VAL, .arg.custom = {open_swatch, THEME_CAT_PRIMARY}},
+    {0, 0, 1, 1, NULL, &icon_up, THEME_DENY, ACT_GO_VIEW, .arg.view = &view_settings},
+    {0, 1, 1, 2, "PRIMARY", NULL, THEME_PRIMARY, ACT_CUSTOM_VAL, .arg.custom = {open_swatch, THEME_CAT_PRIMARY}},
     {1, 1, 1, 2, "SECONDARY", NULL, THEME_SECONDARY, ACT_CUSTOM_VAL, .arg.custom = {open_swatch, THEME_CAT_SECONDARY}},
-    {2, 0, 1, 1, NULL, &icon_down, THEME_FOCUS,     ACT_NEXT_PAGE},
-    {2, 1, 1, 2, "FOCUS",    NULL, THEME_FOCUS,     ACT_CUSTOM_VAL, .arg.custom = {open_swatch, THEME_CAT_FOCUS}},
-    {0}
-};
+    {2, 0, 1, 1, NULL, &icon_down, THEME_FOCUS, ACT_NEXT_PAGE},
+    {2, 1, 1, 2, "FOCUS", NULL, THEME_FOCUS, ACT_CUSTOM_VAL, .arg.custom = {open_swatch, THEME_CAT_FOCUS}},
+    {0}};
 
 static const struct page_cell theme_p1[] = {
-    {0, 0, 1, 1, NULL, &icon_up,   THEME_FOCUS,     ACT_PREV_PAGE},
+    {0, 0, 1, 1, NULL, &icon_up, THEME_FOCUS, ACT_PREV_PAGE},
     /* background's own base can be invisible on itself -- outline muted */
-    {0, 1, 1, 2, "BACKGROUND", NULL, THEME_MUTED,   ACT_CUSTOM_VAL, .arg.custom = {open_swatch, THEME_CAT_BACKGROUND}},
-    {1, 1, 1, 2, "ACCEPT",   NULL, THEME_ACCEPT,    ACT_CUSTOM_VAL, .arg.custom = {open_swatch, THEME_CAT_ACCEPT}},
-    {2, 0, 1, 1, NULL, &icon_down, THEME_DENY,      ACT_GO_VIEW, .arg.view = &view_settings},
-    {2, 1, 1, 2, "DENY",     NULL, THEME_DENY,      ACT_CUSTOM_VAL, .arg.custom = {open_swatch, THEME_CAT_DENY}},
-    {0}
-};
+    {0, 1, 1, 2, "BACKGROUND", NULL, THEME_MUTED, ACT_CUSTOM_VAL, .arg.custom = {open_swatch, THEME_CAT_BACKGROUND}},
+    {1, 1, 1, 2, "ACCEPT", NULL, THEME_ACCEPT, ACT_CUSTOM_VAL, .arg.custom = {open_swatch, THEME_CAT_ACCEPT}},
+    {2, 0, 1, 1, NULL, &icon_down, THEME_DENY, ACT_GO_VIEW, .arg.view = &view_settings},
+    {2, 1, 1, 2, "DENY", NULL, THEME_DENY, ACT_CUSTOM_VAL, .arg.custom = {open_swatch, THEME_CAT_DENY}},
+    {0}};
 
 static const struct page_cell *const theme_pages[] = {theme_p1};
 
@@ -88,13 +85,12 @@ static void pick_color(int idx)
   uint32_t color = swatch_value(swatch_colors[idx]);
   if (theme_get_base(swatch_cat) != color)
   {
-    theme_set_base(swatch_cat, color); /* applies live + persists */
+    theme_set_base(swatch_cat, color);
   }
-  back_to_categories(); /* picking the current colour just backs out */
+  back_to_categories();
 }
 
-/* swatch face: border in the colour, fill = colour muted into the background,
- * white dot on the current selection */
+/* fill = colour muted into the background, white dot on the current selection */
 static void build_swatch(void)
 {
   uint32_t bg = theme_color(THEME_BACKGROUND);
@@ -130,15 +126,19 @@ static void build_swatch(void)
   }
 }
 
-#define SWATCH(r, c, i) \
-    {r, c, 1, 1, " ", NULL, THEME_MUTED, ACT_CUSTOM_VAL, .arg.custom = {pick_color, i}}
+#define SWATCH(r, c, i) {r, c, 1, 1, " ", NULL, THEME_MUTED, ACT_CUSTOM_VAL, .arg.custom = { pick_color, i } }
 
 static const struct page_cell swatch_cells[] = {
-    SWATCH(0, 0, 0), SWATCH(0, 1, 1), SWATCH(0, 2, 2),
-    SWATCH(1, 0, 3), SWATCH(1, 1, 4), SWATCH(1, 2, 5),
-    SWATCH(2, 0, 6), SWATCH(2, 1, 7), SWATCH(2, 2, 8),
-    {0}
-};
+    SWATCH(0, 0, 0),
+    SWATCH(0, 1, 1),
+    SWATCH(0, 2, 2),
+    SWATCH(1, 0, 3),
+    SWATCH(1, 1, 4),
+    SWATCH(1, 2, 5),
+    SWATCH(2, 0, 6),
+    SWATCH(2, 1, 7),
+    SWATCH(2, 2, 8),
+    {0}};
 
 static const struct view_def view_swatch = {
     .cells = swatch_cells,

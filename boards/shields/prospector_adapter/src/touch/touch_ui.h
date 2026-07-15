@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include <lvgl.h>
 #include <zephyr/kernel.h>
 #include <zephyr/sys/atomic.h>
@@ -14,7 +13,7 @@
 #define SCR_W 280
 #define SCR_H 240
 #define TOUCH_TIMEOUT_MS 30000
-#define TOUCH_HOLD_MS 700 /* press-and-lift >= this = a hold, not a tap */
+#define TOUCH_HOLD_MS 500 /* press-and-lift >= this = a hold, not a tap */
 #define BRIGHTNESS_STEP 10
 #define KEYS_PER_PAGE 7
 
@@ -28,63 +27,65 @@
 #define UI_PAD 5
 #define BTN_RADIUS 14
 
-
-enum action_type {
-    ACT_NONE,
-    ACT_GO_VIEW,
-    ACT_SEND_KEY,
-    ACT_CUSTOM,
-    ACT_FIRE_MACRO,
-    ACT_NEXT_PAGE,
-    ACT_PREV_PAGE,
-    ACT_CUSTOM_VAL
+enum action_type
+{
+  ACT_NONE,
+  ACT_GO_VIEW,
+  ACT_SEND_KEY,
+  ACT_CUSTOM,
+  ACT_FIRE_MACRO,
+  ACT_NEXT_PAGE,
+  ACT_PREV_PAGE,
+  ACT_CUSTOM_VAL
 };
 
 struct view_def; // Forward declaration for page_cell arg
 
-struct page_cell {
-    int row;
-    int col;
-    int row_span;
-    int col_span;
-    const char *label;
-    const lv_image_dsc_t *icon;
-    enum theme_role color;
-    enum action_type action;
-    union {
-        const struct view_def *view;
-        uint32_t keycode;
-        const char *macro;
-        void (*func)(int cell);
-        struct {
-            void (*cb)(int val);
-            int val;
-        } custom;
-    } arg;
+struct page_cell
+{
+  int row;
+  int col;
+  int row_span;
+  int col_span;
+  const char *label;
+  const lv_image_dsc_t *icon;
+  enum theme_role color;
+  enum action_type action;
+  union
+  {
+    const struct view_def *view;
+    uint32_t keycode;
+    const char *macro;
+    void (*func)(int cell);
+    struct
+    {
+      void (*cb)(int val);
+      int val;
+    } custom;
+  } arg;
 };
 
 struct view_def
 {
-  const struct page_cell *cells; /* declarative layout and actions; NULL-terminated */
-  const struct page_cell *cells_portrait; /* optional explicit portrait layout override */
-  const struct page_cell *const *pages; /* array of paginated landscape layouts */
+  const struct page_cell *cells;                 /* declarative layout and actions; NULL-terminated */
+  const struct page_cell *cells_portrait;        /* optional explicit portrait layout override */
+  const struct page_cell *const *pages;          /* array of paginated landscape layouts */
   const struct page_cell *const *pages_portrait; /* array of paginated portrait overrides */
-  uint8_t num_pages;           /* TOTAL pages incl. the base cells page; pages[] holds N-1 */
-  void (*build)(void);         /* renderer; NULL = nothing to draw (NORMAL) */
-  bool idle_timeout;           /* return to NORMAL after TOUCH_TIMEOUT_MS idle */
-  bool keeps_mods;             /* armed one-shot mods survive entering this view */
-  void (*on_hold)(int cell);   /* long-press handler; NULL = holds act as taps */
-  void (*on_enter)(void);      /* called once when the view is shown */
+  uint8_t num_pages;                             /* TOTAL pages incl. the base cells page; pages[] holds N-1 */
+  void (*build)(void);                           /* renderer; NULL = nothing to draw (NORMAL) */
+  bool idle_timeout;                             /* return to NORMAL after TOUCH_TIMEOUT_MS idle */
+  bool keeps_mods;                               /* armed one-shot mods survive entering this view */
+  void (*on_hold)(int cell);                     /* long-press handler; NULL = holds act as taps */
+  void (*on_enter)(void);                        /* called once when the view is shown */
 };
 
 /* ----------------------------- shared state ------------------------------- */
-
-extern lv_obj_t *touch_overlay; /* full-screen touch UI layer (touch_nav.c) */
-extern lv_obj_t *cur_view_btns[32]; /* cached declarative button objects for mutation */
-extern const struct view_def *cur_view;   /* current view (touch_nav.c) */
-extern int cur_page;            /* page of the paginated key screens (touch_nav.c) */
-extern uint8_t pending_mods;    /* one-shot mods, applied to the next key (touch_keys.c) */
-extern int grid_rows;           /* current screen's grid (touch_draw.c) */
+extern lv_obj_t *touch_overlay;         /* full-screen touch UI layer (touch_nav.c) */
+extern lv_obj_t *cur_view_btns[32];     /* cached declarative button objects for mutation */
+extern const struct view_def *cur_view; /* current view (touch_nav.c) */
+extern int cur_page;                    /* page of the paginated key screens (touch_nav.c) */
+extern uint8_t pending_mods;            /* one-shot mods, applied to the next key (touch_keys.c) */
+extern int grid_rows;                   /* current screen's grid (touch_draw.c) */
 extern int grid_cols;
 extern uint8_t ui_rot; /* 0..3 = 0/90/180/270 deg CW (touch_rotation.c) */
 
@@ -130,7 +131,6 @@ extern const lv_image_dsc_t icon_up __weak;
 extern const lv_image_dsc_t icon_up_32 __weak;
 extern const lv_image_dsc_t icon_voldown __weak;
 extern const lv_image_dsc_t icon_volup __weak;
-
 
 /* ------------------------------- functions -------------------------------- */
 /* touch_draw.c */

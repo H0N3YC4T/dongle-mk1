@@ -1,6 +1,5 @@
 /* ------------------------------- TRACKPAD ---------------------------------- */
 
-
 #include "../touch_ui.h"
 
 static void build_trackpad(void)
@@ -53,14 +52,12 @@ static void build_trackpad(void)
 static const struct page_cell trackpad_cells[] = {
     {0, 0, 1, 1, NULL, NULL, 0, ACT_GO_VIEW, .arg.view = &view_home},
     {5, 6, 1, 1, NULL, NULL, 0, ACT_NONE},
-    {0}
-};
+    {0}};
 
 static const struct page_cell trackpad_cells_portrait[] = {
     {0, 0, 1, 1, NULL, NULL, 0, ACT_GO_VIEW, .arg.view = &view_home},
     {6, 5, 1, 1, NULL, NULL, 0, ACT_NONE},
-    {0}
-};
+    {0}};
 
 const struct view_def view_trackpad = {
     .cells = trackpad_cells,
