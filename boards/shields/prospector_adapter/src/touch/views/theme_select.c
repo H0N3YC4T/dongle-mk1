@@ -57,7 +57,6 @@ static const struct page_cell theme_p1[] = {
     {0, 1, 1, 2, "INCREMENT", NULL, THEME_INCREMENT, ACT_CUSTOM_VAL, .arg.custom = {open_swatch, THEME_CAT_INCREMENT}},
     {1, 1, 1, 2, "DECREMENT", NULL, THEME_DECREMENT, ACT_CUSTOM_VAL, .arg.custom = {open_swatch, THEME_CAT_DECREMENT}},
     {2, 0, 1, 1, NULL, &icon_down, THEME_FOCUS, ACT_NEXT_PAGE},
-    /* background's own base can be invisible on itself -- outline muted */
     {2, 1, 1, 2, "BACKGROUND", NULL, THEME_MUTED, ACT_CUSTOM_VAL, .arg.custom = {open_swatch, THEME_CAT_BACKGROUND}},
     {0}};
 
@@ -167,14 +166,14 @@ static void build_swatch(void)
   }
 }
 
-#define SWATCH(r, c, i) {r, c, 1, 1, " ", NULL, THEME_MUTED, ACT_CUSTOM_VAL, .arg.custom = { pick_color, i } }
+#define SWATCH(r, c, i)                                                             \
+  {                                                                                 \
+    r, c, 1, 1, " ", NULL, THEME_MUTED, ACT_CUSTOM_VAL, .arg.custom = { pick_color, \
+                                                                        i }         \
+  }
 
 static const struct page_cell swatch_cells[] = {
-    SWATCH(0, 0, 0), SWATCH(0, 1, 1), SWATCH(0, 2, 2), SWATCH(0, 3, 3),
-    SWATCH(1, 0, 4), SWATCH(1, 1, 5), SWATCH(1, 2, 6), SWATCH(1, 3, 7),
-    SWATCH(2, 0, 8), SWATCH(2, 1, 9), SWATCH(2, 2, 10), SWATCH(2, 3, 11),
-    SWATCH(3, 0, 12), SWATCH(3, 1, 13), SWATCH(3, 2, 14), SWATCH(3, 3, 15),
-    {0}};
+    SWATCH(0, 0, 0), SWATCH(0, 1, 1), SWATCH(0, 2, 2), SWATCH(0, 3, 3), SWATCH(1, 0, 4), SWATCH(1, 1, 5), SWATCH(1, 2, 6), SWATCH(1, 3, 7), SWATCH(2, 0, 8), SWATCH(2, 1, 9), SWATCH(2, 2, 10), SWATCH(2, 3, 11), SWATCH(3, 0, 12), SWATCH(3, 1, 13), SWATCH(3, 2, 14), SWATCH(3, 3, 15), {0}};
 
 static const struct view_def view_swatch = {
     .cells = swatch_cells,
