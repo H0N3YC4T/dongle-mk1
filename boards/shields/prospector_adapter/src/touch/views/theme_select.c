@@ -5,16 +5,23 @@
 
 static const struct view_def view_swatch;
 
-/* preset bases: the six classic defaults + cream / apricot / magenta */
-static const uint32_t swatch_colors[9] = {
-    0xc8a2c8, /* lilac      */
-    0xa8d0e6, /* sky        */
-    0xf5e08c, /* chardonnay */
-    0xa8e6b8, /* mint       */
+/* presets in rainbow order (all six classic defaults included), white + black last */
+static const uint32_t swatch_colors[16] = {
     0xc2526a, /* rose       */
-    0xe08cd0, /* magenta    */
+    0xf2a09a, /* salmon     */
     0xf5b98c, /* apricot    */
+    0xf5cf8c, /* gold       */
+    0xf5e08c, /* chardonnay */
+    0xcfe89c, /* lime       */
+    0xa8e6b8, /* mint       */
+    0x8cd9c8, /* teal       */
+    0xa8d0e6, /* sky        */
+    0x8ca8e6, /* periwinkle */
+    0xb0a0e0, /* violet     */
+    0xc8a2c8, /* lilac      */
+    0xe08cd0, /* magenta    */
     0xf0e8d8, /* cream      */
+    0xf2f2f0, /* white      */
     0x000000, /* charcole   */
 };
 
@@ -64,8 +71,27 @@ static const struct page_cell theme_p2[] = {
 
 static const struct page_cell *const theme_pages[] = {theme_p1, theme_p2};
 
+/* category buttons read one size smaller than the default cell face */
+static void build_theme(void)
+{
+  for (int i = 0; i < 8; i++)
+  {
+    lv_obj_t *b = cur_view_btns[i];
+    if (b == NULL)
+    {
+      continue;
+    }
+    lv_obj_t *l = lv_obj_get_child(b, 0);
+    if (l != NULL && lv_obj_check_type(l, &lv_label_class))
+    {
+      lv_obj_set_style_text_font(l, &lv_font_montserrat_16, LV_PART_MAIN);
+    }
+  }
+}
+
 const struct view_def view_theme = {
     .cells = theme_p0,
+    .build = build_theme,
     .pages = theme_pages,
     .num_pages = 3,
     .keeps_mods = true,
@@ -111,7 +137,7 @@ static void build_swatch(void)
 {
   uint32_t bg = theme_color(THEME_BACKGROUND);
   uint32_t current = theme_get_base(swatch_cat);
-  for (int i = 0; i < 9; i++)
+  for (int i = 0; i < 16; i++)
   {
     lv_obj_t *b = cur_view_btns[i];
     if (b == NULL)
@@ -144,15 +170,10 @@ static void build_swatch(void)
 #define SWATCH(r, c, i) {r, c, 1, 1, " ", NULL, THEME_MUTED, ACT_CUSTOM_VAL, .arg.custom = { pick_color, i } }
 
 static const struct page_cell swatch_cells[] = {
-    SWATCH(0, 0, 0),
-    SWATCH(0, 1, 1),
-    SWATCH(0, 2, 2),
-    SWATCH(1, 0, 3),
-    SWATCH(1, 1, 4),
-    SWATCH(1, 2, 5),
-    SWATCH(2, 0, 6),
-    SWATCH(2, 1, 7),
-    SWATCH(2, 2, 8),
+    SWATCH(0, 0, 0), SWATCH(0, 1, 1), SWATCH(0, 2, 2), SWATCH(0, 3, 3),
+    SWATCH(1, 0, 4), SWATCH(1, 1, 5), SWATCH(1, 2, 6), SWATCH(1, 3, 7),
+    SWATCH(2, 0, 8), SWATCH(2, 1, 9), SWATCH(2, 2, 10), SWATCH(2, 3, 11),
+    SWATCH(3, 0, 12), SWATCH(3, 1, 13), SWATCH(3, 2, 14), SWATCH(3, 3, 15),
     {0}};
 
 static const struct view_def view_swatch = {
