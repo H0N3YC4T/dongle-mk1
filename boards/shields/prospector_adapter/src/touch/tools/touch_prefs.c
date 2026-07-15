@@ -32,7 +32,10 @@ void touch_prefs_apply(void) {
     if (!prefs_loaded) {
         return;
     }
-    prospector_brightness_step((int)loaded_prefs.bright - prospector_brightness_get());
+    int b = ((loaded_prefs.bright + 5) / 10) * 10; /* snap to the 1-10 scale */
+    if (b < SETTINGS_BRIGHT_MIN) b = SETTINGS_BRIGHT_MIN;
+    if (b > SETTINGS_BRIGHT_MAX) b = SETTINGS_BRIGHT_MAX;
+    prospector_brightness_step(b - prospector_brightness_get());
     if (loaded_prefs.sens >= 0 && prospector_touchpad_sens_get() >= 0) {
         prospector_touchpad_sens_step(loaded_prefs.sens - prospector_touchpad_sens_get());
     }

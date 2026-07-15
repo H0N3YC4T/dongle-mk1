@@ -110,7 +110,7 @@ static void build_settings(void)
   if (cur_view_btns[SET_BTN_BRIGHT_READOUT])
   {
     static char bright_text[12];
-    snprintf(bright_text, sizeof(bright_text), "%d", br);
+    snprintf(bright_text, sizeof(bright_text), "%d", br / 10);
     readout_set(SET_BTN_BRIGHT_READOUT, &icon_bright, bright_text);
   }
 }
