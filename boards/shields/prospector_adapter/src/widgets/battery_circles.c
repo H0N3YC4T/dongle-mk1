@@ -26,6 +26,7 @@ static sys_slist_t widgets = SYS_SLIST_STATIC_INIT(&widgets);
 
 static uint8_t peripheral_battery[PERIPHERAL_COUNT] = {0};
 static bool peripheral_connected[PERIPHERAL_COUNT] = {false};
+static bool peripheral_charging[PERIPHERAL_COUNT] = {false};
 
 static lv_style_t style_arc_ring_disconnected;
 static lv_style_t style_arc_ring_connected;
@@ -363,8 +364,6 @@ static void update_peripheral_display(uint8_t source)
     }
   }
 }
-
-static bool peripheral_charging[PERIPHERAL_COUNT];
 
 static void set_battery_level(uint8_t source, uint8_t level)
 {
