@@ -7,7 +7,7 @@
 #include <dt-bindings/zmk/keys.h>
 #include <dt-bindings/zmk/modifiers.h>
 
-#include "display_colors.h"
+#include "theme.h"
 
 /* ------------------------------- constants -------------------------------- */
 
@@ -49,7 +49,7 @@ struct page_cell {
     int col_span;
     const char *label;
     const lv_image_dsc_t *icon;
-    uint32_t color;
+    enum theme_role color;
     enum action_type action;
     union {
         const struct view_def *view;
@@ -133,11 +133,11 @@ extern const lv_image_dsc_t icon_volup __weak;
 
 /* ------------------------------- functions -------------------------------- */
 /* touch_draw.c */
-lv_obj_t *draw_cell(int row, int col, int w_cells, const char *text, uint32_t accent);
-lv_obj_t *draw_cell_ext(int row, int col, int w_cells, int h_cells, const char *text, uint32_t accent, bool filled);
-lv_obj_t *draw_cell_icon(int row, int col, const lv_image_dsc_t *icon, const char *fallback, uint32_t accent);
-lv_obj_t *draw_cell_icon_ext(int row, int col, int w_cells, int h_cells, const lv_image_dsc_t *icon, const char *fallback, uint32_t accent);
-void cell_child_set_color(lv_obj_t *btn, uint32_t color_hex); /* label text or image recolor */
+lv_obj_t *draw_cell(int row, int col, int w_cells, const char *text, enum theme_role accent);
+lv_obj_t *draw_cell_ext(int row, int col, int w_cells, int h_cells, const char *text, enum theme_role accent, bool filled);
+lv_obj_t *draw_cell_icon(int row, int col, const lv_image_dsc_t *icon, const char *fallback, enum theme_role accent);
+lv_obj_t *draw_cell_icon_ext(int row, int col, int w_cells, int h_cells, const lv_image_dsc_t *icon, const char *fallback, enum theme_role accent);
+void cell_child_set_color(lv_obj_t *btn, enum theme_role role); /* label text or image recolor */
 
 /* touch_main.c */
 void build_view(const struct view_def *v);

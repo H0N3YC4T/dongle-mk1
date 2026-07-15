@@ -11,6 +11,7 @@
 
 #include <fonts.h>
 #include "display_colors.h"
+#include "theme.h"
 
 static sys_slist_t widgets = SYS_SLIST_STATIC_INIT(&widgets);
 static struct k_work_delayable wpm_smooth_work;
@@ -63,8 +64,8 @@ static void wpm_meter_render(int active_bars)
       for (int i = min_bar; i < max_bar; i++)
       {
         lv_color_t color = (i < active_bars)
-                               ? lv_color_hex(COLOR_WPM_BAR_ACTIVE)
-                               : lv_color_hex(COLOR_WPM_BAR_INACTIVE);
+                               ? lv_color_hex(theme_color(THEME_PRIMARY))
+                               : lv_color_hex(theme_color(THEME_PRIMARY_DIM));
         lv_obj_set_style_bg_color(widget->bars[i], color, LV_PART_MAIN);
       }
       prev_active_bars = active_bars;
@@ -214,7 +215,7 @@ int zmk_widget_wpm_meter_init(struct zmk_widget_wpm_meter *widget, lv_obj_t *par
   for (int i = 0; i < WPM_BAR_COUNT; i++)
   {
     widget->bars[i] = lv_obj_create(widget->obj);
-    lv_obj_set_style_bg_color(widget->bars[i], lv_color_hex(COLOR_WPM_BAR_INACTIVE), LV_PART_MAIN);
+    lv_obj_set_style_bg_color(widget->bars[i], lv_color_hex(theme_color(THEME_PRIMARY_DIM)), LV_PART_MAIN);
     lv_obj_set_style_bg_opa(widget->bars[i], LV_OPA_COVER, LV_PART_MAIN);
     lv_obj_set_style_border_width(widget->bars[i], 0, LV_PART_MAIN);
     lv_obj_set_style_radius(widget->bars[i], 1, LV_PART_MAIN);
@@ -224,7 +225,7 @@ int zmk_widget_wpm_meter_init(struct zmk_widget_wpm_meter *widget, lv_obj_t *par
 
   widget->peak_indicator = lv_obj_create(widget->obj);
   lv_obj_set_size(widget->peak_indicator, 4, WPM_BAR_HEIGHT);
-  lv_obj_set_style_bg_color(widget->peak_indicator, lv_color_hex(COLOR_GREY), LV_PART_MAIN);
+  lv_obj_set_style_bg_color(widget->peak_indicator, lv_color_hex(theme_color(THEME_MUTED)), LV_PART_MAIN);
 
   lv_obj_set_style_bg_opa(widget->peak_indicator, LV_OPA_COVER, LV_PART_MAIN);
   lv_obj_set_style_border_width(widget->peak_indicator, 0, LV_PART_MAIN);
@@ -234,8 +235,8 @@ int zmk_widget_wpm_meter_init(struct zmk_widget_wpm_meter *widget, lv_obj_t *par
   widget->wpm_label = lv_label_create(widget->obj);
   lv_label_set_text(widget->wpm_label, "0");
   lv_obj_set_style_text_font(widget->wpm_label, &FR_Medium_32, LV_PART_MAIN);
-  lv_obj_set_style_text_color(widget->wpm_label, lv_color_hex(COLOR_PRIMARY), LV_PART_MAIN);
-  lv_obj_set_style_bg_color(widget->wpm_label, lv_color_hex(COLOR_BACKGROUND), LV_PART_MAIN);
+  lv_obj_set_style_text_color(widget->wpm_label, lv_color_hex(theme_color(THEME_PRIMARY)), LV_PART_MAIN);
+  lv_obj_set_style_bg_color(widget->wpm_label, lv_color_hex(theme_color(THEME_BACKGROUND)), LV_PART_MAIN);
   lv_obj_set_style_bg_opa(widget->wpm_label, LV_OPA_COVER, LV_PART_MAIN);
   lv_obj_set_style_pad_hor(widget->wpm_label, 6, LV_PART_MAIN);
   lv_obj_set_style_pad_ver(widget->wpm_label, 4, LV_PART_MAIN);
@@ -245,7 +246,7 @@ int zmk_widget_wpm_meter_init(struct zmk_widget_wpm_meter *widget, lv_obj_t *par
   lv_label_set_text(widget->layer_label, "");
   lv_obj_set_style_text_font(widget->layer_label, &DINishExpanded_Light_36, LV_PART_MAIN);
   lv_obj_set_style_text_color(widget->layer_label, lv_color_hex(COLOR_LAYER_TEXT), LV_PART_MAIN);
-  lv_obj_set_style_bg_color(widget->layer_label, lv_color_hex(COLOR_BACKGROUND), LV_PART_MAIN);
+  lv_obj_set_style_bg_color(widget->layer_label, lv_color_hex(theme_color(THEME_BACKGROUND)), LV_PART_MAIN);
   lv_obj_set_style_bg_opa(widget->layer_label, LV_OPA_COVER, LV_PART_MAIN);
   lv_obj_set_style_pad_hor(widget->layer_label, 8, LV_PART_MAIN);
   lv_obj_set_style_pad_top(widget->layer_label, 7, LV_PART_MAIN);

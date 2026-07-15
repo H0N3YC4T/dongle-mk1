@@ -87,7 +87,7 @@ void touch_ui_attach(lv_obj_t *screen) {
     touch_overlay = lv_obj_create(screen);
     lv_obj_set_size(touch_overlay, scr_w(), scr_h());
     lv_obj_set_pos(touch_overlay, 0, 0);
-    lv_obj_set_style_bg_color(touch_overlay, lv_color_hex(COLOR_BACKGROUND), LV_PART_MAIN);
+    lv_obj_set_style_bg_color(touch_overlay, lv_color_hex(theme_color(THEME_BACKGROUND)), LV_PART_MAIN);
     lv_obj_set_style_bg_opa(touch_overlay, LV_OPA_COVER, LV_PART_MAIN);
     lv_obj_set_style_border_width(touch_overlay, 0, LV_PART_MAIN);
     lv_obj_set_style_pad_all(touch_overlay, 0, LV_PART_MAIN);

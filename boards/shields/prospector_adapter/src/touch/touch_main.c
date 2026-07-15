@@ -139,7 +139,7 @@ void build_view(const struct view_def *d)
       lv_obj_set_size(frame, scr_w(), scr_h());
       lv_obj_set_pos(frame, 0, 0);
       lv_obj_set_style_bg_opa(frame, LV_OPA_TRANSP, LV_PART_MAIN);
-      lv_obj_set_style_border_color(frame, lv_color_hex(COLOR_ACCENT), LV_PART_MAIN);
+      lv_obj_set_style_border_color(frame, lv_color_hex(theme_color(THEME_SECONDARY)), LV_PART_MAIN);
       lv_obj_set_style_border_width(frame, 3, LV_PART_MAIN);
       lv_obj_set_style_radius(frame, GLASS_RADIUS, LV_PART_MAIN);
       lv_obj_set_style_pad_all(frame, 0, LV_PART_MAIN);

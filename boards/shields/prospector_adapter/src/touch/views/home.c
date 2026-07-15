@@ -38,15 +38,15 @@ static void hold_home(int cell)
 }
 
 static const struct page_cell home_cells[] = {
-    {0, 0, 1, 1, NULL,               &icon_fkeys,    COLOR_PRIMARY, ACT_GO_VIEW, .arg.view = &view_fkeys},
-    {0, 1, 1, 1, NULL,       &icon_up,           COLOR_RED,     ACT_GO_VIEW, .arg.view = &view_normal},
-    {0, 2, 1, 1, NULL,               &icon_numpad,   COLOR_PRIMARY, ACT_GO_VIEW, .arg.view = &view_numpad},
-    {1, 0, 1, 1, NULL,               &icon_symbols,  COLOR_PRIMARY, ACT_GO_VIEW, .arg.view = &view_symbols},
-    {1, 1, 1, 1, NULL, &icon_settings,           COLOR_PRIMARY, ACT_GO_VIEW, .arg.view = &view_settings},
-    {1, 2, 1, 1, NULL,               &icon_trackpad, COLOR_PRIMARY, ACT_GO_VIEW, .arg.view = &view_trackpad},
-    {2, 0, 1, 1, "MOD",              &icon_modkeys,  COLOR_PRIMARY, ACT_GO_VIEW, .arg.view = &view_modifiers},
-    {2, 1, 1, 1, NULL, &icon_keyboard,           COLOR_PRIMARY, ACT_CUSTOM,  .arg.func = tap_home_pad},
-    {2, 2, 1, 1, NULL,    &icon_audio,           COLOR_PRIMARY, ACT_GO_VIEW, .arg.view = &view_media},
+    {0, 0, 1, 1, NULL,               &icon_fkeys,    THEME_PRIMARY, ACT_GO_VIEW, .arg.view = &view_fkeys},
+    {0, 1, 1, 1, NULL,       &icon_up,           THEME_DENY,     ACT_GO_VIEW, .arg.view = &view_normal},
+    {0, 2, 1, 1, NULL,               &icon_numpad,   THEME_PRIMARY, ACT_GO_VIEW, .arg.view = &view_numpad},
+    {1, 0, 1, 1, NULL,               &icon_symbols,  THEME_PRIMARY, ACT_GO_VIEW, .arg.view = &view_symbols},
+    {1, 1, 1, 1, NULL, &icon_settings,           THEME_PRIMARY, ACT_GO_VIEW, .arg.view = &view_settings},
+    {1, 2, 1, 1, NULL,               &icon_trackpad, THEME_PRIMARY, ACT_GO_VIEW, .arg.view = &view_trackpad},
+    {2, 0, 1, 1, "MOD",              &icon_modkeys,  THEME_PRIMARY, ACT_GO_VIEW, .arg.view = &view_modifiers},
+    {2, 1, 1, 1, NULL, &icon_keyboard,           THEME_PRIMARY, ACT_CUSTOM,  .arg.func = tap_home_pad},
+    {2, 2, 1, 1, NULL,    &icon_audio,           THEME_PRIMARY, ACT_GO_VIEW, .arg.view = &view_media},
     {0}
 };
 

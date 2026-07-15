@@ -18,9 +18,9 @@ static void build_trackpad(void)
       lv_obj_set_size(lane, scr_w() - TP_SCROLL_ZONE, scr_h());
       lv_obj_set_pos(lane, TP_SCROLL_ZONE, 0);
     }
-    lv_obj_set_style_bg_color(lane, lv_color_hex(COLOR_NEAR_BLACK), LV_PART_MAIN);
+    lv_obj_set_style_bg_color(lane, lv_color_hex(theme_color(THEME_SURFACE_LOW)), LV_PART_MAIN);
     lv_obj_set_style_bg_opa(lane, LV_OPA_COVER, LV_PART_MAIN);
-    lv_obj_set_style_border_color(lane, lv_color_hex(COLOR_SLATE), LV_PART_MAIN);
+    lv_obj_set_style_border_color(lane, lv_color_hex(theme_color(THEME_OUTLINE)), LV_PART_MAIN);
     lv_obj_set_style_border_width(lane, 1, LV_PART_MAIN);
     lv_obj_set_style_radius(lane, 0, LV_PART_MAIN);
     lv_obj_set_style_pad_all(lane, 0, LV_PART_MAIN);
@@ -29,7 +29,7 @@ static void build_trackpad(void)
   if (ex != NULL)
   {
     lv_image_set_src(ex, &icon_close);
-    lv_obj_set_style_image_recolor(ex, lv_color_hex(COLOR_RED), LV_PART_MAIN);
+    lv_obj_set_style_image_recolor(ex, lv_color_hex(theme_color(THEME_DENY)), LV_PART_MAIN);
     lv_obj_set_style_image_recolor_opa(ex, LV_OPA_COVER, LV_PART_MAIN);
     lv_obj_set_pos(ex, 16, 12);
   }
@@ -38,7 +38,7 @@ static void build_trackpad(void)
   {
     lv_label_set_text(hint, "TRACKPAD");
     lv_obj_set_style_text_font(hint, &lv_font_montserrat_20, LV_PART_MAIN);
-    lv_obj_set_style_text_color(hint, lv_color_hex(COLOR_DARK_GREY), LV_PART_MAIN);
+    lv_obj_set_style_text_color(hint, lv_color_hex(theme_color(THEME_MUTED_DIM)), LV_PART_MAIN);
     if (ui_rot & 1)
     {
       lv_obj_align(hint, LV_ALIGN_CENTER, 0, -20);

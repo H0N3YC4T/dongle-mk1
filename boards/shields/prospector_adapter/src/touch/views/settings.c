@@ -39,7 +39,7 @@ static void readout_set(int idx, const lv_image_dsc_t *icon, const char *text)
     if (img != NULL)
     {
       lv_image_set_src(img, icon);
-      lv_obj_set_style_image_recolor(img, lv_color_hex(COLOR_PRIMARY), LV_PART_MAIN);
+      lv_obj_set_style_image_recolor(img, lv_color_hex(theme_color(THEME_PRIMARY)), LV_PART_MAIN);
       lv_obj_set_style_image_recolor_opa(img, LV_OPA_COVER, LV_PART_MAIN);
       lv_obj_move_to_index(img, 0);
     }
@@ -59,8 +59,8 @@ static void build_settings(void)
   int sn = prospector_touchpad_sens_get();
 
   if (sn >= 0) {
-      if (cur_view_btns[SET_BTN_SENS_PLUS]) lv_obj_set_style_border_color(cur_view_btns[SET_BTN_SENS_PLUS], lv_color_hex(sn >= SETTINGS_SENS_MAX ? COLOR_GREY : COLOR_GREEN), LV_PART_MAIN);
-      if (cur_view_btns[SET_BTN_SENS_MINUS]) lv_obj_set_style_border_color(cur_view_btns[SET_BTN_SENS_MINUS], lv_color_hex(sn <= 0 ? COLOR_GREY : COLOR_ALERT), LV_PART_MAIN);
+      if (cur_view_btns[SET_BTN_SENS_PLUS]) lv_obj_set_style_border_color(cur_view_btns[SET_BTN_SENS_PLUS], lv_color_hex(theme_color(sn >= SETTINGS_SENS_MAX ? THEME_MUTED : THEME_ACCEPT)), LV_PART_MAIN);
+      if (cur_view_btns[SET_BTN_SENS_MINUS]) lv_obj_set_style_border_color(cur_view_btns[SET_BTN_SENS_MINUS], lv_color_hex(theme_color(sn <= 0 ? THEME_MUTED : THEME_FOCUS)), LV_PART_MAIN);
       if (cur_view_btns[SET_BTN_SENS_READOUT]) {
           static char sens_text[8];
           snprintf(sens_text, sizeof(sens_text), "%d", sn);
@@ -72,8 +72,8 @@ static void build_settings(void)
       if (cur_view_btns[SET_BTN_SENS_READOUT]) lv_obj_add_flag(cur_view_btns[SET_BTN_SENS_READOUT], LV_OBJ_FLAG_HIDDEN);
   }
 
-  if (cur_view_btns[SET_BTN_BRIGHT_PLUS]) lv_obj_set_style_border_color(cur_view_btns[SET_BTN_BRIGHT_PLUS], lv_color_hex(br >= SETTINGS_BRIGHT_MAX ? COLOR_GREY : COLOR_GREEN), LV_PART_MAIN);
-  if (cur_view_btns[SET_BTN_BRIGHT_MINUS]) lv_obj_set_style_border_color(cur_view_btns[SET_BTN_BRIGHT_MINUS], lv_color_hex(br <= SETTINGS_BRIGHT_MIN ? COLOR_GREY : COLOR_ALERT), LV_PART_MAIN);
+  if (cur_view_btns[SET_BTN_BRIGHT_PLUS]) lv_obj_set_style_border_color(cur_view_btns[SET_BTN_BRIGHT_PLUS], lv_color_hex(theme_color(br >= SETTINGS_BRIGHT_MAX ? THEME_MUTED : THEME_ACCEPT)), LV_PART_MAIN);
+  if (cur_view_btns[SET_BTN_BRIGHT_MINUS]) lv_obj_set_style_border_color(cur_view_btns[SET_BTN_BRIGHT_MINUS], lv_color_hex(theme_color(br <= SETTINGS_BRIGHT_MIN ? THEME_MUTED : THEME_FOCUS)), LV_PART_MAIN);
   if (cur_view_btns[SET_BTN_BRIGHT_READOUT]) {
       static char bright_text[8];
       snprintf(bright_text, sizeof(bright_text), "%d%%", br);
@@ -82,14 +82,14 @@ static void build_settings(void)
 }
 
 static const struct page_cell settings_cells[] = {
-    {0, 0, 1, 2, NULL, &icon_plus, COLOR_GREEN, ACT_CUSTOM_VAL, .arg.custom = {tap_sens, +1}},
-    {0, 2, 1, 2, NULL, &icon_up, COLOR_RED, ACT_GO_VIEW, .arg.view = &view_home},
-    {0, 4, 1, 2, NULL, &icon_plus, COLOR_GREEN, ACT_CUSTOM_VAL, .arg.custom = {tap_bright, +BRIGHTNESS_STEP}},
-    {1, 0, 1, 2, NULL, &icon_minus, COLOR_ALERT, ACT_CUSTOM_VAL, .arg.custom = {tap_sens, -1}},
-    {1, 2, 1, 2, NULL, &icon_rotate, COLOR_ACCENT, ACT_CUSTOM, .arg.func = tap_rotate},
-    {1, 4, 1, 2, NULL, &icon_minus, COLOR_ALERT, ACT_CUSTOM_VAL, .arg.custom = {tap_bright, -BRIGHTNESS_STEP}},
-    {2, 0, 1, 3, " ", NULL, COLOR_PRIMARY, ACT_NONE},
-    {2, 3, 1, 3, " ", NULL, COLOR_PRIMARY, ACT_NONE},
+    {0, 0, 1, 2, NULL, &icon_plus, THEME_ACCEPT, ACT_CUSTOM_VAL, .arg.custom = {tap_sens, +1}},
+    {0, 2, 1, 2, NULL, &icon_up, THEME_DENY, ACT_GO_VIEW, .arg.view = &view_home},
+    {0, 4, 1, 2, NULL, &icon_plus, THEME_ACCEPT, ACT_CUSTOM_VAL, .arg.custom = {tap_bright, +BRIGHTNESS_STEP}},
+    {1, 0, 1, 2, NULL, &icon_minus, THEME_FOCUS, ACT_CUSTOM_VAL, .arg.custom = {tap_sens, -1}},
+    {1, 2, 1, 2, NULL, &icon_rotate, THEME_SECONDARY, ACT_CUSTOM, .arg.func = tap_rotate},
+    {1, 4, 1, 2, NULL, &icon_minus, THEME_FOCUS, ACT_CUSTOM_VAL, .arg.custom = {tap_bright, -BRIGHTNESS_STEP}},
+    {2, 0, 1, 3, " ", NULL, THEME_PRIMARY, ACT_NONE},
+    {2, 3, 1, 3, " ", NULL, THEME_PRIMARY, ACT_NONE},
     {0}
 };
 

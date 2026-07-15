@@ -9,6 +9,7 @@
 
 #include <fonts.h>
 #include "display_colors.h"
+#include "theme.h"
 
 static sys_slist_t widgets = SYS_SLIST_STATIC_INIT(&widgets);
 
@@ -135,7 +136,7 @@ static lv_obj_t *create_slot_btn(lv_obj_t *parent, int index, int x, int width, 
         snprintf(text, sizeof(text), "%d", index + 1);
         lv_label_set_text(label, text);
         lv_obj_set_style_text_font(label, &FG_Medium_20, LV_PART_MAIN);
-        lv_obj_set_style_text_color(label, lv_color_hex(COLOR_BACKGROUND), LV_PART_MAIN);
+        lv_obj_set_style_text_color(label, lv_color_hex(theme_color(THEME_BACKGROUND)), LV_PART_MAIN);
         lv_obj_center(label);
         lv_obj_set_style_translate_y(label, 1, LV_PART_MAIN);
     }

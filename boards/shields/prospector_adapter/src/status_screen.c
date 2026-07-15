@@ -1,5 +1,6 @@
 
 #include <lvgl.h>
+#include "theme.h"
 
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
@@ -43,7 +44,7 @@ void status_screen_reflow(void) {
 
 lv_obj_t *zmk_display_status_screen() {
     lv_obj_t *screen = lv_obj_create(NULL);
-    lv_obj_set_style_bg_color(screen, lv_color_hex(COLOR_BACKGROUND), LV_PART_MAIN);
+    lv_obj_set_style_bg_color(screen, lv_color_hex(theme_color(THEME_BACKGROUND)), LV_PART_MAIN);
     lv_obj_set_style_bg_opa(screen, 255, LV_PART_MAIN);
 
     zmk_widget_modifier_indicator_init(&modifier_indicator_widget, screen);

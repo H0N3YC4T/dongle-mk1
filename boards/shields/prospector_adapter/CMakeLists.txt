@@ -11,6 +11,7 @@ if(CONFIG_SHIELD_PROSPECTOR_ADAPTER)
 
   # Status screen entry point + supporting features
   zephyr_library_sources(src/status_screen.c)
+  zephyr_library_sources(src/theme.c)
   zephyr_library_sources(src/brightness.c)
   zephyr_library_sources(src/display_rotate_init.c)
 

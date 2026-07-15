@@ -11,6 +11,7 @@
 #include <fonts.h>
 #include <modifier_order.h>
 #include "display_colors.h"
+#include "theme.h"
 
 static sys_slist_t widgets = SYS_SLIST_STATIC_INIT(&widgets);
 
@@ -26,8 +27,8 @@ static bool caps_word_active = false;
 #endif
 
 static void set_modifier_color(lv_obj_t *label, bool active) {
-    lv_color_t color = active ? lv_color_hex(COLOR_MOD_ACTIVE)
-                               : lv_color_hex(COLOR_MOD_INACTIVE);
+    lv_color_t color = active ? lv_color_hex(theme_color(THEME_SECONDARY_BRIGHT))
+                               : lv_color_hex(theme_color(THEME_SECONDARY_DIM));
     lv_obj_set_style_text_color(label, color, 0);
 }
 
@@ -39,7 +40,7 @@ static void modifier_indicator_update_cb(struct modifier_indicator_state state) 
 #ifdef CONFIG_DT_HAS_ZMK_BEHAVIOR_CAPS_WORD_ENABLED
             if (type == MOD_TYPE_SHIFT && state.caps_word) {
                 lv_obj_set_style_text_color(widget->mod_labels[i],
-                    lv_color_hex(COLOR_MOD_CAPS_WORD), 0);
+                    lv_color_hex(theme_color(THEME_FOCUS_BRIGHT)), 0);
                 continue;
             }
 #endif
@@ -98,7 +99,7 @@ static lv_obj_t *create_mod_label(lv_obj_t *parent, const char *text) {
     lv_obj_t *label = lv_label_create(parent);
     lv_label_set_text(label, text);
     lv_obj_set_style_text_font(label, &lv_font_montserrat_16, LV_PART_MAIN);
-    lv_obj_set_style_text_color(label, lv_color_hex(COLOR_MOD_INACTIVE), LV_PART_MAIN);
+    lv_obj_set_style_text_color(label, lv_color_hex(theme_color(THEME_SECONDARY_DIM)), LV_PART_MAIN);
     return label;
 }
 
