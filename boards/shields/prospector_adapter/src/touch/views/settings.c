@@ -86,6 +86,20 @@ static void build_settings(void)
   }
 }
 
+/* hold the theme button = reset every category to the classic palette */
+static void hold_settings(int cell)
+{
+  if (cell == 7)
+  {
+    theme_reset_classic();
+    build_view(cur_view);
+  }
+  else
+  {
+    tap_declarative(cell);
+  }
+}
+
 static const struct page_cell settings_cells[] = {
     {0, 0, 1, 1, " ", NULL, THEME_PRIMARY, ACT_NONE},
     {0, 1, 1, 1, NULL, &icon_up, THEME_DENY, ACT_GO_VIEW, .arg.view = &view_home},
@@ -103,4 +117,5 @@ const struct view_def view_settings = {
     .cells = settings_cells,
     .build = build_settings,
     .keeps_mods = true,
+    .on_hold = hold_settings,
 };

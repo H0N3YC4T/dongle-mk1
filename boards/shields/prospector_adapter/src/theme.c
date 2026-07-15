@@ -141,6 +141,16 @@ SETTINGS_STATIC_HANDLER_DEFINE(prospector_theme, "prospector_theme", NULL, theme
 
 #endif /* IS_ENABLED(CONFIG_SETTINGS) */
 
+void theme_reset_classic(void) {
+    for (int c = 0; c < THEME_CAT_COUNT; c++) {
+        theme_apply_base(c, theme_classic[cat_base[c]]);
+    }
+    theme_changed();
+#if IS_ENABLED(CONFIG_SETTINGS)
+    k_work_schedule(&theme_save_work, K_SECONDS(2));
+#endif
+}
+
 void theme_set_base(enum theme_category cat, uint32_t base_rgb) {
     if (cat >= THEME_CAT_COUNT) {
         return;

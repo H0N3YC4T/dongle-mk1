@@ -46,6 +46,9 @@ uint32_t theme_color(enum theme_role role);
 void theme_set_base(enum theme_category cat, uint32_t base_rgb);
 uint32_t theme_get_base(enum theme_category cat);
 
+/* All categories back to the classic palette (applies live + persists). */
+void theme_reset_classic(void);
+
 /* Notified after any palette change (live set_base or boot settings load).
  * Weak no-op in theme.c; the status screen overrides it to restyle live
  * widgets. Touch views restyle themselves via build_view() as usual. */
