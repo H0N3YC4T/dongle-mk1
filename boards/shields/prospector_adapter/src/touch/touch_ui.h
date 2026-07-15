@@ -85,6 +85,7 @@ extern lv_obj_t *cur_view_btns[32];     /* cached declarative button objects for
 extern const struct view_def *cur_view; /* current view (touch_nav.c) */
 extern int cur_page;                    /* page of the paginated key screens (touch_nav.c) */
 extern uint8_t pending_mods;            /* one-shot mods, applied to the next key (touch_keys.c) */
+extern enum theme_role pending_mod_role; /* armed-mod ring colour (views/modifiers.c) */
 extern int grid_rows;                   /* current screen's grid (touch_draw.c) */
 extern int grid_cols;
 extern uint8_t ui_rot; /* 0..3 = 0/90/180/270 deg CW (touch_rotation.c) */

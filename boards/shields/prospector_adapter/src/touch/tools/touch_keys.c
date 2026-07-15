@@ -6,6 +6,7 @@
 #include "../touch_ui.h"
 
 uint8_t pending_mods; /* one-shot, applied to the next key sent */
+enum theme_role pending_mod_role = THEME_SECONDARY;
 
 struct pending_key {
     const char *dev;

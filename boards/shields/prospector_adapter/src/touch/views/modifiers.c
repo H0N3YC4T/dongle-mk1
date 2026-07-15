@@ -2,14 +2,43 @@
 
 #include "../touch_ui.h"
 
+static const struct page_cell mod_cells[];
+static const struct page_cell mod_cells_portrait[];
+
+/* ring colour = the (last) armed mod's own button colour */
+static enum theme_role mod_role(int mod)
+{
+  const struct page_cell *active = (ui_rot & 1) ? mod_cells_portrait : mod_cells;
+  for (int i = 0; active[i].row_span != 0 || active[i].col_span != 0; i++)
+  {
+    if (active[i].action == ACT_CUSTOM_VAL && active[i].arg.custom.val == mod)
+    {
+      return active[i].color;
+    }
+  }
+  return THEME_SECONDARY;
+}
+
 static void tap_mod(int mod)
 {
   pending_mods ^= mod;
+  if (pending_mods & mod)
+  {
+    pending_mod_role = mod_role(mod);
+  }
+  else
+  {
+    for (int m = 0; m < 8; m++)
+    {
+      if (pending_mods & BIT(m))
+      {
+        pending_mod_role = mod_role(BIT(m));
+        break;
+      }
+    }
+  }
   build_view(cur_view);
 }
-
-static const struct page_cell mod_cells[];
-static const struct page_cell mod_cells_portrait[];
 
 static void build_modifiers(void)
 {
