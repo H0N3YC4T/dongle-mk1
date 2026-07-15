@@ -23,7 +23,7 @@ static struct zmk_widget_output output_widget;
 void status_screen_reflow(void)
 {
   if (ui_rot & 1)
-  {
+  { // Portrait
     zmk_widget_modifier_indicator_set_width(&modifier_indicator_widget, 200);
     lv_obj_set_pos(zmk_widget_modifier_indicator_obj(&modifier_indicator_widget), 20, 8);
 
@@ -41,7 +41,7 @@ void status_screen_reflow(void)
     lv_obj_set_pos(zmk_widget_output_obj(&output_widget), 10, 154);
   }
   else
-  {
+  { // Landscape
     zmk_widget_modifier_indicator_set_width(&modifier_indicator_widget, 230);
     lv_obj_set_pos(zmk_widget_modifier_indicator_obj(&modifier_indicator_widget), 25, 8);
 
@@ -54,9 +54,9 @@ void status_screen_reflow(void)
     zmk_widget_output_set_stacked(false);
 
     zmk_widget_battery_circles_place(256, 62, 0, 2, 198, 2);
-    lv_obj_set_pos(zmk_widget_battery_circles_obj(&battery_circles_widget), 12, 170);
+    lv_obj_set_pos(zmk_widget_battery_circles_obj(&battery_circles_widget), 12, 162);
 
-    lv_obj_set_pos(zmk_widget_output_obj(&output_widget), 82, 170);
+    lv_obj_set_pos(zmk_widget_output_obj(&output_widget), 82, 162);
   }
 }
 
