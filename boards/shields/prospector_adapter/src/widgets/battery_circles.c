@@ -209,6 +209,7 @@ struct battery_update_state
 {
   uint8_t source;
   uint8_t level;
+  bool charging;
 };
 
 struct connection_update_state
@@ -310,10 +311,11 @@ static void update_peripheral_display(uint8_t source)
     }
     else if (PERIPHERAL_COUNT == 2)
     {
-      char text[4];
+      char text[8];
       if (connected && level > 0)
       {
-        snprintf(text, sizeof(text), "%d", level);
+        snprintf(text, sizeof(text), "%s%d",
+                 peripheral_charging[source] ? LV_SYMBOL_CHARGE : "", level);
       }
       else
       {
@@ -329,16 +331,17 @@ static void update_peripheral_display(uint8_t source)
     lv_obj_remove_style(battery_label, &style_battery_label_connected, LV_PART_MAIN);
     lv_obj_add_style(battery_label, battery_style, LV_PART_MAIN);
 
-    char text[5];
+    char text[10];
     if (connected && level > 0)
     {
+      const char *bolt = peripheral_charging[source] ? LV_SYMBOL_CHARGE : "";
       if (PERIPHERAL_COUNT == 1)
       {
-        snprintf(text, sizeof(text), "%d%%", level);
+        snprintf(text, sizeof(text), "%s%d%%", bolt, level);
       }
       else
       {
-        snprintf(text, sizeof(text), "%d", level);
+        snprintf(text, sizeof(text), "%s%d", bolt, level);
       }
     }
     else
@@ -360,6 +363,8 @@ static void update_peripheral_display(uint8_t source)
     }
   }
 }
+
+static bool peripheral_charging[PERIPHERAL_COUNT];
 
 static void set_battery_level(uint8_t source, uint8_t level)
 {
@@ -388,6 +393,10 @@ void battery_circles_battery_update_cb(struct battery_update_state state)
   {
     if (widget->initialized)
     {
+      if (state.source < PERIPHERAL_COUNT)
+      {
+        peripheral_charging[state.source] = state.charging;
+      }
       set_battery_level(state.source, state.level);
     }
   }
@@ -410,6 +419,7 @@ static struct battery_update_state battery_circles_get_battery_state(const zmk_e
   return (struct battery_update_state){
       .source = bat_ev->source,
       .level = bat_ev->state_of_charge,
+      .charging = bat_ev->charging,
   };
 }
 
