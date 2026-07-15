@@ -167,13 +167,13 @@ void zmk_widget_output_set_stacked(bool stacked) {
         int slot_width =
             (width - (ZMK_BLE_PROFILE_COUNT - 1) * slot_spacing) / ZMK_BLE_PROFILE_COUNT;
         int stack_x = (width - 84) / 2;
-        lv_obj_set_size(widget->obj, width, stacked ? 114 : 62);
+        lv_obj_set_size(widget->obj, width, stacked ? 104 : 62);
         lv_obj_set_size(widget->usb_btn, stacked ? 84 : 56, 29);
         lv_obj_set_size(widget->ble_btn, stacked ? 84 : 56, 29);
         lv_obj_set_pos(widget->usb_btn, stacked ? stack_x : 0, 0);
         lv_obj_set_pos(widget->ble_btn, stacked ? stack_x : 58, stacked ? 33 : 0);
         for (int i = 0; i < ZMK_BLE_PROFILE_COUNT; i++) {
-            lv_obj_set_size(widget->slots[i], slot_width, stacked ? 44 : 29);
+            lv_obj_set_size(widget->slots[i], slot_width, stacked ? 34 : 29);
             lv_obj_set_pos(widget->slots[i], i * (slot_width + slot_spacing), stacked ? 70 : 33);
         }
     }

@@ -30,8 +30,8 @@ void status_screen_reflow(void) {
         lv_obj_set_pos(zmk_widget_layer_display_obj(&layer_display_widget), 10, 140);
         zmk_widget_output_set_stacked(true);
         zmk_widget_battery_circles_place(220, 62, 0, 2, 162, 2);
-        lv_obj_set_pos(zmk_widget_battery_circles_obj(&battery_circles_widget), 10, 159);
-        lv_obj_set_pos(zmk_widget_output_obj(&output_widget), 10, 159);
+        lv_obj_set_pos(zmk_widget_battery_circles_obj(&battery_circles_widget), 10, 154);
+        lv_obj_set_pos(zmk_widget_output_obj(&output_widget), 10, 154);
     } else {
         zmk_widget_modifier_indicator_set_width(&modifier_indicator_widget, 230);
         lv_obj_set_pos(zmk_widget_modifier_indicator_obj(&modifier_indicator_widget), 25, 8);
