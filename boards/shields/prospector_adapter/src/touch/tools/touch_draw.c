@@ -5,7 +5,11 @@
 int grid_rows = 2; /* rows in the current screen's grid */
 int grid_cols = 3; /* cols in the current screen's grid */
 
-static lv_obj_t *make_btn(int row, int col, int w_cells, int h_cells, enum theme_role accent, int pct, bool filled)
+static lv_obj_t *make_btn(int row, int col,
+                          int w_cells, int h_cells,
+                          enum theme_role accent,
+                          int pct,
+                          bool filled)
 {
   lv_coord_t cwc = (scr_w() - 2 * UI_PAD) / grid_cols;
   lv_coord_t ch = (scr_h() - 2 * UI_PAD) / grid_rows;
@@ -32,8 +36,12 @@ static lv_obj_t *make_btn(int row, int col, int w_cells, int h_cells, enum theme
   return b;
 }
 
-static lv_obj_t *draw_cell_impl(int row, int col, int w_cells, int h_cells, const char *text, enum theme_role accent,
-                           int pct, bool filled)
+static lv_obj_t *draw_cell_impl(int row, int col,
+                                int w_cells, int h_cells,
+                                const char *text,
+                                enum theme_role accent,
+                                int pct,
+                                bool filled)
 {
   lv_obj_t *b = make_btn(row, col, w_cells, h_cells, accent, pct, filled);
   if (b == NULL)
@@ -54,18 +62,28 @@ static lv_obj_t *draw_cell_impl(int row, int col, int w_cells, int h_cells, cons
   return b;
 }
 
-lv_obj_t *draw_cell(int row, int col, int w_cells, const char *text, enum theme_role accent)
+lv_obj_t *draw_cell(int row, int col,
+                    int w_cells,
+                    const char *text,
+                    enum theme_role accent)
 {
   return draw_cell_impl(row, col, w_cells, 1, text, accent, 80, false);
 }
 
-lv_obj_t *draw_cell_ext(int row, int col, int w_cells, int h_cells, const char *text, enum theme_role accent, bool filled)
+lv_obj_t *draw_cell_ext(int row, int col,
+                        int w_cells, int h_cells,
+                        const char *text,
+                        enum theme_role accent,
+                        bool filled)
 {
   return draw_cell_impl(row, col, w_cells, h_cells, text, accent, 80, filled);
 }
 
-lv_obj_t *draw_cell_icon_ext(int row, int col, int w_cells, int h_cells, const lv_image_dsc_t *icon, const char *fallback,
-                        enum theme_role accent)
+lv_obj_t *draw_cell_icon_ext(int row, int col,
+                             int w_cells, int h_cells,
+                             const lv_image_dsc_t *icon,
+                             const char *fallback,
+                             enum theme_role accent)
 {
   if (icon == NULL)
   {
@@ -88,8 +106,10 @@ lv_obj_t *draw_cell_icon_ext(int row, int col, int w_cells, int h_cells, const l
   return b;
 }
 
-lv_obj_t *draw_cell_icon(int row, int col, const lv_image_dsc_t *icon, const char *fallback,
-                    enum theme_role accent)
+lv_obj_t *draw_cell_icon(int row, int col,
+                         const lv_image_dsc_t *icon,
+                         const char *fallback,
+                         enum theme_role accent)
 {
   return draw_cell_icon_ext(row, col, 1, 1, icon, fallback, accent);
 }

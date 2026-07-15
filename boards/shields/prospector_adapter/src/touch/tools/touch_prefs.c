@@ -36,16 +36,16 @@ void touch_prefs_apply(void)
   {
     return;
   }
-  int b = ((loaded_prefs.bright + 5) / 10) * 10; /* snap to the 1-10 scale */
-  if (b < SETTINGS_BRIGHT_MIN)
+  int brightness = ((loaded_prefs.bright + 5) / 10) * 10; /* snap to the 1-10 scale */
+  if (brightness < SETTINGS_BRIGHT_MIN)
   {
-    b = SETTINGS_BRIGHT_MIN;
+    brightness = SETTINGS_BRIGHT_MIN;
   }
-  if (b > SETTINGS_BRIGHT_MAX)
+  if (brightness > SETTINGS_BRIGHT_MAX)
   {
-    b = SETTINGS_BRIGHT_MAX;
+    brightness = SETTINGS_BRIGHT_MAX;
   }
-  prospector_brightness_step(b - prospector_brightness_get());
+  prospector_brightness_step(brightness - prospector_brightness_get());
   if (loaded_prefs.sens >= 0 && prospector_touchpad_sens_get() >= 0)
   {
     prospector_touchpad_sens_step(loaded_prefs.sens - prospector_touchpad_sens_get());
@@ -57,7 +57,9 @@ void touch_prefs_apply(void)
   }
 }
 
-static int prefs_settings_set(const char *name, size_t len, settings_read_cb read_cb,
+static int prefs_settings_set(const char *name,
+                              size_t len,
+                              settings_read_cb read_cb,
                               void *cb_arg)
 {
   if (settings_name_steq(name, "prefs", NULL) && len == sizeof(loaded_prefs))
@@ -70,8 +72,7 @@ static int prefs_settings_set(const char *name, size_t len, settings_read_cb rea
   return 0;
 }
 
-SETTINGS_STATIC_HANDLER_DEFINE(prospector_ui, "prospector_ui", NULL, prefs_settings_set, NULL,
-                               NULL);
+SETTINGS_STATIC_HANDLER_DEFINE(prospector_ui, "prospector_ui", NULL, prefs_settings_set, NULL, NULL);
 
 #else /* !CONFIG_SETTINGS */
 
