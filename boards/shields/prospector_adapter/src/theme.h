@@ -18,14 +18,14 @@ enum theme_role
   THEME_FOCUS_BRIGHT,     /* caps-word indicator */
   THEME_ACCEPT,           /* affirmative controls (classic: mint) */
   THEME_DENY,             /* back/exit/destructive (classic: rose) */
+  THEME_INCREMENT,        /* increment controls */
+  THEME_DECREMENT,        /* decrement controls */
   THEME_BACKGROUND,       /* screen background */
   THEME_SURFACE,          /* button fill */
   THEME_SURFACE_LOW,      /* recessed fill (scroll track) */
   THEME_OUTLINE,          /* scroll-track outline */
   THEME_MUTED,            /* greyed-out controls, brighter hints */
   THEME_MUTED_DIM,        /* dim legend / hint text */
-  THEME_INCREMENT,        /* increment controls */
-  THEME_DECREMENT,        /* decrement controls */
   THEME_ROLE_COUNT
 };
 

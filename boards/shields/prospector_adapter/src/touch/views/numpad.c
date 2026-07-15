@@ -18,7 +18,7 @@ static const struct page_cell numpad_cells[] = {
     {2, 2, 1, 1, "3", NULL, THEME_PRIMARY, ACT_SEND_KEY, .arg.keycode = KP_N3},
     {2, 3, 1, 1, "*", NULL, THEME_FOCUS, ACT_SEND_KEY, .arg.keycode = KP_MULTIPLY},
 
-    {3, 0, 1, 1, NULL, &icon_up_32, THEME_DENY, ACT_GO_VIEW, .arg.view = &view_home},
+    {3, 0, 1, 1, NULL, &icon_left_32, THEME_DENY, ACT_GO_VIEW, .arg.view = &view_home},
     {3, 1, 1, 1, "0", NULL, THEME_PRIMARY, ACT_SEND_KEY, .arg.keycode = KP_N0},
     {3, 2, 1, 1, NULL, &icon_newline_32, THEME_ACCEPT, ACT_SEND_KEY, .arg.keycode = KP_ENTER},
     {3, 3, 1, 1, "/", NULL, THEME_FOCUS, ACT_SEND_KEY, .arg.keycode = KP_DIVIDE},

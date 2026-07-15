@@ -41,9 +41,9 @@ static const struct page_cell theme_p1[] = {
     {0, 0, 1, 1, NULL, &icon_up, THEME_FOCUS, ACT_PREV_PAGE},
     /* background's own base can be invisible on itself -- outline muted */
     {0, 1, 1, 2, "BACKGROUND", NULL, THEME_MUTED, ACT_CUSTOM_VAL, .arg.custom = {open_swatch, THEME_CAT_BACKGROUND}},
-    {1, 1, 1, 2, "ACCEPT", NULL, THEME_ACCEPT, ACT_CUSTOM_VAL, .arg.custom = {open_swatch, THEME_CAT_ACCEPT}},
+    {1, 1, 1, 2, "INCREMENT", NULL, THEME_INCREMENT, ACT_CUSTOM_VAL, .arg.custom = {open_swatch, THEME_CAT_INCREMENT}},
     {2, 0, 1, 1, NULL, &icon_down, THEME_DENY, ACT_GO_VIEW, .arg.view = &view_settings},
-    {2, 1, 1, 2, "DENY", NULL, THEME_DENY, ACT_CUSTOM_VAL, .arg.custom = {open_swatch, THEME_CAT_DENY}},
+    {2, 1, 1, 2, "DECREMENT", NULL, THEME_DECREMENT, ACT_CUSTOM_VAL, .arg.custom = {open_swatch, THEME_CAT_DECREMENT}},
     {0}};
 
 static const struct page_cell *const theme_pages[] = {theme_p1};
@@ -103,7 +103,6 @@ static void build_swatch(void)
       continue;
     }
     uint32_t c = swatch_colors[i]; /* face keeps the full colour */
-    /* very dark swatches vanish against the background -- keep a visible rim */
     uint32_t rim = ((c >> 16 & 0xff) + (c >> 8 & 0xff) + (c & 0xff)) < 96
                        ? theme_color(THEME_MUTED)
                        : c;
@@ -143,6 +142,5 @@ static const struct page_cell swatch_cells[] = {
 static const struct view_def view_swatch = {
     .cells = swatch_cells,
     .build = build_swatch,
-    .keeps_mods = true,
     .idle_timeout = true,
 };

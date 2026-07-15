@@ -1,5 +1,4 @@
-/* icon_up_32: 32x32 ARGB8888, generated from icons.txt "up" SVG
- * (alpha mask, forced white; recolored to the theme accent at draw time). */
+/* icon_left_32: 40x40 ARGB8888, generated from rotating icon_up_32.c */
 
 #include <lvgl.h>
 
