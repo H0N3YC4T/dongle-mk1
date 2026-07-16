@@ -5,24 +5,24 @@
 
 static const struct view_def view_swatch;
 
-/* presets in rainbow order (all six classic defaults included), white + black last */
+/* 0-6 pastel red->green->blue (classic defaults kept) + white; 8-14 neon + black */
 static const uint32_t swatch_colors[16] = {
-    0xc2526a, /* rose       */
-    0xf2a09a, /* salmon     */
-    0xf5b98c, /* apricot    */
-    0xf5cf8c, /* gold       */
-    0xf5e08c, /* chardonnay */
-    0xcfe89c, /* lime       */
-    0xa8e6b8, /* mint       */
-    0x8cd9c8, /* teal       */
-    0xa8d0e6, /* sky        */
-    0x8ca8e6, /* periwinkle */
-    0xb0a0e0, /* violet     */
-    0xc8a2c8, /* lilac      */
-    0xe08cd0, /* magenta    */
-    0xf0e8d8, /* cream      */
-    0xf2f2f0, /* white      */
-    0x000000, /* charcole   */
+    0xc2526a, /* rose (deny)        */
+    0xf5b98c, /* apricot            */
+    0xf5e08c, /* chardonnay (focus) */
+    0xa8e6b8, /* mint (accept)      */
+    0x8cd9c8, /* teal               */
+    0xa8d0e6, /* sky (secondary)    */
+    0xc8a2c8, /* lilac (primary)    */
+    0xf2f2f0, /* white              */
+    0xff3b30, /* neon red           */
+    0xff8c00, /* neon orange        */
+    0xffd500, /* neon yellow        */
+    0x00e050, /* neon green         */
+    0x00d8d8, /* neon cyan          */
+    0x2f6bff, /* neon blue          */
+    0xc026ff, /* neon violet        */
+    0x000000, /* black              */
 };
 
 static enum theme_category swatch_cat;
