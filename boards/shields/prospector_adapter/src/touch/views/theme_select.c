@@ -173,7 +173,11 @@ static void build_swatch(void)
   }
 
 static const struct page_cell swatch_cells[] = {
-    SWATCH(0, 0, 0), SWATCH(0, 1, 1), SWATCH(0, 2, 2), SWATCH(0, 3, 3), SWATCH(1, 0, 4), SWATCH(1, 1, 5), SWATCH(1, 2, 6), SWATCH(1, 3, 7), SWATCH(2, 0, 8), SWATCH(2, 1, 9), SWATCH(2, 2, 10), SWATCH(2, 3, 11), SWATCH(3, 0, 12), SWATCH(3, 1, 13), SWATCH(3, 2, 14), SWATCH(3, 3, 15), {0}};
+    SWATCH(0, 0, 0), SWATCH(0, 1, 1), SWATCH(0, 2, 2), SWATCH(0, 3, 3), 
+    SWATCH(1, 0, 4), SWATCH(1, 1, 5), SWATCH(1, 2, 6), SWATCH(1, 3, 7), 
+    SWATCH(2, 0, 8), SWATCH(2, 1, 9), SWATCH(2, 2, 10), SWATCH(2, 3, 11), 
+    SWATCH(3, 0, 12), SWATCH(3, 1, 13), SWATCH(3, 2, 14), SWATCH(3, 3, 15), 
+    {0}};
 
 static const struct view_def view_swatch = {
     .cells = swatch_cells,
