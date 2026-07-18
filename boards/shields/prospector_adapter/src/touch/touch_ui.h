@@ -132,6 +132,11 @@ extern const lv_image_dsc_t icon_next __weak;
 extern const lv_image_dsc_t icon_prev __weak;
 extern const lv_image_dsc_t icon_voldown __weak;
 extern const lv_image_dsc_t icon_volup __weak;
+extern const lv_image_dsc_t icon_mute __weak;
+extern const lv_image_dsc_t icon_stop __weak;
+extern const lv_image_dsc_t icon_rew __weak;
+extern const lv_image_dsc_t icon_ff __weak;
+extern const lv_image_dsc_t icon_music __weak;
 
 // General Icons
 extern const lv_image_dsc_t icon_plus __weak;
