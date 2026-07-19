@@ -194,10 +194,14 @@ void settings_apply_rotation(void);
 void touch_prefs_apply(void);
 void touch_prefs_save(void);
 
+/* Status Screen */
 void status_screen_reflow(void);
 
+/* brightness.c */
 void prospector_brightness_step(int delta);
 uint8_t prospector_brightness_get(void);
+
+/* touch_input.c */
 int prospector_touchpad_sens_get(void);
 void prospector_touchpad_sens_step(int delta);
 void prospector_touch_set_orientation(int rot);
@@ -205,6 +209,10 @@ bool prospector_touch_tap(int sx, int sy, bool hold); /* touch_input.c -> touch_
 bool prospector_touchpad_active(void);
 bool prospector_scrollpad_active(void);
 bool prospector_touch_has_action(int sx, int sy);
+
+/* touch_keys.c */
+void tap_studio_unlock(int cell);
+void tap_bootloader(int cell);
 
 /* ------------------------------- views -------------------------------- */
 extern const struct view_def view_normal;

@@ -118,6 +118,7 @@ int prospector_touchpad_sens_get(void)
 {
   return tp_sens_level;
 }
+
 void prospector_touchpad_sens_step(int delta)
 {
   int l = (int)tp_sens_level + delta;

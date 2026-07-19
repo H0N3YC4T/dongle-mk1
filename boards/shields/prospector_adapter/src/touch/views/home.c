@@ -11,22 +11,6 @@ static void tap_home_pad(int cell)
   }
 }
 
-static void tap_studio_unlock(int cell)
-{
-  ARG_UNUSED(cell);
-#if DT_NODE_EXISTS(DT_NODELABEL(studio_unlock))
-  fire_macro(DEVICE_DT_NAME(DT_NODELABEL(studio_unlock)));
-#endif
-}
-
-static void tap_bootloader(int cell)
-{
-  ARG_UNUSED(cell);
-#if DT_NODE_EXISTS(DT_NODELABEL(bootloader))
-  fire_macro(DEVICE_DT_NAME(DT_NODELABEL(bootloader)));
-#endif
-}
-
 static void tap_clear_mods(int cell)
 {
   ARG_UNUSED(cell);
